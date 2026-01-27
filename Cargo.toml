@@ -1,0 +1,13 @@
+[package]
+name = "scope"
+version = "0.1.0"
+edition = "2024"
+
+license = "MIT OR Apache-2.0"
+description = "A high-assurance framework for scoped lifetimes and deterministic execution boundaries. Part of the Honest-Classified security suite."
+
+authors = ["James Hunt <jameshuntdevelopment@gmail.com>"]
+repository = "https://github.com/jameshuntt/classified"
+
+[dependencies]
+
