@@ -351,6 +351,8 @@ fn deep_chain(scope: &mut Scope<'_, Resources>, depth: u32) -> JoinHandle<AppRes
 }
 
 fn main() {
+    let start = std::time::Instant::now();
+
     let leaves = env_usize("LEAVES", 600);
     let races = env_usize("RACES", 250);
     let depth = env_u32("DEPTH", 140);
@@ -417,4 +419,10 @@ fn main() {
 
         scope.run();
     });
+    let elapsed = start.elapsed();
+    println!("total runtime: {:?}", elapsed);
+
+    let secs = elapsed.as_secs_f64();
+    println!("total runtime: {:.3}s", secs);
+
 }

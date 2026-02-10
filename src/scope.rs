@@ -1030,83 +1030,85 @@ impl<'env, R> Scope<'env, R> {
             let cancel_time_deadline = &mut self.cancel_time_deadline;
             let cancel_time_heap = &mut self.cancel_time_heap;
 
-let tracer_ptr: Option<NonNull<dyn Tracer>> = self.tracer.as_deref_mut().map(NonNull::from);
+            // SAFETY: `tracer_ptr` comes from a valid &mut self.tracer as NonNull<dyn Tracer>,
+            // and is only accessed once per poll loop in a serialized manner (no aliasing).
+            let tracer_ptr: Option<NonNull<dyn Tracer>> = self.tracer.as_deref_mut().map(NonNull::from);
 
-// Hooks
-let mut subscribe_finish = |waiter: TaskId, target: TaskId| {
-    if let Some(mut tr) = tracer_ptr {
-        unsafe{
-            tr.as_mut().on_subscribe_finish(waiter, target);
-        }
-    }
-    if let Some(v) = finish_waiters.get_mut(target) {
-        v.push(waiter);
-    }
-};
+            // Hooks
+            let mut subscribe_finish = |waiter: TaskId, target: TaskId| {
+                if let Some(mut tr) = tracer_ptr {
+                    unsafe{
+                        tr.as_mut().on_subscribe_finish(waiter, target);
+                    }
+                }
+                if let Some(v) = finish_waiters.get_mut(target) {
+                    v.push(waiter);
+                }
+            };
 
-let mut defer_spawn =
-    |parent: TaskId, name: String, task: Pin<Box<dyn ScopedTask<'env, R> + 'env>>| {
-        spawns.push_back(SpawnReq { parent, name, task });
-    };
+            let mut defer_spawn =
+                |parent: TaskId, name: String, task: Pin<Box<dyn ScopedTask<'env, R> + 'env>>| {
+                    spawns.push_back(SpawnReq { parent, name, task });
+                };
 
-let mut query_state = |qid: TaskId| {
-    tasks_ref
-        .get(qid)
-        .map(|t| t.state)
-        .unwrap_or(TaskState::Completed)
-};
+            let mut query_state = |qid: TaskId| {
+                tasks_ref
+                    .get(qid)
+                    .map(|t| t.state)
+                    .unwrap_or(TaskState::Completed)
+            };
 
-let mut subscribe_io_readable = |task_id: TaskId, token: usize| {
-    if token >= io_read_waiters.len() {
-        io_read_waiters.resize_with(token + 1, Vec::new);
-    }
-    io_read_waiters[token].push(task_id);
+            let mut subscribe_io_readable = |task_id: TaskId, token: usize| {
+                if token >= io_read_waiters.len() {
+                    io_read_waiters.resize_with(token + 1, Vec::new);
+                }
+                io_read_waiters[token].push(task_id);
 
-    if let Some(mut tr) = tracer_ptr {
-        unsafe {
-            tr.as_mut().on_io_wait_readable(task_id, token);
-        }
-    }
-};
+                if let Some(mut tr) = tracer_ptr {
+                    unsafe {
+                        tr.as_mut().on_io_wait_readable(task_id, token);
+                    }
+                }
+            };
 
-let mut subscribe_sleep_until = |task_id: TaskId, deadline: Instant| {
-    if task_id >= sleeping_until.len() {
-        return;
-    }
-    sleeping_until[task_id] = Some(deadline);
-    sleep_heap.push(Reverse((deadline, task_id)));
+            let mut subscribe_sleep_until = |task_id: TaskId, deadline: Instant| {
+                if task_id >= sleeping_until.len() {
+                    return;
+                }
+                sleeping_until[task_id] = Some(deadline);
+                sleep_heap.push(Reverse((deadline, task_id)));
 
-    if let Some(mut tr) = tracer_ptr {
-        let micros = deadline
-            .saturating_duration_since(Instant::now())
-            .as_micros();
-        unsafe {
-            tr.as_mut().on_sleep_until(task_id, micros);
-        }
-    }
-};
+                if let Some(mut tr) = tracer_ptr {
+                    let micros = deadline
+                        .saturating_duration_since(Instant::now())
+                        .as_micros();
+                    unsafe {
+                        tr.as_mut().on_sleep_until(task_id, micros);
+                    }
+                }
+            };
 
-let mut request_cancel_escalate_reason =
-    |target: TaskId, esc: CancelEscalation, reason: CancelReason| {
-        hook_request_cancel_escalate::<R>(
-            target,
-            esc,
-            reason,
-            tasks_ref,
-            cancel_flags,
-            cancel_reason,
-            abort_reason,
-            tick_count,
-            cancel_budget_default,
-            cancel_time_default,
-            cancel_deadline,
-            cancel_heap,
-            cancel_time_deadline,
-            cancel_time_heap,
-            tracer_ptr,     // ✅ correct type now
-            &wake_tx,
-        );
-    };
+            let mut request_cancel_escalate_reason =
+                |target: TaskId, esc: CancelEscalation, reason: CancelReason| {
+                    hook_request_cancel_escalate::<R>(
+                        target,
+                        esc,
+                        reason,
+                        tasks_ref,
+                        cancel_flags,
+                        cancel_reason,
+                        abort_reason,
+                        tick_count,
+                        cancel_budget_default,
+                        cancel_time_default,
+                        cancel_deadline,
+                        cancel_heap,
+                        cancel_time_deadline,
+                        cancel_time_heap,
+                        tracer_ptr,     // ✅ correct type now
+                        &wake_tx,
+                    );
+                };
 
 
             let mut cx = Cx {
