@@ -1,1 +1,7 @@
 /target
+/_
+/.vscode
+/.gitignore
+/src/scope_monolith.rs
+/src/scope_refactor_1.rs
+/src/scope_before_second_refactor.rs
