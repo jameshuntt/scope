@@ -50,3 +50,60 @@ impl<'a, T, F: FnOnce()> DerefMut for Lease<'a, T, F> {
         self.value
     }
 }
+
+
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    #[test]
+    fn test_on_drop_executes_logic() {
+        let counter = AtomicUsize::new(0);
+        {
+            let _guard = OnDrop::new(|| {
+                counter.fetch_add(1, Ordering::SeqCst);
+            });
+            assert_eq!(counter.load(Ordering::SeqCst), 0);
+        } // _guard dropped here
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn test_on_drop_manual_drop() {
+        let mut triggered = false;
+        let guard = OnDrop::new(|| triggered = true);
+        drop(guard);
+        assert!(triggered);
+    }
+
+    #[test]
+    fn test_lease_with_atomics() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        
+        let resource_load = AtomicUsize::new(0);
+        let mut shared_val = String::from("Initial");
+    
+        {
+            // The closure captures the reference to the atomic, 
+            // which only requires a shared borrow (&) to mutate the inner value.
+            let mut lease = Lease::new(&mut shared_val, || {
+                resource_load.fetch_sub(1, Ordering::SeqCst);
+            });
+            
+            resource_load.fetch_add(1, Ordering::SeqCst);
+            lease.push_str(" -> Leased");
+            
+            assert_eq!(resource_load.load(Ordering::SeqCst), 1);
+        } 
+    
+        assert_eq!(resource_load.load(Ordering::SeqCst), 0);
+        assert_eq!(shared_val, "Initial -> Leased");
+    }
+}
+
+

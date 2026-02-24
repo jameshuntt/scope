@@ -1,5 +1,3 @@
-#[cfg(feature = "mio")]
-pub mod mio;
 pub mod io;
 pub mod lease;
 pub mod scope;

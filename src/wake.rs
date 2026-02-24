@@ -117,3 +117,78 @@ mod imp {
 }
 
 pub use imp::*;
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::Duration;
+
+    #[test]
+    fn test_wake_channel_fifo() {
+        let (tx, rx) = wake_channel();
+        
+        let msg1 = WakeMsg { from: 1, to: 10 };
+        let msg2 = WakeMsg { from: 2, to: 20 };
+
+        tx.send(msg1);
+        tx.send(msg2);
+
+        // Verify Order
+        let r1 = rx.try_recv().expect("Should have msg1");
+        let r2 = rx.try_recv().expect("Should have msg2");
+
+        assert_eq!(r1.from, 1);
+        assert_eq!(r2.from, 2);
+        assert!(rx.try_recv().is_none());
+    }
+
+    #[test]
+    fn test_wake_recv_timeout_logic() {
+        let (tx, rx) = wake_channel();
+        let timeout = Duration::from_millis(10);
+
+        // 1. Test actual timeout
+        match rx.recv_timeout(timeout) {
+            WakeRecvTimeout::Timeout => {} // Expected
+            _ => panic!("Expected timeout on empty channel"),
+        }
+
+        // 2. Test success within timeout
+        tx.send(WakeMsg { from: 5, to: 55 });
+        match rx.recv_timeout(timeout) {
+            WakeRecvTimeout::Msg(m) => assert_eq!(m.from, 5),
+            _ => panic!("Expected message"),
+        }
+    }
+
+    #[test]
+    fn test_blocking_capability() {
+        let (_, rx) = wake_channel();
+        
+        #[cfg(any(target_arch = "wasm32", feature = "local_wake"))]
+        {
+            assert!(!rx.supports_blocking());
+            // On WASM, recv() should return immediately even if empty
+            assert!(rx.recv().is_none()); 
+        }
+
+        #[cfg(all(not(target_arch = "wasm32"), not(feature = "local_wake")))]
+        {
+            assert!(rx.supports_blocking());
+            // We don't call rx.recv() here because it would hang the test thread!
+        }
+    }
+
+    #[test]
+    #[cfg(all(not(target_arch = "wasm32"), not(feature = "local_wake")))]
+    fn test_disconnection_threaded() {
+        let (tx, rx) = wake_channel();
+        drop(tx); // Close the channel
+
+        match rx.recv_timeout(Duration::from_millis(1)) {
+            WakeRecvTimeout::Disconnected => {} // Correct
+            _ => panic!("Expected Disconnected state"),
+        }
+    }
+}
