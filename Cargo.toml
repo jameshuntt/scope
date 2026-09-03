@@ -8,7 +8,7 @@ description = "A deterministic, cooperative structured-concurrency runtime whose
 authors = ["James Hunt <james@1o.business>"]
 repository = "https://github.com/jameshuntt/scope"
 readme = "README.md"
-keywords = ["async", "runtime", "structured-concurrency", "scheduler", "deterministic"]
+keywords = ["async", "runtime", "structured", "scheduler", "deterministic"]
 categories = ["asynchronous", "concurrency"]
 include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "README.md", "LICENSE-*"]
 
