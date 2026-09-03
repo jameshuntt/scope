@@ -1,6 +1,5 @@
-//! Integration tests for the scheduler core — exactly the surface the original
-//! scope left untested (cancellation, timers, join/select, panic propagation,
-//! determinism, external wakers, stall reporting).
+//! Integration tests for the scheduler core: cancellation, timers, join and
+//! select, panic propagation, determinism, external wakers, stall reporting.
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -27,7 +26,7 @@ impl<'env> ScopedTask<'env, u64> for CountUp {
 
 #[test]
 fn scoped_borrow_lets_many_tasks_mutate_env() {
-    // The crown jewel: several tasks share &mut R with no locks, no 'static.
+    // Several tasks share &mut R with no locks and no 'static.
     let mut counter: u64 = 0;
     let report = run_scoped(&mut counter, |s| {
         s.spawn_named("a", CountUp { remaining: 10 });

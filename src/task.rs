@@ -1,4 +1,4 @@
-//! The scoped task model — scope's crown jewel.
+//! The scoped task model.
 //!
 //! A [`ScopedTask`] is polled by `&mut self` (not `Pin`: nothing here is
 //! self-referential, so dropping `Pin` costs nothing and lets the whole crate
@@ -119,7 +119,7 @@ impl<'poll, 'env, R> Cx<'poll, 'env, R> {
 
     /// A **real `std::task::Waker`** for this task. Hand it to an IO reactor,
     /// timer, or `Future`-shaped code; firing it wakes this task through the
-    /// same bus. This is the waker_protocol capability the original lacked.
+    /// same bus.
     #[cfg(not(loom))]
     #[inline]
     pub fn waker(&self) -> Waker {

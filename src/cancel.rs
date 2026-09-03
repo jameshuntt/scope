@@ -1,7 +1,7 @@
 //! Cancellation vocabulary: reasons, escalation policy, and the shared cell a
 //! task reads to learn it has been asked to stop.
 //!
-//! Two-axis escalation (ported from the original scope): a cancel can be a soft
+//! Two-axis escalation: a cancel can be a soft
 //! request that hard-stops after N scheduler ticks, or after a wall-clock
 //! duration, or immediately. Reasons carry a priority so a meaningful reason is
 //! never clobbered by a bland timeout.

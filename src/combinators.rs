@@ -8,7 +8,7 @@
 //! old mpsc channel got from disconnection.
 
 use crate::ids::TaskId;
-use crate::sync::{Arc, Mutex};
+use crate::sync::{lock, Arc, Mutex};
 use crate::task::{Cx, JoinError, JoinPoll, ScopedTask, TaskPoll};
 
 pub(crate) type ResultSlot<T> = Arc<Mutex<Option<Result<T, JoinError>>>>;
@@ -22,7 +22,7 @@ pub(crate) struct SlotSetter<T> {
 impl<T> SlotSetter<T> {
     pub(crate) fn send(&mut self, v: Result<T, JoinError>) {
         if !self.sent {
-            *self.slot.lock().unwrap() = Some(v);
+            *lock(&self.slot) = Some(v);
             self.sent = true;
         }
     }
@@ -31,7 +31,7 @@ impl<T> SlotSetter<T> {
 impl<T> Drop for SlotSetter<T> {
     fn drop(&mut self) {
         if !self.sent {
-            *self.slot.lock().unwrap() = Some(Err(JoinError::Panicked));
+            *lock(&self.slot) = Some(Err(JoinError::Panicked));
         }
     }
 }
@@ -55,7 +55,7 @@ impl<T> JoinHandle<T> {
 
     /// Non-consuming poll. `Ready` once, then `Pending` (the value is taken).
     pub fn poll(&self) -> JoinPoll<T> {
-        match self.slot.lock().unwrap().take() {
+        match lock(&self.slot).take() {
             Some(r) => JoinPoll::Ready(r),
             None => JoinPoll::Pending,
         }
@@ -63,7 +63,7 @@ impl<T> JoinHandle<T> {
 
     /// Take the result if present. Useful after `Scope::run` has completed.
     pub fn take(&self) -> Option<Result<T, JoinError>> {
-        self.slot.lock().unwrap().take()
+        lock(&self.slot).take()
     }
 }
 
@@ -287,7 +287,7 @@ where
 }
 
 // --------------------------------------------------------------------------
-// map_join — the SAFE replacement for the original's UB `map_ok` transmute.
+// map_join: apply a function to a joined result, without touching the value's type.
 // --------------------------------------------------------------------------
 
 pub(crate) struct MapJoinTask<T, Out, F> {

@@ -1,24 +1,22 @@
-//! The wake substrate — scope's spine, built on waker_protocol's design.
+//! The wake substrate: how anything, inside or outside the scope, wakes a task.
 //!
 //! Two things live here:
 //!
 //! 1. [`WakeBus`] — a tiny std-only `Mutex<VecDeque> + Condvar` channel carrying
-//!    reason-tagged [`SchedulerMsg`]s. It replaces the original scope's
-//!    `mpsc::channel::<WakeMsg>`; being a plain `Mutex`/`Condvar` it is also
-//!    what `--cfg loom` swaps out to model every wake interleaving.
+//!    reason-tagged [`SchedulerMsg`]s. Being a plain `Mutex`/`Condvar` it is
+//!    also what `--cfg loom` swaps out to model every wake interleaving.
 //!
 //! 2. [`scheduler_waker`] — a **real `std::task::Waker`** minted from an
-//!    `Arc<WakeSignal>` via James's `waker_tables` vtable machinery. Hand this
-//!    to an IO reactor, a timer thread, or any `Future`-shaped code and, when
-//!    fired, it enqueues a `Wake { id, reason }` for the scheduler. The old
-//!    `WakeMsg{from,to}` model had no such external handle.
+//!    `Arc<WakeSignal>` through `waker_tables`' vtable registry. Hand it to an
+//!    IO reactor, a timer thread, or any `Future`-shaped code and, when fired,
+//!    it enqueues a `Wake { id, reason }` for the scheduler.
 //!
 //! This module is the *only* place `unsafe` is allowed in the crate, and all of
 //! it is the audited `waker_tables` refcount plumbing.
 #![allow(unsafe_code)]
 
 use crate::ids::TaskId;
-use crate::sync::{Arc, Condvar, Mutex};
+use crate::sync::{lock, Arc, Condvar, Mutex};
 use std::collections::VecDeque;
 #[cfg(not(loom))]
 use std::task::Waker;
@@ -30,8 +28,8 @@ use std::time::Duration;
 #[cfg(not(loom))]
 use waker_tables::{derive_arc_unsafe_wakeable, waker_from_arc};
 
-/// Why a task is being woken. Richer than the original's bare `from` field;
-/// drives tracing and (later) reason-aware scheduling.
+/// Why a task is being woken. Carried on every wake for tracing and for
+/// reason-aware scheduling.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WakeReason {
     /// First poll after spawning.
@@ -98,7 +96,7 @@ impl WakeBus {
     #[inline]
     /// Enqueue a message and notify a blocked receiver.
     pub fn send(&self, msg: SchedulerMsg) {
-        let mut q = self.inner.queue.lock().unwrap();
+        let mut q = lock(&self.inner.queue);
         q.push_back(msg);
         self.inner.cv.notify_one();
     }
@@ -112,24 +110,24 @@ impl WakeBus {
     #[inline]
     /// Dequeue the oldest message without blocking.
     pub fn try_recv(&self) -> Option<SchedulerMsg> {
-        self.inner.queue.lock().unwrap().pop_front()
+        lock(&self.inner.queue).pop_front()
     }
 
     #[inline]
     /// Whether nothing is queued.
     pub fn is_empty(&self) -> bool {
-        self.inner.queue.lock().unwrap().is_empty()
+        lock(&self.inner.queue).is_empty()
     }
 
     /// Blocking wait bounded by `timeout`. Not used under loom (which has no
     /// wall clock); loom paths only ever `try_recv`.
     #[cfg(not(loom))]
     pub fn recv_timeout(&self, timeout: Duration) -> WakeRecv {
-        let mut q = self.inner.queue.lock().unwrap();
+        let mut q = lock(&self.inner.queue);
         if let Some(m) = q.pop_front() {
             return WakeRecv::Msg(m);
         }
-        let (mut q, _res) = self.inner.cv.wait_timeout(q, timeout).unwrap();
+        let (mut q, _res) = self.inner.cv.wait_timeout(q, timeout).unwrap_or_else(|poisoned| poisoned.into_inner());
         match q.pop_front() {
             Some(m) => WakeRecv::Msg(m),
             None => WakeRecv::Timeout,
@@ -173,8 +171,8 @@ mod vtable {
 use vtable::WAKE_SIGNAL_VTABLE;
 
 /// Mint a real `std::task::Waker` that, when woken, enqueues
-/// `Wake { id, reason }` on `bus`. This is the external integration point the
-/// original scope lacked entirely.
+/// `Wake { id, reason }` on `bus`. This is the integration point for anything
+/// outside the scope.
 #[cfg(not(loom))]
 pub fn scheduler_waker(id: TaskId, reason: WakeReason, bus: WakeBus) -> Waker {
     waker_from_arc(std::sync::Arc::new(WakeSignal { id, reason, bus }), &WAKE_SIGNAL_VTABLE)

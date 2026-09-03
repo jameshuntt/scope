@@ -1,11 +1,9 @@
 //! Generational task identity + a slab that stores tasks by it.
 //!
-//! Ported (and made fully safe) from the waker_protocol slab. A [`TaskId`]
-//! names a `slot` plus a `generation`; freeing a slot bumps its generation, so
-//! a stale id (a wake or join subscription that outlived its task) resolves to
-//! `None` *by construction*. That single property deletes a whole class of
-//! "is this deadline still valid?" staleness checks the original `usize`-keyed
-//! scheduler needed.
+//! A [`TaskId`] names a `slot` plus a `generation`; freeing a slot bumps its
+//! generation, so a stale id (a wake or join subscription that outlived its
+//! task) resolves to `None` *by construction*. That single property removes a
+//! whole class of "is this deadline still valid?" checks.
 
 use std::fmt;
 

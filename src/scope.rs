@@ -1,10 +1,9 @@
 //! The scheduler: a single-threaded, cooperative, deterministic executor whose
 //! tasks borrow the scope environment `R`.
 //!
-//! Design notes vs. the original scope:
-//! * Tasks live in a generational [`TaskSlab`] — stale wakes/joins resolve to
-//!   `None` for free, so the pile of "is this deadline still valid?" checks is
-//!   gone.
+//! How it is put together:
+//! * Tasks live in a generational [`TaskSlab`]: a wake or join that outlives
+//!   its task resolves to `None`, so no deadline needs a validity check.
 //! * The runnable set is ordered every round by the [`WakeOrdering`] policy;
 //!   this is the axis the scheduler policy chooses on.
 //! * `run()` drives to completion, so the scope boundary is a real join point
@@ -13,8 +12,7 @@
 //! * Waking rides the [`WakeBus`] / real-`Waker` substrate.
 //! * Zero `unsafe`: the mid-poll callbacks record *intents* into local buffers
 //!   applied after the poll, so no closure needs `&mut` into the scheduler while
-//!   a task holds the environment borrow. (The old code used `unsafe` pointer
-//!   punning to thread the tracer through here.)
+//!   a task holds the environment borrow.
 
 use crate::cancel::{CancelCell, CancelEscalation, CancelReason};
 use crate::combinators::{
@@ -24,7 +22,7 @@ use crate::combinators::{
 use crate::ids::{TaskId, TaskSlab};
 use crate::mailbox::{Mailbox, MailboxSender};
 use crate::policy::{resolve_cancel_budgets, QoSClass, SchedulerConfig, WakeOrdering};
-use crate::sync::{Arc, Mutex};
+use crate::sync::{lock, Arc, Mutex};
 use crate::task::{Cx, JoinError, ScopedTask, TaskPoll, TaskState};
 use crate::timer::SleepTask;
 use crate::trace::Tracer;
@@ -998,7 +996,7 @@ where
 {
     fn poll(&mut self, cx: &mut Cx<'_, 'env, R>) -> TaskPoll {
         if cx.is_cancelled() && !self.sent {
-            *self.slot.lock().unwrap() = Some(Err(JoinError::Cancelled(cx.cancel_reason())));
+            *lock(&self.slot) = Some(Err(JoinError::Cancelled(cx.cancel_reason())));
             self.sent = true;
             return TaskPoll::Ready;
         }
@@ -1008,7 +1006,7 @@ where
                 if let Some(f) = self.finish.take() {
                     let out = f(&mut self.inner, cx.resources);
                     if !self.sent {
-                        *self.slot.lock().unwrap() = Some(Ok(out));
+                        *lock(&self.slot) = Some(Ok(out));
                         self.sent = true;
                     }
                 }
@@ -1028,6 +1026,6 @@ impl<T, Out, F> Drop for OutputTask<T, Out, F> {
         } else {
             JoinError::Panicked
         };
-        *self.slot.lock().unwrap() = Some(Err(err));
+        *lock(&self.slot) = Some(Err(err));
     }
 }

@@ -7,11 +7,18 @@
 //! `#[cfg]` through the scheduler.
 
 #[cfg(loom)]
-pub use loom::sync::{Arc, Condvar, Mutex};
+pub use loom::sync::{Arc, Condvar, Mutex, MutexGuard};
 #[cfg(loom)]
 pub use loom::sync::atomic::{AtomicBool, AtomicU8, Ordering};
 
 #[cfg(not(loom))]
-pub use std::sync::{Arc, Condvar, Mutex};
+pub use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 #[cfg(not(loom))]
 pub use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
+
+/// Lock `m`, recovering the data if another thread panicked while holding it.
+/// Every critical section in this crate is a single push, pop or assignment,
+/// so the data behind a poisoned lock is still consistent.
+pub(crate) fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+}
