@@ -3,7 +3,7 @@
 //!
 //! Results travel through a small loom-friendly one-shot slot
 //! (`Arc<Mutex<Option<..>>>`) instead of `std::mpsc` (whose `Sender` is `!Sync`
-//! and not loom-instrumented). A [`SlotSetter`] fills `Err(Panicked)` on drop,
+//! and not loom-instrumented). A `SlotSetter` fills `Err(Panicked)` on drop,
 //! preserving the "producer vanished ⇒ consumer sees an error" semantics the
 //! old mpsc channel got from disconnection.
 
