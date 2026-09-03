@@ -1,16 +1,34 @@
 [package]
 name = "scope"
-version = "0.1.3"
-edition = "2024"
-
+version = "0.2.0"
+edition = "2021"
+rust-version = "1.80"
 license = "MIT OR Apache-2.0"
-description = "A high-assurance framework for scoped lifetimes and deterministic execution boundaries. Part of the Honest-Classified security suite."
-
-authors = ["James Hunt <jameshuntdevelopment@gmail.com>"]
+description = "A deterministic, cooperative structured-concurrency runtime whose tasks borrow non-'static scope environment data; unsafe-free outside one audited wake module."
+authors = ["James Hunt <james@1o.business>"]
 repository = "https://github.com/jameshuntt/scope"
-
-[features]
-default = []
-local_wake = []
+readme = "README.md"
+keywords = ["async", "runtime", "structured-concurrency", "scheduler", "deterministic"]
+categories = ["asynchronous", "concurrency"]
+include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "README.md", "LICENSE-*"]
 
 [dependencies]
+# The wake substrate: real std::task::Wakers minted through waker_tables' vtable registry.
+waker_tables = "0.1.4"
+
+# Loom model-checks the cross-thread wake/cancel handoff. Active only when the
+# crate is built with RUSTFLAGS="--cfg loom" (see src/sync.rs).
+[target.'cfg(loom)'.dependencies]
+loom = "0.7"
+
+[dev-dependencies]
+# The 1BRC example mmaps its input file. Not a runtime dependency.
+memmap2 = "0.9"
+
+[lib]
+name = "scope"
+path = "src/lib.rs"
+
+[lints.rust]
+# `loom` is a real cfg set via RUSTFLAGS='--cfg loom' for model-checking.
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(loom)'] }

@@ -1,194 +1,212 @@
-// src/wake.rs
-use crate::task::WakeMsg;
+//! The wake substrate — scope's spine, built on waker_protocol's design.
+//!
+//! Two things live here:
+//!
+//! 1. [`WakeBus`] — a tiny std-only `Mutex<VecDeque> + Condvar` channel carrying
+//!    reason-tagged [`SchedulerMsg`]s. It replaces the original scope's
+//!    `mpsc::channel::<WakeMsg>`; being a plain `Mutex`/`Condvar` it is also
+//!    what `--cfg loom` swaps out to model every wake interleaving.
+//!
+//! 2. [`scheduler_waker`] — a **real `std::task::Waker`** minted from an
+//!    `Arc<WakeSignal>` via James's `waker_tables` vtable machinery. Hand this
+//!    to an IO reactor, a timer thread, or any `Future`-shaped code and, when
+//!    fired, it enqueues a `Wake { id, reason }` for the scheduler. The old
+//!    `WakeMsg{from,to}` model had no such external handle.
+//!
+//! This module is the *only* place `unsafe` is allowed in the crate, and all of
+//! it is the audited `waker_tables` refcount plumbing.
+#![allow(unsafe_code)]
+
+use crate::ids::TaskId;
+use crate::sync::{Arc, Condvar, Mutex};
+use std::collections::VecDeque;
+#[cfg(not(loom))]
+use std::task::Waker;
+#[cfg(not(loom))]
 use std::time::Duration;
 
+// The real-Waker machinery is a std concept and is not what loom model-checks;
+// under `--cfg loom` only WakeBus + the message types compile.
+#[cfg(not(loom))]
+use waker_tables::{derive_arc_unsafe_wakeable, waker_from_arc};
+
+/// Why a task is being woken. Richer than the original's bare `from` field;
+/// drives tracing and (later) reason-aware scheduling.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WakeReason {
+    /// First poll after spawning.
+    Spawn,
+    /// `Cx::wake`, `wake_self` or `yield_now`.
+    Manual,
+    /// A sleep deadline passed.
+    Timer,
+    /// A cancellation was requested, so the task can observe it.
+    Cancel,
+    /// A task this one subscribed to finished.
+    Join,
+    /// An external `Waker` fired.
+    Io,
+    /// A message arrived in the task mailbox.
+    Inbox,
+    /// The scope is shutting down.
+    Shutdown,
+}
+
+/// A control message on the wake bus.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SchedulerMsg {
+    /// Wake `id` for `reason`.
+    Wake {
+        /// The task to wake.
+        id: TaskId,
+        /// Why it is being woken.
+        reason: WakeReason,
+    },
+}
+
+struct Inner {
+    queue: Mutex<VecDeque<SchedulerMsg>>,
+    cv: Condvar,
+}
+
+/// Cloneable, `Send + Sync` handle to the scheduler's wake queue.
+#[derive(Clone)]
+pub struct WakeBus {
+    inner: Arc<Inner>,
+}
+
+/// The result of a bounded wait on the bus.
 #[derive(Debug)]
-pub enum WakeRecvTimeout {
-    Msg(WakeMsg),
+pub enum WakeRecv {
+    /// A message arrived.
+    Msg(SchedulerMsg),
+    /// The wait expired with nothing queued.
     Timeout,
-    Disconnected,
 }
 
-#[cfg(any(target_arch = "wasm32", feature = "local_wake"))]
-mod imp {
-    use super::*;
-    use std::{cell::RefCell, collections::VecDeque, rc::Rc};
-
-    #[derive(Clone)]
-    pub struct WakeTx {
-        q: Rc<RefCell<VecDeque<WakeMsg>>>,
-    }
-
-    #[derive(Clone)]
-    pub struct WakeRx {
-        q: Rc<RefCell<VecDeque<WakeMsg>>>,
-    }
-
-    pub fn wake_channel() -> (WakeTx, WakeRx) {
-        let q = Rc::new(RefCell::new(VecDeque::new()));
-        (WakeTx { q: q.clone() }, WakeRx { q })
-    }
-
-    impl WakeTx {
-        #[inline]
-        pub fn send(&self, msg: WakeMsg) {
-            self.q.borrow_mut().push_back(msg);
+impl WakeBus {
+    /// An empty bus.
+    pub fn new() -> Self {
+        Self {
+            inner: Arc::new(Inner {
+                queue: Mutex::new(VecDeque::new()),
+                cv: Condvar::new(),
+            }),
         }
     }
 
-    impl WakeRx {
-        #[inline]
-        pub fn supports_blocking(&self) -> bool {
-            false
-        }
-
-        #[inline]
-        pub fn try_recv(&self) -> Option<WakeMsg> {
-            self.q.borrow_mut().pop_front()
-        }
-
-        #[inline]
-        pub fn recv(&self) -> Option<WakeMsg> {
-            // no blocking on WASM/local
-            self.try_recv()
-        }
-
-        #[inline]
-        pub fn recv_timeout(&self, _dur: Duration) -> WakeRecvTimeout {
-            match self.try_recv() {
-                Some(m) => WakeRecvTimeout::Msg(m),
-                None => WakeRecvTimeout::Timeout,
-            }
-        }
-    }
-}
-
-#[cfg(all(not(target_arch = "wasm32"), not(feature = "local_wake")))]
-mod imp {
-    use super::*;
-    use std::sync::mpsc;
-
-    #[derive(Clone)]
-    pub struct WakeTx {
-        tx: mpsc::Sender<WakeMsg>,
+    #[inline]
+    /// Enqueue a message and notify a blocked receiver.
+    pub fn send(&self, msg: SchedulerMsg) {
+        let mut q = self.inner.queue.lock().unwrap();
+        q.push_back(msg);
+        self.inner.cv.notify_one();
     }
 
-    pub struct WakeRx {
-        rx: mpsc::Receiver<WakeMsg>,
+    #[inline]
+    /// Enqueue `Wake { id, reason }`.
+    pub fn wake(&self, id: TaskId, reason: WakeReason) {
+        self.send(SchedulerMsg::Wake { id, reason });
     }
 
-    pub fn wake_channel() -> (WakeTx, WakeRx) {
-        let (tx, rx) = mpsc::channel();
-        (WakeTx { tx }, WakeRx { rx })
+    #[inline]
+    /// Dequeue the oldest message without blocking.
+    pub fn try_recv(&self) -> Option<SchedulerMsg> {
+        self.inner.queue.lock().unwrap().pop_front()
     }
 
-    impl WakeTx {
-        #[inline]
-        pub fn send(&self, msg: WakeMsg) {
-            let _ = self.tx.send(msg);
-        }
+    #[inline]
+    /// Whether nothing is queued.
+    pub fn is_empty(&self) -> bool {
+        self.inner.queue.lock().unwrap().is_empty()
     }
 
-    impl WakeRx {
-        #[inline]
-        pub fn supports_blocking(&self) -> bool {
-            true
+    /// Blocking wait bounded by `timeout`. Not used under loom (which has no
+    /// wall clock); loom paths only ever `try_recv`.
+    #[cfg(not(loom))]
+    pub fn recv_timeout(&self, timeout: Duration) -> WakeRecv {
+        let mut q = self.inner.queue.lock().unwrap();
+        if let Some(m) = q.pop_front() {
+            return WakeRecv::Msg(m);
         }
-
-        #[inline]
-        pub fn try_recv(&self) -> Option<WakeMsg> {
-            self.rx.try_recv().ok()
-        }
-
-        #[inline]
-        pub fn recv(&self) -> Option<WakeMsg> {
-            self.rx.recv().ok()
-        }
-
-        #[inline]
-        pub fn recv_timeout(&self, dur: Duration) -> WakeRecvTimeout {
-            match self.rx.recv_timeout(dur) {
-                Ok(m) => WakeRecvTimeout::Msg(m),
-                Err(std::sync::mpsc::RecvTimeoutError::Timeout) => WakeRecvTimeout::Timeout,
-                Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => WakeRecvTimeout::Disconnected,
-            }
+        let (mut q, _res) = self.inner.cv.wait_timeout(q, timeout).unwrap();
+        match q.pop_front() {
+            Some(m) => WakeRecv::Msg(m),
+            None => WakeRecv::Timeout,
         }
     }
 }
 
-pub use imp::*;
+impl Default for WakeBus {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
+/// The payload behind a real `Waker`: which task to wake, why, and where to
+/// route it. `Send + Sync + 'static` (required by `waker_tables`) because
+/// `WakeBus` is `Arc`-backed and `TaskId`/`WakeReason` are `Copy`.
+#[cfg(not(loom))]
+pub struct WakeSignal {
+    id: TaskId,
+    reason: WakeReason,
+    bus: WakeBus,
+}
 
-#[cfg(test)]
+#[cfg(not(loom))]
+impl WakeSignal {
+    fn emit(self: std::sync::Arc<Self>) {
+        self.bus.wake(self.id, self.reason);
+    }
+}
+
+#[cfg(not(loom))]
+derive_arc_unsafe_wakeable!(WakeSignal, emit);
+#[cfg(not(loom))]
+mod vtable {
+    //! The raw-waker vtable for [`WakeSignal`], generated by `waker_tables`.
+    #![allow(missing_docs)]
+    use super::WakeSignal;
+    waker_tables::declare_raw_waker_vtable!(WakeSignal, WAKE_SIGNAL_VTABLE);
+}
+#[cfg(not(loom))]
+use vtable::WAKE_SIGNAL_VTABLE;
+
+/// Mint a real `std::task::Waker` that, when woken, enqueues
+/// `Wake { id, reason }` on `bus`. This is the external integration point the
+/// original scope lacked entirely.
+#[cfg(not(loom))]
+pub fn scheduler_waker(id: TaskId, reason: WakeReason, bus: WakeBus) -> Waker {
+    waker_from_arc(std::sync::Arc::new(WakeSignal { id, reason, bus }), &WAKE_SIGNAL_VTABLE)
+}
+
+#[cfg(all(test, not(loom)))]
 mod tests {
     use super::*;
-    use std::time::Duration;
 
     #[test]
-    fn test_wake_channel_fifo() {
-        let (tx, rx) = wake_channel();
-        
-        let msg1 = WakeMsg { from: 1, to: 10 };
-        let msg2 = WakeMsg { from: 2, to: 20 };
-
-        tx.send(msg1);
-        tx.send(msg2);
-
-        // Verify Order
-        let r1 = rx.try_recv().expect("Should have msg1");
-        let r2 = rx.try_recv().expect("Should have msg2");
-
-        assert_eq!(r1.from, 1);
-        assert_eq!(r2.from, 2);
-        assert!(rx.try_recv().is_none());
+    fn bus_is_fifo() {
+        let bus = WakeBus::new();
+        let a = TaskId::new(0, 0);
+        let b = TaskId::new(1, 0);
+        bus.wake(a, WakeReason::Spawn);
+        bus.wake(b, WakeReason::Manual);
+        assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id: a, reason: WakeReason::Spawn }));
+        assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id: b, reason: WakeReason::Manual }));
+        assert_eq!(bus.try_recv(), None);
     }
 
     #[test]
-    fn test_wake_recv_timeout_logic() {
-        let (tx, rx) = wake_channel();
-        let timeout = Duration::from_millis(10);
-
-        // 1. Test actual timeout
-        match rx.recv_timeout(timeout) {
-            WakeRecvTimeout::Timeout => {} // Expected
-            _ => panic!("Expected timeout on empty channel"),
-        }
-
-        // 2. Test success within timeout
-        tx.send(WakeMsg { from: 5, to: 55 });
-        match rx.recv_timeout(timeout) {
-            WakeRecvTimeout::Msg(m) => assert_eq!(m.from, 5),
-            _ => panic!("Expected message"),
-        }
-    }
-
-    #[test]
-    fn test_blocking_capability() {
-        let (_, rx) = wake_channel();
-        
-        #[cfg(any(target_arch = "wasm32", feature = "local_wake"))]
-        {
-            assert!(!rx.supports_blocking());
-            // On WASM, recv() should return immediately even if empty
-            assert!(rx.recv().is_none()); 
-        }
-
-        #[cfg(all(not(target_arch = "wasm32"), not(feature = "local_wake")))]
-        {
-            assert!(rx.supports_blocking());
-            // We don't call rx.recv() here because it would hang the test thread!
-        }
-    }
-
-    #[test]
-    #[cfg(all(not(target_arch = "wasm32"), not(feature = "local_wake")))]
-    fn test_disconnection_threaded() {
-        let (tx, rx) = wake_channel();
-        drop(tx); // Close the channel
-
-        match rx.recv_timeout(Duration::from_millis(1)) {
-            WakeRecvTimeout::Disconnected => {} // Correct
-            _ => panic!("Expected Disconnected state"),
-        }
+    fn real_waker_routes_back_to_bus() {
+        let bus = WakeBus::new();
+        let id = TaskId::new(7, 3);
+        let waker = scheduler_waker(id, WakeReason::Io, bus.clone());
+        // A clone must wake the same task (exercises clone_ptr/drop_ptr).
+        let w2 = waker.clone();
+        w2.wake();
+        waker.wake_by_ref();
+        assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id, reason: WakeReason::Io }));
+        assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id, reason: WakeReason::Io }));
+        assert_eq!(bus.try_recv(), None);
     }
 }
