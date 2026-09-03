@@ -13,6 +13,43 @@ completion and reports stalled tasks instead of hanging.
 `unsafe` is confined to one audited module (`wake`, the `waker_tables` plumbing
 that mints real `std::task::Waker`s); everything else is `#![deny(unsafe_code)]`.
 
+## When to use it
+
+Reach for scope when all three of these are true: the work is naturally many
+small cooperative steps, those steps share one piece of mutable state, and you
+want the same program to schedule the same way every time.
+
+- **Simulations and engines.** A world, a game state, a document model: many
+  actors mutate one structure. Here each actor is a task and the structure is
+  `R`; no actor holds a lock, no actor holds an `Arc`, and the frame order is
+  the scheduling policy you chose, not the operating system's.
+- **Protocol and session state machines.** Each connection is a task borrowing
+  the shared tables it needs. External IO wakes the task through a real
+  `Waker`; the parsing and the table updates stay single-threaded and
+  lock-free.
+- **Tests and replays.** Because scheduling is deterministic, a failing
+  interleaving is a fixed input, not a flaky one. Two runs with the same
+  policy produce the same trace, and `BufferTracer` lets a test assert on it.
+- **Embedded-style control loops** that want cancellation with escalation,
+  timers, join and select, without a thread pool underneath.
+
+How it differs from the things you already know:
+
+- An async executor (tokio, smol) spawns `'static` futures onto threads; the
+  price of that freedom is `Arc<Mutex<State>>` around anything shared and no
+  guaranteed interleaving. scope gives up the threads and keeps the borrow.
+- `std::thread::scope` and rayon's `scope` let borrowed work run in parallel,
+  which means shared state still needs synchronization. scope runs the work
+  cooperatively on one thread, so `&mut R` is enough.
+- A hand-rolled `loop { for task in &mut tasks { task.step(&mut state) } }`
+  is what scope is, plus the parts you would write next: wake-driven
+  readiness instead of polling everyone, real wakers for the outside world,
+  cancellation, timers, join and select, stall detection, and policies that
+  keep any one task from starving the rest.
+
+If you need work to run in parallel across cores, use threads and put one
+scope on each, as the 1BRC example does.
+
 ## Quick start
 
 ```rust
