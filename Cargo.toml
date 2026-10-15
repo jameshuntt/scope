@@ -1,8 +1,8 @@
 [package]
 name = "scope"
-version = "0.2.3"
+version = "0.3.0"
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.85"
 license = "MIT OR Apache-2.0"
 description = "A deterministic, cooperative structured-concurrency runtime whose tasks borrow non-'static scope environment data; unsafe-free outside one audited wake module."
 authors = ["James Hunt <james@1o.business>"]
@@ -14,7 +14,7 @@ include = ["src/**", "tests/**", "examples/**", "Cargo.toml", "README.md", "LICE
 
 [dependencies]
 # The wake substrate: real std::task::Wakers minted through waker_tables' vtable registry.
-waker_tables = "0.1.4"
+waker_tables = "0.3"
 
 # Loom model-checks the cross-thread wake/cancel handoff. Active only when the
 # crate is built with RUSTFLAGS="--cfg loom" (see src/sync.rs).

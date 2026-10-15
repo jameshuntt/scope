@@ -152,6 +152,13 @@ them; a work-stealing variant would be a different runtime, not a feature of
 this one. Use OS threads around scopes (one runtime per thread, as the 1BRC
 example does), not scopes across threads.
 
+## 0.3.0
+
+Built on `waker_tables` 0.3: `scheduler_waker` gets a vtable built from `WakeSignal` itself, so
+the waker can never run another type's functions (0.1.4 took the vtable as a separate argument).
+Because `WakeSignal` implements `waker_tables`' public trait, this is a minor version. Minimum
+Rust is 1.85, which `waker_tables` (edition 2024) already required.
+
 ## License
 
 MIT OR Apache-2.0.

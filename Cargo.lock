@@ -149,7 +149,7 @@ checksum = "cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f"
 
 [[package]]
 name = "scope"
-version = "0.2.3"
+version = "0.3.0"
 dependencies = [
  "loom",
  "memmap2",
@@ -249,9 +249,9 @@ checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
 
 [[package]]
 name = "waker_tables"
-version = "0.1.4"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0ca1ceced840955d7a103b17e65a581410574d44df225c39990ba55b0b09d44"
+checksum = "69f9daffdb4fba74053a1a37c1716ede3b8424d2c7bee15c91c89f62056e9502"
 
 [[package]]
 name = "windows-link"
