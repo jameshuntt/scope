@@ -29,6 +29,10 @@ impl fmt::Display for TaskId {
     }
 }
 
+/// `repr(C)` with `generation` first: a lookup checks the generation and then
+/// reads the start of the value, so both sit at the front of the slot (the
+/// scheduler's task entry puts its per-round fields first to match).
+#[repr(C)]
 struct Slot<T> {
     generation: u32,
     value: Option<T>,
@@ -119,12 +123,21 @@ impl<T> TaskSlab<T> {
     /// scheduling).
     pub fn live_ids(&self) -> Vec<TaskId> {
         let mut out = Vec::with_capacity(self.len);
-        for (idx, slot) in self.slots.iter().enumerate() {
-            if slot.value.is_some() {
-                out.push(TaskId::new(idx as u32, slot.generation));
-            }
-        }
+        out.extend(self.entries().map(|(id, _)| id));
         out
+    }
+
+    /// Live entries with their ids, in slot order. Stops at the last live
+    /// entry instead of walking the freed slots after it.
+    pub(crate) fn entries(&self) -> impl Iterator<Item = (TaskId, &T)> + '_ {
+        self.slots
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, slot)| {
+                let value = slot.value.as_ref()?;
+                Some((TaskId::new(idx as u32, slot.generation), value))
+            })
+            .take(self.len)
     }
 }
 

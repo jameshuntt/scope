@@ -30,6 +30,7 @@ use crate::trace::Tracer;
 use crate::wake::{SchedulerMsg, WakeBus, WakeReason};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, VecDeque};
+use std::num::NonZeroU64;
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::time::{Duration, Instant};
 
@@ -70,19 +71,25 @@ pub enum TickOutcome {
     Done,
 }
 
+/// `repr(C)` keeps this order. First what every round reads for every live
+/// task (the ordering keys, the runnable flag, and `name`, whose `String` holds
+/// the niche the slab's occupied check reads), then what a poll needs, then the
+/// timer, cancel and join bookkeeping that is touched rarely.
+#[repr(C)]
 struct TaskEntry<'env, R> {
-    name: String,
-    qos: QoSClass,
-    state: TaskState,
-    task: Option<Box<dyn ScopedTask<'env, R> + 'env>>,
-    cancel: Arc<CancelCell>,
-    finish_waiters: Vec<TaskId>,
-    runnable: bool,
     runnable_seq: u64,
     last_polled: u64,
+    name: String,
+    runnable: bool,
+    state: TaskState,
+    qos: QoSClass,
+    cancel: Arc<CancelCell>,
+    task: Option<Box<dyn ScopedTask<'env, R> + 'env>>,
+    finish_waiters: Vec<TaskId>,
     sleeping_until: Option<Instant>,
-    cancel_tick_deadline: Option<u64>,
     cancel_time_deadline: Option<Instant>,
+    /// Never zero: it is the tick count plus a budget of at least one.
+    cancel_tick_deadline: Option<NonZeroU64>,
 }
 
 struct SpawnReq<'env, R> {
@@ -261,18 +268,18 @@ impl<'env, R> Scope<'env, R> {
     ) -> TaskId {
         let seq = self.next_seq();
         let id = self.slab.insert(TaskEntry {
-            name,
-            qos,
-            state: TaskState::Alive,
-            task: Some(task),
-            cancel: cell,
-            finish_waiters: Vec::new(),
-            runnable: true,
             runnable_seq: seq,
             last_polled: 0,
+            name,
+            runnable: true,
+            state: TaskState::Alive,
+            qos,
+            cancel: cell,
+            task: Some(task),
+            finish_waiters: Vec::new(),
             sleeping_until: None,
-            cancel_tick_deadline: None,
             cancel_time_deadline: None,
+            cancel_tick_deadline: None,
         });
         // The name moved into the entry; a tracer reads it from there.
         if let Some(t) = self.tracer.as_mut() {
@@ -502,13 +509,8 @@ impl<'env, R> Scope<'env, R> {
 
     /// Hard-stop `id` right now with `reason` (safe to call between rounds).
     pub fn cancel_now_with_reason(&mut self, id: TaskId, reason: CancelReason) {
-        let alive = self.slab.get(id).map(|e| e.state == TaskState::Alive).unwrap_or(false);
-        if !alive {
-            return;
-        }
-        if let Some(e) = self.slab.get(id) {
-            e.cancel.request(reason);
-        }
+        let Some(e) = self.slab.get(id).filter(|e| e.state == TaskState::Alive) else { return };
+        e.cancel.request(reason);
         if let Some(t) = self.tracer.as_mut() {
             t.on_cancel_hard_stop(id, reason);
         }
@@ -522,13 +524,8 @@ impl<'env, R> Scope<'env, R> {
 
     /// Best-effort cooperative cancel with the scope's default escalation.
     pub fn request_cancel(&mut self, id: TaskId, reason: CancelReason) {
-        let alive = self.slab.get(id).map(|e| e.state == TaskState::Alive).unwrap_or(false);
-        if !alive {
-            return;
-        }
-        if let Some(e) = self.slab.get(id) {
-            e.cancel.request(reason);
-        }
+        let Some(e) = self.slab.get(id).filter(|e| e.state == TaskState::Alive) else { return };
+        e.cancel.request(reason);
         self.bus.wake(id, WakeReason::Cancel);
         self.schedule_cancel_deadlines(id, CancelEscalation::DEFAULT, reason);
     }
@@ -620,16 +617,9 @@ impl<'env, R> Scope<'env, R> {
             if polled >= budget {
                 break; // contention: the rest wait for a later round
             }
-            let runnable = self
-                .slab
-                .get(id)
-                .map(|e| e.runnable && e.state == TaskState::Alive)
-                .unwrap_or(false);
-            if !runnable {
-                continue;
-            }
-            if let Some(e) = self.slab.get_mut(id) {
-                e.runnable = false;
+            match self.slab.get_mut(id) {
+                Some(e) if e.runnable && e.state == TaskState::Alive => e.runnable = false,
+                _ => continue,
             }
             self.poll_one(id);
             polled += 1;
@@ -667,13 +657,8 @@ impl<'env, R> Scope<'env, R> {
             if let Some(e) = self.slab.get_mut(id) {
                 if e.state == TaskState::Alive && !e.runnable {
                     e.runnable = true;
-                    let seq = {
-                        self.seq_counter = self.seq_counter.wrapping_add(1);
-                        self.seq_counter
-                    };
-                    if let Some(e) = self.slab.get_mut(id) {
-                        e.runnable_seq = seq;
-                    }
+                    self.seq_counter = self.seq_counter.wrapping_add(1);
+                    e.runnable_seq = self.seq_counter;
                 }
             }
         }
@@ -888,9 +873,9 @@ impl<'env, R> Scope<'env, R> {
         esc: CancelEscalation,
         reason: CancelReason,
     ) {
-        if self.slab.get(target).map(|e| e.state != TaskState::Alive).unwrap_or(true) {
+        let Some(e) = self.slab.get_mut(target).filter(|e| e.state == TaskState::Alive) else {
             return;
-        }
+        };
         let budgets = resolve_cancel_budgets(
             self.config.default_cancel_ticks,
             self.config.default_cancel_time,
@@ -906,24 +891,18 @@ impl<'env, R> Scope<'env, R> {
         }
         if budgets.immediate {
             let dl = Instant::now();
-            if let Some(e) = self.slab.get_mut(target) {
-                e.cancel_time_deadline = Some(dl);
-            }
+            e.cancel_time_deadline = Some(dl);
             self.cancel_time_heap.push(Reverse((dl, target)));
             return;
         }
         if budgets.tick_budget > 0 {
             let dl = self.tick_count.saturating_add(budgets.tick_budget);
-            if let Some(e) = self.slab.get_mut(target) {
-                e.cancel_tick_deadline = Some(dl);
-            }
+            e.cancel_tick_deadline = NonZeroU64::new(dl);
             self.cancel_tick_heap.push(Reverse((dl, target)));
         }
         if let Some(dur) = budgets.time_budget {
             let dl = Instant::now() + dur;
-            if let Some(e) = self.slab.get_mut(target) {
-                e.cancel_time_deadline = Some(dl);
-            }
+            e.cancel_time_deadline = Some(dl);
             self.cancel_time_heap.push(Reverse((dl, target)));
         }
     }
@@ -939,7 +918,7 @@ impl<'env, R> Scope<'env, R> {
                 .get(id)
                 .map(|e| {
                     e.state == TaskState::Alive
-                        && e.cancel_tick_deadline == Some(dl)
+                        && e.cancel_tick_deadline.map(NonZeroU64::get) == Some(dl)
                         && e.cancel.is_cancelled()
                 })
                 .unwrap_or(false);
@@ -950,6 +929,10 @@ impl<'env, R> Scope<'env, R> {
     }
 
     fn fire_expired_cancel_times(&mut self) {
+        // Read the clock only when there is a deadline to compare it with.
+        if self.cancel_time_heap.is_empty() {
+            return;
+        }
         let now = Instant::now();
         while let Some(&Reverse((dl, id))) = self.cancel_time_heap.peek() {
             if dl > now {
@@ -972,28 +955,27 @@ impl<'env, R> Scope<'env, R> {
     }
 
     fn fire_expired_timers(&mut self) {
+        // Read the clock only when there is a deadline to compare it with.
+        if self.sleep_heap.is_empty() {
+            return;
+        }
         let now = Instant::now();
         while let Some(&Reverse((dl, id))) = self.sleep_heap.peek() {
             if dl > now {
                 break;
             }
             self.sleep_heap.pop();
-            let wake = self
-                .slab
-                .get(id)
-                .map(|e| e.state == TaskState::Alive && e.sleeping_until == Some(dl))
-                .unwrap_or(false);
-            if wake {
-                if let Some(e) = self.slab.get_mut(id) {
+            match self.slab.get_mut(id) {
+                Some(e) if e.state == TaskState::Alive && e.sleeping_until == Some(dl) => {
                     e.sleeping_until = None;
                 }
-                self.bus.wake(id, WakeReason::Timer);
+                _ => continue,
             }
+            self.bus.wake(id, WakeReason::Timer);
         }
     }
 
     fn next_deadline(&self) -> Option<Duration> {
-        let now = Instant::now();
         let next_sleep = self.sleep_heap.peek().map(|Reverse((dl, _))| *dl);
         let next_cancel = self.cancel_time_heap.peek().map(|Reverse((dl, _))| *dl);
         let next = match (next_sleep, next_cancel) {
@@ -1002,16 +984,11 @@ impl<'env, R> Scope<'env, R> {
             (None, Some(b)) => b,
             (Some(a), Some(b)) => a.min(b),
         };
-        Some(next.saturating_duration_since(now))
+        Some(next.saturating_duration_since(Instant::now()))
     }
 
     fn build_report(&mut self) -> RunReport {
-        let stalled = self
-            .slab
-            .live_ids()
-            .into_iter()
-            .filter_map(|id| self.slab.get(id).map(|e| (id, e.name.clone())))
-            .collect();
+        let stalled = self.slab.entries().map(|(id, e)| (id, e.name.clone())).collect();
         RunReport {
             rounds: self.rounds,
             polls: self.polls,
