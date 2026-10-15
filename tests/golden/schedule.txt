@@ -1,0 +1,10631 @@
+== yielders fifo budget=18446744073709551615 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+poll 2 #1.0 y1
+end #1.0 y1
+poll 3 #2.0 y2
+end #2.0 y2
+poll 4 #3.0 y3
+end #3.0 y3
+poll 5 #4.0 y4
+end #4.0 y4
+poll 6 #5.0 y5
+end #5.0 y5
+poll 7 #6.0 y6
+end #6.0 y6
+poll 8 #7.0 y7
+end #7.0 y7
+poll 9 #8.0 y8
+end #8.0 y8
+poll 10 #9.0 y9
+end #9.0 y9
+poll 11 #10.0 y10
+end #10.0 y10
+poll 12 #11.0 y11
+end #11.0 y11
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 13 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 14 #1.0 y1
+end #1.0 y1
+poll 15 #2.0 y2
+end #2.0 y2
+poll 16 #3.0 y3
+end #3.0 y3
+poll 17 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 18 #5.0 y5
+end #5.0 y5
+poll 19 #6.0 y6
+end #6.0 y6
+poll 20 #7.0 y7
+end #7.0 y7
+poll 21 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 22 #9.0 y9
+end #9.0 y9
+poll 23 #10.0 y10
+end #10.0 y10
+poll 24 #11.0 y11
+end #11.0 y11
+round 3
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 26 #2.0 y2
+end #2.0 y2
+poll 27 #3.0 y3
+end #3.0 y3
+poll 28 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 29 #6.0 y6
+end #6.0 y6
+poll 30 #7.0 y7
+end #7.0 y7
+poll 31 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 32 #10.0 y10
+end #10.0 y10
+poll 33 #11.0 y11
+end #11.0 y11
+round 4
+wake #2.0 Manual
+wake #3.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 34 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 35 #3.0 y3
+end #3.0 y3
+poll 36 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 37 #7.0 y7
+end #7.0 y7
+poll 38 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 39 #11.0 y11
+end #11.0 y11
+round 5
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders fifo budget=18446744073709551615 traced=false
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders fifo budget=3 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+poll 2 #1.0 y1
+end #1.0 y1
+poll 3 #2.0 y2
+end #2.0 y2
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #3.0 y3
+end #3.0 y3
+poll 5 #4.0 y4
+end #4.0 y4
+poll 6 #5.0 y5
+end #5.0 y5
+round 3
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+poll 7 #6.0 y6
+end #6.0 y6
+poll 8 #7.0 y7
+end #7.0 y7
+poll 9 #8.0 y8
+end #8.0 y8
+round 4
+wake #6.0 Manual
+wake #7.0 Manual
+wake #8.0 Manual
+poll 10 #9.0 y9
+end #9.0 y9
+poll 11 #10.0 y10
+end #10.0 y10
+poll 12 #11.0 y11
+end #11.0 y11
+round 5
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 13 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 14 #1.0 y1
+end #1.0 y1
+poll 15 #2.0 y2
+end #2.0 y2
+round 6
+wake #1.0 Manual
+wake #2.0 Manual
+poll 16 #3.0 y3
+end #3.0 y3
+poll 17 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 18 #5.0 y5
+end #5.0 y5
+round 7
+wake #3.0 Manual
+wake #5.0 Manual
+poll 19 #6.0 y6
+end #6.0 y6
+poll 20 #7.0 y7
+end #7.0 y7
+poll 21 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 8
+wake #6.0 Manual
+wake #7.0 Manual
+poll 22 #9.0 y9
+end #9.0 y9
+poll 23 #10.0 y10
+end #10.0 y10
+poll 24 #11.0 y11
+end #11.0 y11
+round 9
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 26 #2.0 y2
+end #2.0 y2
+poll 27 #3.0 y3
+end #3.0 y3
+round 10
+wake #2.0 Manual
+wake #3.0 Manual
+poll 28 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 29 #6.0 y6
+end #6.0 y6
+poll 30 #7.0 y7
+end #7.0 y7
+round 11
+wake #6.0 Manual
+wake #7.0 Manual
+poll 31 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 32 #10.0 y10
+end #10.0 y10
+poll 33 #11.0 y11
+end #11.0 y11
+round 12
+wake #10.0 Manual
+wake #11.0 Manual
+poll 34 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 35 #3.0 y3
+end #3.0 y3
+poll 36 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 13
+wake #3.0 Manual
+poll 37 #7.0 y7
+end #7.0 y7
+poll 38 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 39 #11.0 y11
+end #11.0 y11
+round 14
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=14 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders fifo budget=3 traced=false
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=14 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders fifo budget=1 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+round 2
+wake #0.0 Manual
+poll 2 #1.0 y1
+end #1.0 y1
+round 3
+wake #1.0 Manual
+poll 3 #2.0 y2
+end #2.0 y2
+round 4
+wake #2.0 Manual
+poll 4 #3.0 y3
+end #3.0 y3
+round 5
+wake #3.0 Manual
+poll 5 #4.0 y4
+end #4.0 y4
+round 6
+wake #4.0 Manual
+poll 6 #5.0 y5
+end #5.0 y5
+round 7
+wake #5.0 Manual
+poll 7 #6.0 y6
+end #6.0 y6
+round 8
+wake #6.0 Manual
+poll 8 #7.0 y7
+end #7.0 y7
+round 9
+wake #7.0 Manual
+poll 9 #8.0 y8
+end #8.0 y8
+round 10
+wake #8.0 Manual
+poll 10 #9.0 y9
+end #9.0 y9
+round 11
+wake #9.0 Manual
+poll 11 #10.0 y10
+end #10.0 y10
+round 12
+wake #10.0 Manual
+poll 12 #11.0 y11
+end #11.0 y11
+round 13
+wake #11.0 Manual
+poll 13 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+round 14
+poll 14 #1.0 y1
+end #1.0 y1
+round 15
+wake #1.0 Manual
+poll 15 #2.0 y2
+end #2.0 y2
+round 16
+wake #2.0 Manual
+poll 16 #3.0 y3
+end #3.0 y3
+round 17
+wake #3.0 Manual
+poll 17 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+round 18
+poll 18 #5.0 y5
+end #5.0 y5
+round 19
+wake #5.0 Manual
+poll 19 #6.0 y6
+end #6.0 y6
+round 20
+wake #6.0 Manual
+poll 20 #7.0 y7
+end #7.0 y7
+round 21
+wake #7.0 Manual
+poll 21 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 22
+poll 22 #9.0 y9
+end #9.0 y9
+round 23
+wake #9.0 Manual
+poll 23 #10.0 y10
+end #10.0 y10
+round 24
+wake #10.0 Manual
+poll 24 #11.0 y11
+end #11.0 y11
+round 25
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 26
+poll 26 #2.0 y2
+end #2.0 y2
+round 27
+wake #2.0 Manual
+poll 27 #3.0 y3
+end #3.0 y3
+round 28
+wake #3.0 Manual
+poll 28 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 29
+poll 29 #6.0 y6
+end #6.0 y6
+round 30
+wake #6.0 Manual
+poll 30 #7.0 y7
+end #7.0 y7
+round 31
+wake #7.0 Manual
+poll 31 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 32
+poll 32 #10.0 y10
+end #10.0 y10
+round 33
+wake #10.0 Manual
+poll 33 #11.0 y11
+end #11.0 y11
+round 34
+wake #11.0 Manual
+poll 34 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 35
+poll 35 #3.0 y3
+end #3.0 y3
+round 36
+wake #3.0 Manual
+poll 36 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 37
+poll 37 #7.0 y7
+end #7.0 y7
+round 38
+wake #7.0 Manual
+poll 38 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+round 39
+poll 39 #11.0 y11
+end #11.0 y11
+round 40
+wake #11.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+round 41
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+round 42
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders fifo budget=1 traced=false
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y1 0
+log y2 1
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=18446744073709551615 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #11.0 y11
+end #11.0 y11
+poll 2 #10.0 y10
+end #10.0 y10
+poll 3 #9.0 y9
+end #9.0 y9
+poll 4 #8.0 y8
+end #8.0 y8
+poll 5 #7.0 y7
+end #7.0 y7
+poll 6 #6.0 y6
+end #6.0 y6
+poll 7 #5.0 y5
+end #5.0 y5
+poll 8 #4.0 y4
+end #4.0 y4
+poll 9 #3.0 y3
+end #3.0 y3
+poll 10 #2.0 y2
+end #2.0 y2
+poll 11 #1.0 y1
+end #1.0 y1
+poll 12 #0.0 y0
+end #0.0 y0
+round 2
+wake #11.0 Manual
+wake #10.0 Manual
+wake #9.0 Manual
+wake #8.0 Manual
+wake #7.0 Manual
+wake #6.0 Manual
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 13 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 14 #1.0 y1
+end #1.0 y1
+poll 15 #2.0 y2
+end #2.0 y2
+poll 16 #3.0 y3
+end #3.0 y3
+poll 17 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 18 #5.0 y5
+end #5.0 y5
+poll 19 #6.0 y6
+end #6.0 y6
+poll 20 #7.0 y7
+end #7.0 y7
+poll 21 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 22 #9.0 y9
+end #9.0 y9
+poll 23 #10.0 y10
+end #10.0 y10
+poll 24 #11.0 y11
+end #11.0 y11
+round 3
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 25 #11.0 y11
+end #11.0 y11
+poll 26 #10.0 y10
+end #10.0 y10
+poll 27 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 28 #7.0 y7
+end #7.0 y7
+poll 29 #6.0 y6
+end #6.0 y6
+poll 30 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 31 #3.0 y3
+end #3.0 y3
+poll 32 #2.0 y2
+end #2.0 y2
+poll 33 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 4
+wake #11.0 Manual
+wake #10.0 Manual
+wake #7.0 Manual
+wake #6.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+poll 34 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 35 #3.0 y3
+end #3.0 y3
+poll 36 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 37 #7.0 y7
+end #7.0 y7
+poll 38 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 39 #11.0 y11
+end #11.0 y11
+round 5
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+log y11 4
+log y10 3
+log y9 2
+log y8 1
+log y7 4
+log y6 3
+log y5 2
+log y4 1
+log y3 4
+log y2 3
+log y1 2
+log y0 1
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y11 2
+log y10 1
+log y9 0
+log y7 2
+log y6 1
+log y5 0
+log y3 2
+log y2 1
+log y1 0
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y11 0
+log y7 0
+log y3 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=18446744073709551615 traced=false
+log y11 4
+log y10 3
+log y9 2
+log y8 1
+log y7 4
+log y6 3
+log y5 2
+log y4 1
+log y3 4
+log y2 3
+log y1 2
+log y0 1
+log y0 0
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y11 2
+log y10 1
+log y9 0
+log y7 2
+log y6 1
+log y5 0
+log y3 2
+log y2 1
+log y1 0
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y10 0
+log y11 1
+log y11 0
+log y7 0
+log y3 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=3 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #11.0 y11
+end #11.0 y11
+poll 2 #10.0 y10
+end #10.0 y10
+poll 3 #9.0 y9
+end #9.0 y9
+round 2
+wake #11.0 Manual
+wake #10.0 Manual
+wake #9.0 Manual
+poll 4 #9.0 y9
+end #9.0 y9
+poll 5 #10.0 y10
+end #10.0 y10
+poll 6 #11.0 y11
+end #11.0 y11
+round 3
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 7 #11.0 y11
+end #11.0 y11
+poll 8 #10.0 y10
+end #10.0 y10
+poll 9 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 4
+wake #11.0 Manual
+wake #10.0 Manual
+poll 10 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 11 #11.0 y11
+end #11.0 y11
+poll 12 #8.0 y8
+end #8.0 y8
+round 5
+wake #11.0 Manual
+wake #8.0 Manual
+poll 13 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 14 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+poll 15 #7.0 y7
+end #7.0 y7
+round 6
+wake #7.0 Manual
+poll 16 #7.0 y7
+end #7.0 y7
+poll 17 #6.0 y6
+end #6.0 y6
+poll 18 #5.0 y5
+end #5.0 y5
+round 7
+wake #7.0 Manual
+wake #6.0 Manual
+wake #5.0 Manual
+poll 19 #5.0 y5
+end #5.0 y5
+poll 20 #6.0 y6
+end #6.0 y6
+poll 21 #7.0 y7
+end #7.0 y7
+round 8
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+poll 22 #7.0 y7
+end #7.0 y7
+poll 23 #6.0 y6
+end #6.0 y6
+poll 24 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 9
+wake #7.0 Manual
+wake #6.0 Manual
+poll 25 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 26 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 27 #4.0 y4
+end #4.0 y4
+round 10
+wake #4.0 Manual
+poll 28 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 29 #3.0 y3
+end #3.0 y3
+poll 30 #2.0 y2
+end #2.0 y2
+round 11
+wake #3.0 Manual
+wake #2.0 Manual
+poll 31 #2.0 y2
+end #2.0 y2
+poll 32 #3.0 y3
+end #3.0 y3
+poll 33 #1.0 y1
+end #1.0 y1
+round 12
+wake #2.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 34 #1.0 y1
+end #1.0 y1
+poll 35 #3.0 y3
+end #3.0 y3
+poll 36 #2.0 y2
+end #2.0 y2
+round 13
+wake #1.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+poll 37 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 38 #3.0 y3
+end #3.0 y3
+poll 39 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 14
+wake #3.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #0.0 y0
+end #0.0 y0
+round 15
+wake #0.0 Manual
+poll 42 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+log y11 4
+log y10 3
+log y9 2
+log y9 1
+log y10 2
+log y11 3
+log y11 2
+log y10 1
+log y9 0
+log y10 0
+log y11 1
+log y8 1
+log y8 0
+log y11 0
+log y7 4
+log y7 3
+log y6 3
+log y5 2
+log y5 1
+log y6 2
+log y7 2
+log y7 1
+log y6 1
+log y5 0
+log y6 0
+log y7 0
+log y4 1
+log y4 0
+log y3 4
+log y2 3
+log y2 2
+log y3 3
+log y1 2
+log y1 1
+log y3 2
+log y2 1
+log y2 0
+log y3 1
+log y1 0
+log y3 0
+log y0 1
+log y0 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=3 traced=false
+log y11 4
+log y10 3
+log y9 2
+log y9 1
+log y10 2
+log y11 3
+log y11 2
+log y10 1
+log y9 0
+log y10 0
+log y11 1
+log y8 1
+log y8 0
+log y11 0
+log y7 4
+log y7 3
+log y6 3
+log y5 2
+log y5 1
+log y6 2
+log y7 2
+log y7 1
+log y6 1
+log y5 0
+log y6 0
+log y7 0
+log y4 1
+log y4 0
+log y3 4
+log y2 3
+log y2 2
+log y3 3
+log y1 2
+log y1 1
+log y3 2
+log y2 1
+log y2 0
+log y3 1
+log y1 0
+log y3 0
+log y0 1
+log y0 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=1 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #11.0 y11
+end #11.0 y11
+round 2
+wake #11.0 Manual
+poll 2 #11.0 y11
+end #11.0 y11
+round 3
+wake #11.0 Manual
+poll 3 #11.0 y11
+end #11.0 y11
+round 4
+wake #11.0 Manual
+poll 4 #11.0 y11
+end #11.0 y11
+round 5
+wake #11.0 Manual
+poll 5 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+round 6
+poll 6 #10.0 y10
+end #10.0 y10
+round 7
+wake #10.0 Manual
+poll 7 #10.0 y10
+end #10.0 y10
+round 8
+wake #10.0 Manual
+poll 8 #10.0 y10
+end #10.0 y10
+round 9
+wake #10.0 Manual
+poll 9 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+round 10
+poll 10 #9.0 y9
+end #9.0 y9
+round 11
+wake #9.0 Manual
+poll 11 #9.0 y9
+end #9.0 y9
+round 12
+wake #9.0 Manual
+poll 12 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 13
+poll 13 #8.0 y8
+end #8.0 y8
+round 14
+wake #8.0 Manual
+poll 14 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 15
+poll 15 #7.0 y7
+end #7.0 y7
+round 16
+wake #7.0 Manual
+poll 16 #7.0 y7
+end #7.0 y7
+round 17
+wake #7.0 Manual
+poll 17 #7.0 y7
+end #7.0 y7
+round 18
+wake #7.0 Manual
+poll 18 #7.0 y7
+end #7.0 y7
+round 19
+wake #7.0 Manual
+poll 19 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+round 20
+poll 20 #6.0 y6
+end #6.0 y6
+round 21
+wake #6.0 Manual
+poll 21 #6.0 y6
+end #6.0 y6
+round 22
+wake #6.0 Manual
+poll 22 #6.0 y6
+end #6.0 y6
+round 23
+wake #6.0 Manual
+poll 23 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 24
+poll 24 #5.0 y5
+end #5.0 y5
+round 25
+wake #5.0 Manual
+poll 25 #5.0 y5
+end #5.0 y5
+round 26
+wake #5.0 Manual
+poll 26 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 27
+poll 27 #4.0 y4
+end #4.0 y4
+round 28
+wake #4.0 Manual
+poll 28 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+round 29
+poll 29 #3.0 y3
+end #3.0 y3
+round 30
+wake #3.0 Manual
+poll 30 #3.0 y3
+end #3.0 y3
+round 31
+wake #3.0 Manual
+poll 31 #3.0 y3
+end #3.0 y3
+round 32
+wake #3.0 Manual
+poll 32 #3.0 y3
+end #3.0 y3
+round 33
+wake #3.0 Manual
+poll 33 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+round 34
+poll 34 #2.0 y2
+end #2.0 y2
+round 35
+wake #2.0 Manual
+poll 35 #2.0 y2
+end #2.0 y2
+round 36
+wake #2.0 Manual
+poll 36 #2.0 y2
+end #2.0 y2
+round 37
+wake #2.0 Manual
+poll 37 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 38
+poll 38 #1.0 y1
+end #1.0 y1
+round 39
+wake #1.0 Manual
+poll 39 #1.0 y1
+end #1.0 y1
+round 40
+wake #1.0 Manual
+poll 40 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 41
+poll 41 #0.0 y0
+end #0.0 y0
+round 42
+wake #0.0 Manual
+poll 42 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+log y11 4
+log y11 3
+log y11 2
+log y11 1
+log y11 0
+log y10 3
+log y10 2
+log y10 1
+log y10 0
+log y9 2
+log y9 1
+log y9 0
+log y8 1
+log y8 0
+log y7 4
+log y7 3
+log y7 2
+log y7 1
+log y7 0
+log y6 3
+log y6 2
+log y6 1
+log y6 0
+log y5 2
+log y5 1
+log y5 0
+log y4 1
+log y4 0
+log y3 4
+log y3 3
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y2 2
+log y2 1
+log y2 0
+log y1 2
+log y1 1
+log y1 0
+log y0 1
+log y0 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders lifo budget=1 traced=false
+log y11 4
+log y11 3
+log y11 2
+log y11 1
+log y11 0
+log y10 3
+log y10 2
+log y10 1
+log y10 0
+log y9 2
+log y9 1
+log y9 0
+log y8 1
+log y8 0
+log y7 4
+log y7 3
+log y7 2
+log y7 1
+log y7 0
+log y6 3
+log y6 2
+log y6 1
+log y6 0
+log y5 2
+log y5 1
+log y5 0
+log y4 1
+log y4 0
+log y3 4
+log y3 3
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y2 2
+log y2 1
+log y2 0
+log y1 2
+log y1 1
+log y1 0
+log y0 1
+log y0 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=18446744073709551615 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+poll 2 #1.0 y1
+end #1.0 y1
+poll 3 #2.0 y2
+end #2.0 y2
+poll 4 #3.0 y3
+end #3.0 y3
+poll 5 #4.0 y4
+end #4.0 y4
+poll 6 #5.0 y5
+end #5.0 y5
+poll 7 #6.0 y6
+end #6.0 y6
+poll 8 #7.0 y7
+end #7.0 y7
+poll 9 #8.0 y8
+end #8.0 y8
+poll 10 #9.0 y9
+end #9.0 y9
+poll 11 #10.0 y10
+end #10.0 y10
+poll 12 #11.0 y11
+end #11.0 y11
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 13 #1.0 y1
+end #1.0 y1
+poll 14 #2.0 y2
+end #2.0 y2
+poll 15 #3.0 y3
+end #3.0 y3
+poll 16 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 17 #5.0 y5
+end #5.0 y5
+poll 18 #6.0 y6
+end #6.0 y6
+poll 19 #7.0 y7
+end #7.0 y7
+poll 20 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 21 #9.0 y9
+end #9.0 y9
+poll 22 #10.0 y10
+end #10.0 y10
+poll 23 #11.0 y11
+end #11.0 y11
+poll 24 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+round 3
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 25 #3.0 y3
+end #3.0 y3
+poll 26 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 27 #6.0 y6
+end #6.0 y6
+poll 28 #7.0 y7
+end #7.0 y7
+poll 29 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 30 #10.0 y10
+end #10.0 y10
+poll 31 #11.0 y11
+end #11.0 y11
+poll 32 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 33 #2.0 y2
+end #2.0 y2
+round 4
+wake #3.0 Manual
+wake #6.0 Manual
+wake #7.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+wake #2.0 Manual
+poll 34 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 35 #11.0 y11
+end #11.0 y11
+poll 36 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 37 #3.0 y3
+end #3.0 y3
+poll 38 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 39 #7.0 y7
+end #7.0 y7
+round 5
+wake #11.0 Manual
+wake #3.0 Manual
+wake #7.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y0 0
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y1 0
+log y2 1
+log y10 0
+log y11 1
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=18446744073709551615 traced=false
+log y0 1
+log y1 2
+log y2 3
+log y3 4
+log y4 1
+log y5 2
+log y6 3
+log y7 4
+log y8 1
+log y9 2
+log y10 3
+log y11 4
+log y1 1
+log y2 2
+log y3 3
+log y4 0
+log y5 1
+log y6 2
+log y7 3
+log y8 0
+log y9 1
+log y10 2
+log y11 3
+log y0 0
+log y3 2
+log y5 0
+log y6 1
+log y7 2
+log y9 0
+log y10 1
+log y11 2
+log y1 0
+log y2 1
+log y10 0
+log y11 1
+log y2 0
+log y3 1
+log y6 0
+log y7 1
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=3 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+poll 2 #1.0 y1
+end #1.0 y1
+poll 3 #2.0 y2
+end #2.0 y2
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #4.0 y4
+end #4.0 y4
+poll 5 #5.0 y5
+end #5.0 y5
+poll 6 #6.0 y6
+end #6.0 y6
+round 3
+wake #4.0 Manual
+wake #5.0 Manual
+wake #6.0 Manual
+poll 7 #8.0 y8
+end #8.0 y8
+poll 8 #9.0 y9
+end #9.0 y9
+poll 9 #10.0 y10
+end #10.0 y10
+round 4
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+poll 10 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 11 #1.0 y1
+end #1.0 y1
+poll 12 #2.0 y2
+end #2.0 y2
+round 5
+wake #1.0 Manual
+wake #2.0 Manual
+poll 13 #5.0 y5
+end #5.0 y5
+poll 14 #6.0 y6
+end #6.0 y6
+poll 15 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 6
+wake #5.0 Manual
+wake #6.0 Manual
+poll 16 #10.0 y10
+end #10.0 y10
+poll 17 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 18 #2.0 y2
+end #2.0 y2
+round 7
+wake #10.0 Manual
+wake #2.0 Manual
+poll 19 #6.0 y6
+end #6.0 y6
+poll 20 #10.0 y10
+end #10.0 y10
+poll 21 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 8
+wake #6.0 Manual
+wake #10.0 Manual
+poll 22 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+poll 23 #3.0 y3
+end #3.0 y3
+poll 24 #7.0 y7
+end #7.0 y7
+round 9
+wake #3.0 Manual
+wake #7.0 Manual
+poll 25 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 26 #9.0 y9
+end #9.0 y9
+poll 27 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 10
+wake #9.0 Manual
+poll 28 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 29 #11.0 y11
+end #11.0 y11
+poll 30 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 11
+wake #11.0 Manual
+poll 31 #7.0 y7
+end #7.0 y7
+poll 32 #11.0 y11
+end #11.0 y11
+poll 33 #3.0 y3
+end #3.0 y3
+round 12
+wake #7.0 Manual
+wake #11.0 Manual
+wake #3.0 Manual
+poll 34 #3.0 y3
+end #3.0 y3
+poll 35 #7.0 y7
+end #7.0 y7
+poll 36 #11.0 y11
+end #11.0 y11
+round 13
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 37 #3.0 y3
+end #3.0 y3
+poll 38 #7.0 y7
+end #7.0 y7
+poll 39 #11.0 y11
+end #11.0 y11
+round 14
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 41 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+poll 42 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+log y0 1
+log y1 2
+log y2 3
+log y4 1
+log y5 2
+log y6 3
+log y8 1
+log y9 2
+log y10 3
+log y0 0
+log y1 1
+log y2 2
+log y5 1
+log y6 2
+log y8 0
+log y10 2
+log y1 0
+log y2 1
+log y6 1
+log y10 1
+log y2 0
+log y10 0
+log y3 4
+log y7 4
+log y4 0
+log y9 1
+log y5 0
+log y9 0
+log y11 4
+log y6 0
+log y7 3
+log y11 3
+log y3 3
+log y3 2
+log y7 2
+log y11 2
+log y3 1
+log y7 1
+log y11 1
+log y7 0
+log y11 0
+log y3 0
+report rounds=14 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=3 traced=false
+log y0 1
+log y1 2
+log y2 3
+log y4 1
+log y5 2
+log y6 3
+log y8 1
+log y9 2
+log y10 3
+log y0 0
+log y1 1
+log y2 2
+log y5 1
+log y6 2
+log y8 0
+log y10 2
+log y1 0
+log y2 1
+log y6 1
+log y10 1
+log y2 0
+log y10 0
+log y3 4
+log y7 4
+log y4 0
+log y9 1
+log y5 0
+log y9 0
+log y11 4
+log y6 0
+log y7 3
+log y11 3
+log y3 3
+log y3 2
+log y7 2
+log y11 2
+log y3 1
+log y7 1
+log y11 1
+log y7 0
+log y11 0
+log y3 0
+report rounds=14 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=1 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #0.0 y0
+end #0.0 y0
+round 2
+wake #0.0 Manual
+poll 2 #2.0 y2
+end #2.0 y2
+round 3
+wake #2.0 Manual
+poll 3 #4.0 y4
+end #4.0 y4
+round 4
+wake #4.0 Manual
+poll 4 #6.0 y6
+end #6.0 y6
+round 5
+wake #6.0 Manual
+poll 5 #8.0 y8
+end #8.0 y8
+round 6
+wake #8.0 Manual
+poll 6 #10.0 y10
+end #10.0 y10
+round 7
+wake #10.0 Manual
+poll 7 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+round 8
+poll 8 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+round 9
+poll 9 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 10
+poll 10 #1.0 y1
+end #1.0 y1
+round 11
+wake #1.0 Manual
+poll 11 #5.0 y5
+end #5.0 y5
+round 12
+wake #5.0 Manual
+poll 12 #9.0 y9
+end #9.0 y9
+round 13
+wake #9.0 Manual
+poll 13 #2.0 y2
+end #2.0 y2
+round 14
+wake #2.0 Manual
+poll 14 #10.0 y10
+end #10.0 y10
+round 15
+wake #10.0 Manual
+poll 15 #5.0 y5
+end #5.0 y5
+round 16
+wake #5.0 Manual
+poll 16 #2.0 y2
+end #2.0 y2
+round 17
+wake #2.0 Manual
+poll 17 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 18
+poll 18 #7.0 y7
+end #7.0 y7
+round 19
+wake #7.0 Manual
+poll 19 #6.0 y6
+end #6.0 y6
+round 20
+wake #6.0 Manual
+poll 20 #9.0 y9
+end #9.0 y9
+round 21
+wake #9.0 Manual
+poll 21 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 22
+poll 22 #3.0 y3
+end #3.0 y3
+round 23
+wake #3.0 Manual
+poll 23 #1.0 y1
+end #1.0 y1
+round 24
+wake #1.0 Manual
+poll 24 #7.0 y7
+end #7.0 y7
+round 25
+wake #7.0 Manual
+poll 25 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 26
+poll 26 #10.0 y10
+end #10.0 y10
+round 27
+wake #10.0 Manual
+poll 27 #3.0 y3
+end #3.0 y3
+round 28
+wake #3.0 Manual
+poll 28 #7.0 y7
+end #7.0 y7
+round 29
+wake #7.0 Manual
+poll 29 #3.0 y3
+end #3.0 y3
+round 30
+wake #3.0 Manual
+poll 30 #3.0 y3
+end #3.0 y3
+round 31
+wake #3.0 Manual
+poll 31 #11.0 y11
+end #11.0 y11
+round 32
+wake #11.0 Manual
+poll 32 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 33
+poll 33 #7.0 y7
+end #7.0 y7
+round 34
+wake #7.0 Manual
+poll 34 #11.0 y11
+end #11.0 y11
+round 35
+wake #11.0 Manual
+poll 35 #11.0 y11
+end #11.0 y11
+round 36
+wake #11.0 Manual
+poll 36 #6.0 y6
+end #6.0 y6
+round 37
+wake #6.0 Manual
+poll 37 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+round 38
+poll 38 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+round 39
+poll 39 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 40
+poll 40 #11.0 y11
+end #11.0 y11
+round 41
+wake #11.0 Manual
+poll 41 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+round 42
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y0 1
+log y2 3
+log y4 1
+log y6 3
+log y8 1
+log y10 3
+log y0 0
+log y4 0
+log y8 0
+log y1 2
+log y5 2
+log y9 2
+log y2 2
+log y10 2
+log y5 1
+log y2 1
+log y5 0
+log y7 4
+log y6 2
+log y9 1
+log y2 0
+log y3 4
+log y1 1
+log y7 3
+log y9 0
+log y10 1
+log y3 3
+log y7 2
+log y3 2
+log y3 1
+log y11 4
+log y1 0
+log y7 1
+log y11 3
+log y11 2
+log y6 1
+log y3 0
+log y7 0
+log y6 0
+log y11 1
+log y10 0
+log y11 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders round_robin budget=1 traced=false
+log y0 1
+log y2 3
+log y4 1
+log y6 3
+log y8 1
+log y10 3
+log y0 0
+log y4 0
+log y8 0
+log y1 2
+log y5 2
+log y9 2
+log y2 2
+log y10 2
+log y5 1
+log y2 1
+log y5 0
+log y7 4
+log y6 2
+log y9 1
+log y2 0
+log y3 4
+log y1 1
+log y7 3
+log y9 0
+log y10 1
+log y3 3
+log y7 2
+log y3 2
+log y3 1
+log y11 4
+log y1 0
+log y7 1
+log y11 3
+log y11 2
+log y6 1
+log y3 0
+log y7 0
+log y6 0
+log y11 1
+log y10 0
+log y11 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=18446744073709551615 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+poll 2 #9.0 y9
+end #9.0 y9
+poll 3 #3.0 y3
+end #3.0 y3
+poll 4 #8.0 y8
+end #8.0 y8
+poll 5 #2.0 y2
+end #2.0 y2
+poll 6 #7.0 y7
+end #7.0 y7
+poll 7 #1.0 y1
+end #1.0 y1
+poll 8 #6.0 y6
+end #6.0 y6
+poll 9 #11.0 y11
+end #11.0 y11
+poll 10 #0.0 y0
+end #0.0 y0
+poll 11 #5.0 y5
+end #5.0 y5
+poll 12 #10.0 y10
+end #10.0 y10
+round 2
+wake #4.0 Manual
+wake #9.0 Manual
+wake #3.0 Manual
+wake #8.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #0.0 Manual
+wake #5.0 Manual
+wake #10.0 Manual
+poll 13 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 14 #9.0 y9
+end #9.0 y9
+poll 15 #3.0 y3
+end #3.0 y3
+poll 16 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 17 #2.0 y2
+end #2.0 y2
+poll 18 #7.0 y7
+end #7.0 y7
+poll 19 #1.0 y1
+end #1.0 y1
+poll 20 #6.0 y6
+end #6.0 y6
+poll 21 #11.0 y11
+end #11.0 y11
+poll 22 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 23 #5.0 y5
+end #5.0 y5
+poll 24 #10.0 y10
+end #10.0 y10
+round 3
+wake #9.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #5.0 Manual
+wake #10.0 Manual
+poll 25 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 26 #3.0 y3
+end #3.0 y3
+poll 27 #2.0 y2
+end #2.0 y2
+poll 28 #7.0 y7
+end #7.0 y7
+poll 29 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 30 #6.0 y6
+end #6.0 y6
+poll 31 #11.0 y11
+end #11.0 y11
+poll 32 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 33 #10.0 y10
+end #10.0 y10
+round 4
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #10.0 Manual
+poll 34 #3.0 y3
+end #3.0 y3
+poll 35 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 36 #7.0 y7
+end #7.0 y7
+poll 37 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 38 #11.0 y11
+end #11.0 y11
+poll 39 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+round 5
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y4 1
+log y9 2
+log y3 4
+log y8 1
+log y2 3
+log y7 4
+log y1 2
+log y6 3
+log y11 4
+log y0 1
+log y5 2
+log y10 3
+log y4 0
+log y9 1
+log y3 3
+log y8 0
+log y2 2
+log y7 3
+log y1 1
+log y6 2
+log y11 3
+log y0 0
+log y5 1
+log y10 2
+log y9 0
+log y3 2
+log y2 1
+log y7 2
+log y1 0
+log y6 1
+log y11 2
+log y5 0
+log y10 1
+log y3 1
+log y2 0
+log y7 1
+log y6 0
+log y11 1
+log y10 0
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=18446744073709551615 traced=false
+log y4 1
+log y9 2
+log y3 4
+log y8 1
+log y2 3
+log y7 4
+log y1 2
+log y6 3
+log y11 4
+log y0 1
+log y5 2
+log y10 3
+log y4 0
+log y9 1
+log y3 3
+log y8 0
+log y2 2
+log y7 3
+log y1 1
+log y6 2
+log y11 3
+log y0 0
+log y5 1
+log y10 2
+log y9 0
+log y3 2
+log y2 1
+log y7 2
+log y1 0
+log y6 1
+log y11 2
+log y5 0
+log y10 1
+log y3 1
+log y2 0
+log y7 1
+log y6 0
+log y11 1
+log y10 0
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=3 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+poll 2 #9.0 y9
+end #9.0 y9
+poll 3 #3.0 y3
+end #3.0 y3
+round 2
+wake #4.0 Manual
+wake #9.0 Manual
+wake #3.0 Manual
+poll 4 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 5 #9.0 y9
+end #9.0 y9
+poll 6 #8.0 y8
+end #8.0 y8
+round 3
+wake #9.0 Manual
+wake #8.0 Manual
+poll 7 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 8 #3.0 y3
+end #3.0 y3
+poll 9 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 4
+wake #3.0 Manual
+poll 10 #3.0 y3
+end #3.0 y3
+poll 11 #2.0 y2
+end #2.0 y2
+poll 12 #7.0 y7
+end #7.0 y7
+round 5
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+poll 13 #3.0 y3
+end #3.0 y3
+poll 14 #2.0 y2
+end #2.0 y2
+poll 15 #7.0 y7
+end #7.0 y7
+round 6
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+poll 16 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 17 #2.0 y2
+end #2.0 y2
+poll 18 #7.0 y7
+end #7.0 y7
+round 7
+wake #2.0 Manual
+wake #7.0 Manual
+poll 19 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 20 #7.0 y7
+end #7.0 y7
+poll 21 #1.0 y1
+end #1.0 y1
+round 8
+wake #7.0 Manual
+wake #1.0 Manual
+poll 22 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 23 #6.0 y6
+end #6.0 y6
+poll 24 #11.0 y11
+end #11.0 y11
+round 9
+wake #6.0 Manual
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+poll 26 #6.0 y6
+end #6.0 y6
+poll 27 #11.0 y11
+end #11.0 y11
+round 10
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+poll 28 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 29 #6.0 y6
+end #6.0 y6
+poll 30 #11.0 y11
+end #11.0 y11
+round 11
+wake #6.0 Manual
+wake #11.0 Manual
+poll 31 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 32 #11.0 y11
+end #11.0 y11
+poll 33 #0.0 y0
+end #0.0 y0
+round 12
+wake #11.0 Manual
+wake #0.0 Manual
+poll 34 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+poll 35 #5.0 y5
+end #5.0 y5
+poll 36 #10.0 y10
+end #10.0 y10
+round 13
+wake #5.0 Manual
+wake #10.0 Manual
+poll 37 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 38 #5.0 y5
+end #5.0 y5
+poll 39 #10.0 y10
+end #10.0 y10
+round 14
+wake #5.0 Manual
+wake #10.0 Manual
+poll 40 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 41 #10.0 y10
+end #10.0 y10
+round 15
+wake #10.0 Manual
+poll 42 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+log y4 1
+log y9 2
+log y3 4
+log y4 0
+log y9 1
+log y8 1
+log y9 0
+log y3 3
+log y8 0
+log y3 2
+log y2 3
+log y7 4
+log y3 1
+log y2 2
+log y7 3
+log y3 0
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y1 2
+log y7 0
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y0 1
+log y11 0
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=3 traced=false
+log y4 1
+log y9 2
+log y3 4
+log y4 0
+log y9 1
+log y8 1
+log y9 0
+log y3 3
+log y8 0
+log y3 2
+log y2 3
+log y7 4
+log y3 1
+log y2 2
+log y7 3
+log y3 0
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y1 2
+log y7 0
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y0 1
+log y11 0
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=1 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+round 2
+wake #4.0 Manual
+poll 2 #9.0 y9
+end #9.0 y9
+round 3
+wake #9.0 Manual
+poll 3 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+round 4
+poll 4 #9.0 y9
+end #9.0 y9
+round 5
+wake #9.0 Manual
+poll 5 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 6
+poll 6 #3.0 y3
+end #3.0 y3
+round 7
+wake #3.0 Manual
+poll 7 #8.0 y8
+end #8.0 y8
+round 8
+wake #8.0 Manual
+poll 8 #3.0 y3
+end #3.0 y3
+round 9
+wake #3.0 Manual
+poll 9 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 10
+poll 10 #3.0 y3
+end #3.0 y3
+round 11
+wake #3.0 Manual
+poll 11 #3.0 y3
+end #3.0 y3
+round 12
+wake #3.0 Manual
+poll 12 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+round 13
+poll 13 #2.0 y2
+end #2.0 y2
+round 14
+wake #2.0 Manual
+poll 14 #7.0 y7
+end #7.0 y7
+round 15
+wake #7.0 Manual
+poll 15 #2.0 y2
+end #2.0 y2
+round 16
+wake #2.0 Manual
+poll 16 #7.0 y7
+end #7.0 y7
+round 17
+wake #7.0 Manual
+poll 17 #2.0 y2
+end #2.0 y2
+round 18
+wake #2.0 Manual
+poll 18 #7.0 y7
+end #7.0 y7
+round 19
+wake #7.0 Manual
+poll 19 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 20
+poll 20 #7.0 y7
+end #7.0 y7
+round 21
+wake #7.0 Manual
+poll 21 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+round 22
+poll 22 #1.0 y1
+end #1.0 y1
+round 23
+wake #1.0 Manual
+poll 23 #6.0 y6
+end #6.0 y6
+round 24
+wake #6.0 Manual
+poll 24 #11.0 y11
+end #11.0 y11
+round 25
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+round 26
+wake #1.0 Manual
+poll 26 #6.0 y6
+end #6.0 y6
+round 27
+wake #6.0 Manual
+poll 27 #11.0 y11
+end #11.0 y11
+round 28
+wake #11.0 Manual
+poll 28 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 29
+poll 29 #6.0 y6
+end #6.0 y6
+round 30
+wake #6.0 Manual
+poll 30 #11.0 y11
+end #11.0 y11
+round 31
+wake #11.0 Manual
+poll 31 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 32
+poll 32 #11.0 y11
+end #11.0 y11
+round 33
+wake #11.0 Manual
+poll 33 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+round 34
+poll 34 #0.0 y0
+end #0.0 y0
+round 35
+wake #0.0 Manual
+poll 35 #5.0 y5
+end #5.0 y5
+round 36
+wake #5.0 Manual
+poll 36 #10.0 y10
+end #10.0 y10
+round 37
+wake #10.0 Manual
+poll 37 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+round 38
+poll 38 #5.0 y5
+end #5.0 y5
+round 39
+wake #5.0 Manual
+poll 39 #10.0 y10
+end #10.0 y10
+round 40
+wake #10.0 Manual
+poll 40 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 41
+poll 41 #10.0 y10
+end #10.0 y10
+round 42
+wake #10.0 Manual
+poll 42 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+log y4 1
+log y9 2
+log y4 0
+log y9 1
+log y9 0
+log y3 4
+log y8 1
+log y3 3
+log y8 0
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y7 4
+log y2 2
+log y7 3
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y7 0
+log y1 2
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y11 0
+log y0 1
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos budget=1 traced=false
+log y4 1
+log y9 2
+log y4 0
+log y9 1
+log y9 0
+log y3 4
+log y8 1
+log y3 3
+log y8 0
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y7 4
+log y2 2
+log y7 3
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y7 0
+log y1 2
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y11 0
+log y0 1
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=18446744073709551615 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+poll 2 #9.0 y9
+end #9.0 y9
+poll 3 #3.0 y3
+end #3.0 y3
+poll 4 #8.0 y8
+end #8.0 y8
+poll 5 #2.0 y2
+end #2.0 y2
+poll 6 #7.0 y7
+end #7.0 y7
+poll 7 #1.0 y1
+end #1.0 y1
+poll 8 #6.0 y6
+end #6.0 y6
+poll 9 #11.0 y11
+end #11.0 y11
+poll 10 #0.0 y0
+end #0.0 y0
+poll 11 #5.0 y5
+end #5.0 y5
+poll 12 #10.0 y10
+end #10.0 y10
+round 2
+wake #4.0 Manual
+wake #9.0 Manual
+wake #3.0 Manual
+wake #8.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #0.0 Manual
+wake #5.0 Manual
+wake #10.0 Manual
+poll 13 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 14 #9.0 y9
+end #9.0 y9
+poll 15 #3.0 y3
+end #3.0 y3
+poll 16 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+poll 17 #2.0 y2
+end #2.0 y2
+poll 18 #7.0 y7
+end #7.0 y7
+poll 19 #1.0 y1
+end #1.0 y1
+poll 20 #6.0 y6
+end #6.0 y6
+poll 21 #11.0 y11
+end #11.0 y11
+poll 22 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 23 #5.0 y5
+end #5.0 y5
+poll 24 #10.0 y10
+end #10.0 y10
+round 3
+wake #9.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #5.0 Manual
+wake #10.0 Manual
+poll 25 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 26 #3.0 y3
+end #3.0 y3
+poll 27 #2.0 y2
+end #2.0 y2
+poll 28 #7.0 y7
+end #7.0 y7
+poll 29 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 30 #6.0 y6
+end #6.0 y6
+poll 31 #11.0 y11
+end #11.0 y11
+poll 32 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 33 #10.0 y10
+end #10.0 y10
+round 4
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+wake #10.0 Manual
+poll 34 #3.0 y3
+end #3.0 y3
+poll 35 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 36 #7.0 y7
+end #7.0 y7
+poll 37 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 38 #11.0 y11
+end #11.0 y11
+poll 39 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+round 5
+wake #3.0 Manual
+wake #7.0 Manual
+wake #11.0 Manual
+poll 40 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 41 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 42 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+log y4 1
+log y9 2
+log y3 4
+log y8 1
+log y2 3
+log y7 4
+log y1 2
+log y6 3
+log y11 4
+log y0 1
+log y5 2
+log y10 3
+log y4 0
+log y9 1
+log y3 3
+log y8 0
+log y2 2
+log y7 3
+log y1 1
+log y6 2
+log y11 3
+log y0 0
+log y5 1
+log y10 2
+log y9 0
+log y3 2
+log y2 1
+log y7 2
+log y1 0
+log y6 1
+log y11 2
+log y5 0
+log y10 1
+log y3 1
+log y2 0
+log y7 1
+log y6 0
+log y11 1
+log y10 0
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=18446744073709551615 traced=false
+log y4 1
+log y9 2
+log y3 4
+log y8 1
+log y2 3
+log y7 4
+log y1 2
+log y6 3
+log y11 4
+log y0 1
+log y5 2
+log y10 3
+log y4 0
+log y9 1
+log y3 3
+log y8 0
+log y2 2
+log y7 3
+log y1 1
+log y6 2
+log y11 3
+log y0 0
+log y5 1
+log y10 2
+log y9 0
+log y3 2
+log y2 1
+log y7 2
+log y1 0
+log y6 1
+log y11 2
+log y5 0
+log y10 1
+log y3 1
+log y2 0
+log y7 1
+log y6 0
+log y11 1
+log y10 0
+log y3 0
+log y7 0
+log y11 0
+report rounds=5 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=3 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+poll 2 #9.0 y9
+end #9.0 y9
+poll 3 #3.0 y3
+end #3.0 y3
+round 2
+wake #4.0 Manual
+wake #9.0 Manual
+wake #3.0 Manual
+poll 4 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+poll 5 #9.0 y9
+end #9.0 y9
+poll 6 #8.0 y8
+end #8.0 y8
+round 3
+wake #9.0 Manual
+wake #8.0 Manual
+poll 7 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+poll 8 #3.0 y3
+end #3.0 y3
+poll 9 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 4
+wake #3.0 Manual
+poll 10 #3.0 y3
+end #3.0 y3
+poll 11 #2.0 y2
+end #2.0 y2
+poll 12 #7.0 y7
+end #7.0 y7
+round 5
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+poll 13 #3.0 y3
+end #3.0 y3
+poll 14 #2.0 y2
+end #2.0 y2
+poll 15 #7.0 y7
+end #7.0 y7
+round 6
+wake #3.0 Manual
+wake #2.0 Manual
+wake #7.0 Manual
+poll 16 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+poll 17 #2.0 y2
+end #2.0 y2
+poll 18 #7.0 y7
+end #7.0 y7
+round 7
+wake #2.0 Manual
+wake #7.0 Manual
+poll 19 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+poll 20 #7.0 y7
+end #7.0 y7
+poll 21 #1.0 y1
+end #1.0 y1
+round 8
+wake #7.0 Manual
+wake #1.0 Manual
+poll 22 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+poll 23 #6.0 y6
+end #6.0 y6
+poll 24 #11.0 y11
+end #11.0 y11
+round 9
+wake #6.0 Manual
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+poll 26 #6.0 y6
+end #6.0 y6
+poll 27 #11.0 y11
+end #11.0 y11
+round 10
+wake #1.0 Manual
+wake #6.0 Manual
+wake #11.0 Manual
+poll 28 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+poll 29 #6.0 y6
+end #6.0 y6
+poll 30 #11.0 y11
+end #11.0 y11
+round 11
+wake #6.0 Manual
+wake #11.0 Manual
+poll 31 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+poll 32 #11.0 y11
+end #11.0 y11
+poll 33 #0.0 y0
+end #0.0 y0
+round 12
+wake #11.0 Manual
+wake #0.0 Manual
+poll 34 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+poll 35 #5.0 y5
+end #5.0 y5
+poll 36 #10.0 y10
+end #10.0 y10
+round 13
+wake #5.0 Manual
+wake #10.0 Manual
+poll 37 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+poll 38 #5.0 y5
+end #5.0 y5
+poll 39 #10.0 y10
+end #10.0 y10
+round 14
+wake #5.0 Manual
+wake #10.0 Manual
+poll 40 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+poll 41 #10.0 y10
+end #10.0 y10
+round 15
+wake #10.0 Manual
+poll 42 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+log y4 1
+log y9 2
+log y3 4
+log y4 0
+log y9 1
+log y8 1
+log y9 0
+log y3 3
+log y8 0
+log y3 2
+log y2 3
+log y7 4
+log y3 1
+log y2 2
+log y7 3
+log y3 0
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y1 2
+log y7 0
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y0 1
+log y11 0
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=3 traced=false
+log y4 1
+log y9 2
+log y3 4
+log y4 0
+log y9 1
+log y8 1
+log y9 0
+log y3 3
+log y8 0
+log y3 2
+log y2 3
+log y7 4
+log y3 1
+log y2 2
+log y7 3
+log y3 0
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y1 2
+log y7 0
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y0 1
+log y11 0
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=15 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=1 traced=true
+spawn #0.0 y0
+spawn #1.0 y1
+spawn #2.0 y2
+spawn #3.0 y3
+spawn #4.0 y4
+spawn #5.0 y5
+spawn #6.0 y6
+spawn #7.0 y7
+spawn #8.0 y8
+spawn #9.0 y9
+spawn #10.0 y10
+spawn #11.0 y11
+round 1
+poll 1 #4.0 y4
+end #4.0 y4
+round 2
+wake #4.0 Manual
+poll 2 #9.0 y9
+end #9.0 y9
+round 3
+wake #9.0 Manual
+poll 3 #4.0 y4
+end #4.0 y4
+done #4.0 y4 Completed
+round 4
+poll 4 #9.0 y9
+end #9.0 y9
+round 5
+wake #9.0 Manual
+poll 5 #9.0 y9
+end #9.0 y9
+done #9.0 y9 Completed
+round 6
+poll 6 #3.0 y3
+end #3.0 y3
+round 7
+wake #3.0 Manual
+poll 7 #8.0 y8
+end #8.0 y8
+round 8
+wake #8.0 Manual
+poll 8 #3.0 y3
+end #3.0 y3
+round 9
+wake #3.0 Manual
+poll 9 #8.0 y8
+end #8.0 y8
+done #8.0 y8 Completed
+round 10
+poll 10 #3.0 y3
+end #3.0 y3
+round 11
+wake #3.0 Manual
+poll 11 #3.0 y3
+end #3.0 y3
+round 12
+wake #3.0 Manual
+poll 12 #3.0 y3
+end #3.0 y3
+done #3.0 y3 Completed
+round 13
+poll 13 #2.0 y2
+end #2.0 y2
+round 14
+wake #2.0 Manual
+poll 14 #7.0 y7
+end #7.0 y7
+round 15
+wake #7.0 Manual
+poll 15 #2.0 y2
+end #2.0 y2
+round 16
+wake #2.0 Manual
+poll 16 #7.0 y7
+end #7.0 y7
+round 17
+wake #7.0 Manual
+poll 17 #2.0 y2
+end #2.0 y2
+round 18
+wake #2.0 Manual
+poll 18 #7.0 y7
+end #7.0 y7
+round 19
+wake #7.0 Manual
+poll 19 #2.0 y2
+end #2.0 y2
+done #2.0 y2 Completed
+round 20
+poll 20 #7.0 y7
+end #7.0 y7
+round 21
+wake #7.0 Manual
+poll 21 #7.0 y7
+end #7.0 y7
+done #7.0 y7 Completed
+round 22
+poll 22 #1.0 y1
+end #1.0 y1
+round 23
+wake #1.0 Manual
+poll 23 #6.0 y6
+end #6.0 y6
+round 24
+wake #6.0 Manual
+poll 24 #11.0 y11
+end #11.0 y11
+round 25
+wake #11.0 Manual
+poll 25 #1.0 y1
+end #1.0 y1
+round 26
+wake #1.0 Manual
+poll 26 #6.0 y6
+end #6.0 y6
+round 27
+wake #6.0 Manual
+poll 27 #11.0 y11
+end #11.0 y11
+round 28
+wake #11.0 Manual
+poll 28 #1.0 y1
+end #1.0 y1
+done #1.0 y1 Completed
+round 29
+poll 29 #6.0 y6
+end #6.0 y6
+round 30
+wake #6.0 Manual
+poll 30 #11.0 y11
+end #11.0 y11
+round 31
+wake #11.0 Manual
+poll 31 #6.0 y6
+end #6.0 y6
+done #6.0 y6 Completed
+round 32
+poll 32 #11.0 y11
+end #11.0 y11
+round 33
+wake #11.0 Manual
+poll 33 #11.0 y11
+end #11.0 y11
+done #11.0 y11 Completed
+round 34
+poll 34 #0.0 y0
+end #0.0 y0
+round 35
+wake #0.0 Manual
+poll 35 #5.0 y5
+end #5.0 y5
+round 36
+wake #5.0 Manual
+poll 36 #10.0 y10
+end #10.0 y10
+round 37
+wake #10.0 Manual
+poll 37 #0.0 y0
+end #0.0 y0
+done #0.0 y0 Completed
+round 38
+poll 38 #5.0 y5
+end #5.0 y5
+round 39
+wake #5.0 Manual
+poll 39 #10.0 y10
+end #10.0 y10
+round 40
+wake #10.0 Manual
+poll 40 #5.0 y5
+end #5.0 y5
+done #5.0 y5 Completed
+round 41
+poll 41 #10.0 y10
+end #10.0 y10
+round 42
+wake #10.0 Manual
+poll 42 #10.0 y10
+end #10.0 y10
+done #10.0 y10 Completed
+log y4 1
+log y9 2
+log y4 0
+log y9 1
+log y9 0
+log y3 4
+log y8 1
+log y3 3
+log y8 0
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y7 4
+log y2 2
+log y7 3
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y7 0
+log y1 2
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y11 0
+log y0 1
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== yielders biased_qos_then_age budget=1 traced=false
+log y4 1
+log y9 2
+log y4 0
+log y9 1
+log y9 0
+log y3 4
+log y8 1
+log y3 3
+log y8 0
+log y3 2
+log y3 1
+log y3 0
+log y2 3
+log y7 4
+log y2 2
+log y7 3
+log y2 1
+log y7 2
+log y2 0
+log y7 1
+log y7 0
+log y1 2
+log y6 3
+log y11 4
+log y1 1
+log y6 2
+log y11 3
+log y1 0
+log y6 1
+log y11 2
+log y6 0
+log y11 1
+log y11 0
+log y0 1
+log y5 2
+log y10 3
+log y0 0
+log y5 1
+log y10 2
+log y5 0
+log y10 1
+log y10 0
+report rounds=42 polls=42 completed=12 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=18446744073709551615 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+poll 2 #1.0 ring1
+end #1.0 ring1
+poll 3 #2.0 ring2
+end #2.0 ring2
+poll 4 #3.0 ring3
+end #3.0 ring3
+poll 5 #4.0 ring4
+end #4.0 ring4
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+poll 7 #1.0 ring1
+end #1.0 ring1
+poll 8 #2.0 ring2
+end #2.0 ring2
+poll 9 #3.0 ring3
+end #3.0 ring3
+poll 10 #4.0 ring4
+end #4.0 ring4
+poll 11 #5.0 ring5
+end #5.0 ring5
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 3
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 13 #2.0 ring2
+end #2.0 ring2
+poll 14 #3.0 ring3
+end #3.0 ring3
+poll 15 #4.0 ring4
+end #4.0 ring4
+poll 16 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+poll 17 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+poll 18 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 4
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 19 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 20 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 21 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=18446744073709551615 traced=false
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=3 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+poll 2 #1.0 ring1
+end #1.0 ring1
+poll 3 #2.0 ring2
+end #2.0 ring2
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+poll 4 #3.0 ring3
+end #3.0 ring3
+poll 5 #4.0 ring4
+end #4.0 ring4
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 3
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+poll 7 #1.0 ring1
+end #1.0 ring1
+poll 8 #2.0 ring2
+end #2.0 ring2
+poll 9 #4.0 ring4
+end #4.0 ring4
+round 4
+wake #2.0 Manual
+wake #3.0 Manual
+wake #5.0 Manual
+poll 10 #5.0 ring5
+end #5.0 ring5
+poll 11 #0.0 ring0
+end #0.0 ring0
+poll 12 #2.0 ring2
+end #2.0 ring2
+round 5
+wake #0.0 Manual
+wake #1.0 Manual
+wake #3.0 Manual
+poll 13 #3.0 ring3
+end #3.0 ring3
+poll 14 #0.0 ring0
+end #0.0 ring0
+poll 15 #1.0 ring1
+end #1.0 ring1
+round 6
+wake #4.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 16 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 17 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 18 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 7
+wake #5.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+poll 19 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+poll 20 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 8
+wake #0.0 Manual
+wake #4.0 Manual
+poll 21 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring0 hops=5
+log ring2 hops=4
+log ring3 hops=3
+log ring0 hops=2
+log ring1 hops=1
+log ring4 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring5 hops=0
+log ring3 hops=0
+log ring0 hops=0
+report rounds=8 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=3 traced=false
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring0 hops=5
+log ring2 hops=4
+log ring3 hops=3
+log ring0 hops=2
+log ring1 hops=1
+log ring4 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring5 hops=0
+log ring3 hops=0
+log ring0 hops=0
+report rounds=8 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=1 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+round 2
+wake #1.0 Manual
+poll 2 #1.0 ring1
+end #1.0 ring1
+round 3
+wake #2.0 Manual
+poll 3 #2.0 ring2
+end #2.0 ring2
+round 4
+wake #3.0 Manual
+poll 4 #3.0 ring3
+end #3.0 ring3
+round 5
+wake #4.0 Manual
+poll 5 #4.0 ring4
+end #4.0 ring4
+round 6
+wake #5.0 Manual
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 7
+wake #0.0 Manual
+poll 7 #0.0 ring0
+end #0.0 ring0
+round 8
+wake #1.0 Manual
+poll 8 #1.0 ring1
+end #1.0 ring1
+round 9
+wake #2.0 Manual
+poll 9 #2.0 ring2
+end #2.0 ring2
+round 10
+wake #3.0 Manual
+poll 10 #3.0 ring3
+end #3.0 ring3
+round 11
+wake #4.0 Manual
+poll 11 #4.0 ring4
+end #4.0 ring4
+round 12
+wake #5.0 Manual
+poll 12 #5.0 ring5
+end #5.0 ring5
+round 13
+wake #0.0 Manual
+poll 13 #0.0 ring0
+end #0.0 ring0
+round 14
+wake #1.0 Manual
+poll 14 #1.0 ring1
+end #1.0 ring1
+round 15
+wake #2.0 Manual
+poll 15 #2.0 ring2
+end #2.0 ring2
+round 16
+wake #3.0 Manual
+poll 16 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 17
+wake #4.0 Manual
+poll 17 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+round 18
+wake #5.0 Manual
+poll 18 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 19
+wake #0.0 Manual
+poll 19 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 20
+wake #1.0 Manual
+poll 20 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 21
+wake #2.0 Manual
+poll 21 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring0 hops=9
+log ring1 hops=8
+log ring2 hops=7
+log ring3 hops=6
+log ring4 hops=5
+log ring5 hops=4
+log ring0 hops=3
+log ring1 hops=2
+log ring2 hops=1
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring fifo budget=1 traced=false
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring0 hops=9
+log ring1 hops=8
+log ring2 hops=7
+log ring3 hops=6
+log ring4 hops=5
+log ring5 hops=4
+log ring0 hops=3
+log ring1 hops=2
+log ring2 hops=1
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=18446744073709551615 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #5.0 ring5
+end #5.0 ring5
+poll 2 #4.0 ring4
+end #4.0 ring4
+poll 3 #3.0 ring3
+end #3.0 ring3
+poll 4 #2.0 ring2
+end #2.0 ring2
+poll 5 #1.0 ring1
+end #1.0 ring1
+poll 6 #0.0 ring0
+end #0.0 ring0
+round 2
+wake #0.0 Manual
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #1.0 Manual
+poll 7 #1.0 ring1
+end #1.0 ring1
+poll 8 #2.0 ring2
+end #2.0 ring2
+poll 9 #3.0 ring3
+end #3.0 ring3
+poll 10 #4.0 ring4
+end #4.0 ring4
+poll 11 #5.0 ring5
+end #5.0 ring5
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 3
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 13 #1.0 ring1
+end #1.0 ring1
+poll 14 #0.0 ring0
+end #0.0 ring0
+poll 15 #5.0 ring5
+end #5.0 ring5
+poll 16 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 17 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 18 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 4
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+poll 19 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+poll 20 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+poll 21 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+log ring5 hops=15
+log ring4 hops=14
+log ring3 hops=13
+log ring2 hops=12
+log ring1 hops=11
+log ring0 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring1 hops=3
+log ring0 hops=2
+log ring5 hops=1
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=18446744073709551615 traced=false
+log ring5 hops=15
+log ring4 hops=14
+log ring3 hops=13
+log ring2 hops=12
+log ring1 hops=11
+log ring0 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring1 hops=3
+log ring0 hops=2
+log ring5 hops=1
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=3 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #5.0 ring5
+end #5.0 ring5
+poll 2 #4.0 ring4
+end #4.0 ring4
+poll 3 #3.0 ring3
+end #3.0 ring3
+round 2
+wake #0.0 Manual
+wake #5.0 Manual
+wake #4.0 Manual
+poll 4 #4.0 ring4
+end #4.0 ring4
+poll 5 #5.0 ring5
+end #5.0 ring5
+poll 6 #2.0 ring2
+end #2.0 ring2
+round 3
+wake #5.0 Manual
+wake #0.0 Manual
+wake #3.0 Manual
+poll 7 #3.0 ring3
+end #3.0 ring3
+poll 8 #5.0 ring5
+end #5.0 ring5
+poll 9 #1.0 ring1
+end #1.0 ring1
+round 4
+wake #4.0 Manual
+wake #0.0 Manual
+wake #2.0 Manual
+poll 10 #2.0 ring2
+end #2.0 ring2
+poll 11 #4.0 ring4
+end #4.0 ring4
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 5
+wake #3.0 Manual
+wake #5.0 Manual
+wake #1.0 Manual
+poll 13 #1.0 ring1
+end #1.0 ring1
+poll 14 #5.0 ring5
+end #5.0 ring5
+poll 15 #3.0 ring3
+end #3.0 ring3
+round 6
+wake #2.0 Manual
+wake #0.0 Manual
+wake #4.0 Manual
+poll 16 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 17 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+poll 18 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 7
+wake #5.0 Manual
+wake #1.0 Manual
+wake #3.0 Manual
+poll 19 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 20 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 21 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+log ring5 hops=15
+log ring4 hops=14
+log ring3 hops=13
+log ring4 hops=12
+log ring5 hops=11
+log ring2 hops=10
+log ring3 hops=9
+log ring5 hops=8
+log ring1 hops=7
+log ring2 hops=6
+log ring4 hops=5
+log ring0 hops=4
+log ring1 hops=3
+log ring5 hops=2
+log ring3 hops=1
+log ring4 hops=0
+log ring0 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=3 traced=false
+log ring5 hops=15
+log ring4 hops=14
+log ring3 hops=13
+log ring4 hops=12
+log ring5 hops=11
+log ring2 hops=10
+log ring3 hops=9
+log ring5 hops=8
+log ring1 hops=7
+log ring2 hops=6
+log ring4 hops=5
+log ring0 hops=4
+log ring1 hops=3
+log ring5 hops=2
+log ring3 hops=1
+log ring4 hops=0
+log ring0 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=1 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #5.0 ring5
+end #5.0 ring5
+round 2
+wake #0.0 Manual
+poll 2 #4.0 ring4
+end #4.0 ring4
+round 3
+wake #5.0 Manual
+poll 3 #5.0 ring5
+end #5.0 ring5
+round 4
+wake #0.0 Manual
+poll 4 #3.0 ring3
+end #3.0 ring3
+round 5
+wake #4.0 Manual
+poll 5 #4.0 ring4
+end #4.0 ring4
+round 6
+wake #5.0 Manual
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 7
+wake #0.0 Manual
+poll 7 #2.0 ring2
+end #2.0 ring2
+round 8
+wake #3.0 Manual
+poll 8 #3.0 ring3
+end #3.0 ring3
+round 9
+wake #4.0 Manual
+poll 9 #4.0 ring4
+end #4.0 ring4
+round 10
+wake #5.0 Manual
+poll 10 #5.0 ring5
+end #5.0 ring5
+round 11
+wake #0.0 Manual
+poll 11 #1.0 ring1
+end #1.0 ring1
+round 12
+wake #2.0 Manual
+poll 12 #2.0 ring2
+end #2.0 ring2
+round 13
+wake #3.0 Manual
+poll 13 #3.0 ring3
+end #3.0 ring3
+round 14
+wake #4.0 Manual
+poll 14 #4.0 ring4
+end #4.0 ring4
+round 15
+wake #5.0 Manual
+poll 15 #5.0 ring5
+end #5.0 ring5
+round 16
+wake #0.0 Manual
+poll 16 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 17
+wake #1.0 Manual
+poll 17 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 18
+wake #2.0 Manual
+poll 18 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 19
+wake #3.0 Manual
+poll 19 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 20
+wake #4.0 Manual
+poll 20 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+round 21
+wake #5.0 Manual
+poll 21 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+log ring5 hops=15
+log ring4 hops=14
+log ring5 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring2 hops=9
+log ring3 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring1 hops=5
+log ring2 hops=4
+log ring3 hops=3
+log ring4 hops=2
+log ring5 hops=1
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring lifo budget=1 traced=false
+log ring5 hops=15
+log ring4 hops=14
+log ring5 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring2 hops=9
+log ring3 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring1 hops=5
+log ring2 hops=4
+log ring3 hops=3
+log ring4 hops=2
+log ring5 hops=1
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=18446744073709551615 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+poll 2 #1.0 ring1
+end #1.0 ring1
+poll 3 #2.0 ring2
+end #2.0 ring2
+poll 4 #3.0 ring3
+end #3.0 ring3
+poll 5 #4.0 ring4
+end #4.0 ring4
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+poll 7 #2.0 ring2
+end #2.0 ring2
+poll 8 #3.0 ring3
+end #3.0 ring3
+poll 9 #4.0 ring4
+end #4.0 ring4
+poll 10 #5.0 ring5
+end #5.0 ring5
+poll 11 #0.0 ring0
+end #0.0 ring0
+poll 12 #1.0 ring1
+end #1.0 ring1
+round 3
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 13 #5.0 ring5
+end #5.0 ring5
+poll 14 #0.0 ring0
+end #0.0 ring0
+poll 15 #1.0 ring1
+end #1.0 ring1
+poll 16 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+poll 17 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 18 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+round 4
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+wake #5.0 Manual
+poll 19 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+poll 20 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 21 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring2 hops=9
+log ring3 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring5 hops=3
+log ring0 hops=2
+log ring1 hops=1
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=18446744073709551615 traced=false
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring3 hops=12
+log ring4 hops=11
+log ring5 hops=10
+log ring2 hops=9
+log ring3 hops=8
+log ring4 hops=7
+log ring5 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring5 hops=3
+log ring0 hops=2
+log ring1 hops=1
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=3 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+poll 2 #1.0 ring1
+end #1.0 ring1
+poll 3 #2.0 ring2
+end #2.0 ring2
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+poll 4 #4.0 ring4
+end #4.0 ring4
+poll 5 #5.0 ring5
+end #5.0 ring5
+poll 6 #1.0 ring1
+end #1.0 ring1
+round 3
+wake #5.0 Manual
+wake #0.0 Manual
+wake #2.0 Manual
+poll 7 #5.0 ring5
+end #5.0 ring5
+poll 8 #0.0 ring0
+end #0.0 ring0
+poll 9 #3.0 ring3
+end #3.0 ring3
+round 4
+wake #0.0 Manual
+wake #1.0 Manual
+wake #4.0 Manual
+poll 10 #4.0 ring4
+end #4.0 ring4
+poll 11 #2.0 ring2
+end #2.0 ring2
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 5
+wake #5.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 13 #5.0 ring5
+end #5.0 ring5
+poll 14 #3.0 ring3
+end #3.0 ring3
+poll 15 #1.0 ring1
+end #1.0 ring1
+round 6
+wake #0.0 Manual
+wake #4.0 Manual
+wake #2.0 Manual
+poll 16 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+poll 17 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+poll 18 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+round 7
+wake #3.0 Manual
+wake #1.0 Manual
+wake #5.0 Manual
+poll 19 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 20 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 21 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring5 hops=11
+log ring1 hops=10
+log ring5 hops=9
+log ring0 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring2 hops=5
+log ring0 hops=4
+log ring5 hops=3
+log ring3 hops=2
+log ring1 hops=1
+log ring2 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=3 traced=false
+log ring0 hops=15
+log ring1 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring5 hops=11
+log ring1 hops=10
+log ring5 hops=9
+log ring0 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring2 hops=5
+log ring0 hops=4
+log ring5 hops=3
+log ring3 hops=2
+log ring1 hops=1
+log ring2 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=1 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #0.0 ring0
+end #0.0 ring0
+round 2
+wake #1.0 Manual
+poll 2 #2.0 ring2
+end #2.0 ring2
+round 3
+wake #3.0 Manual
+poll 3 #4.0 ring4
+end #4.0 ring4
+round 4
+wake #5.0 Manual
+poll 4 #1.0 ring1
+end #1.0 ring1
+round 5
+wake #2.0 Manual
+poll 5 #5.0 ring5
+end #5.0 ring5
+round 6
+wake #0.0 Manual
+poll 6 #0.0 ring0
+end #0.0 ring0
+round 7
+wake #1.0 Manual
+poll 7 #3.0 ring3
+end #3.0 ring3
+round 8
+wake #4.0 Manual
+poll 8 #1.0 ring1
+end #1.0 ring1
+round 9
+wake #2.0 Manual
+poll 9 #2.0 ring2
+end #2.0 ring2
+round 10
+wake #3.0 Manual
+poll 10 #3.0 ring3
+end #3.0 ring3
+round 11
+wake #4.0 Manual
+poll 11 #4.0 ring4
+end #4.0 ring4
+round 12
+wake #5.0 Manual
+poll 12 #5.0 ring5
+end #5.0 ring5
+round 13
+wake #0.0 Manual
+poll 13 #0.0 ring0
+end #0.0 ring0
+round 14
+wake #1.0 Manual
+poll 14 #1.0 ring1
+end #1.0 ring1
+round 15
+wake #2.0 Manual
+poll 15 #2.0 ring2
+end #2.0 ring2
+round 16
+wake #3.0 Manual
+poll 16 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 17
+wake #4.0 Manual
+poll 17 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+round 18
+wake #5.0 Manual
+poll 18 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 19
+wake #0.0 Manual
+poll 19 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 20
+wake #1.0 Manual
+poll 20 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 21
+wake #2.0 Manual
+poll 21 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+log ring0 hops=15
+log ring2 hops=14
+log ring4 hops=13
+log ring1 hops=12
+log ring5 hops=11
+log ring0 hops=10
+log ring3 hops=9
+log ring1 hops=8
+log ring2 hops=7
+log ring3 hops=6
+log ring4 hops=5
+log ring5 hops=4
+log ring0 hops=3
+log ring1 hops=2
+log ring2 hops=1
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring round_robin budget=1 traced=false
+log ring0 hops=15
+log ring2 hops=14
+log ring4 hops=13
+log ring1 hops=12
+log ring5 hops=11
+log ring0 hops=10
+log ring3 hops=9
+log ring1 hops=8
+log ring2 hops=7
+log ring3 hops=6
+log ring4 hops=5
+log ring5 hops=4
+log ring0 hops=3
+log ring1 hops=2
+log ring2 hops=1
+log ring3 hops=0
+log ring4 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=18446744073709551615 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+poll 2 #3.0 ring3
+end #3.0 ring3
+poll 3 #2.0 ring2
+end #2.0 ring2
+poll 4 #1.0 ring1
+end #1.0 ring1
+poll 5 #0.0 ring0
+end #0.0 ring0
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 2
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 7 #4.0 ring4
+end #4.0 ring4
+poll 8 #3.0 ring3
+end #3.0 ring3
+poll 9 #2.0 ring2
+end #2.0 ring2
+poll 10 #1.0 ring1
+end #1.0 ring1
+poll 11 #5.0 ring5
+end #5.0 ring5
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 3
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 13 #4.0 ring4
+end #4.0 ring4
+poll 14 #3.0 ring3
+end #3.0 ring3
+poll 15 #2.0 ring2
+end #2.0 ring2
+poll 16 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 17 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+poll 18 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 4
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 19 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 20 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 21 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring1 hops=12
+log ring0 hops=11
+log ring5 hops=10
+log ring4 hops=9
+log ring3 hops=8
+log ring2 hops=7
+log ring1 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring4 hops=3
+log ring3 hops=2
+log ring2 hops=1
+log ring1 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=18446744073709551615 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring1 hops=12
+log ring0 hops=11
+log ring5 hops=10
+log ring4 hops=9
+log ring3 hops=8
+log ring2 hops=7
+log ring1 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring4 hops=3
+log ring3 hops=2
+log ring2 hops=1
+log ring1 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=3 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+poll 2 #3.0 ring3
+end #3.0 ring3
+poll 3 #2.0 ring2
+end #2.0 ring2
+round 2
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+poll 4 #4.0 ring4
+end #4.0 ring4
+poll 5 #3.0 ring3
+end #3.0 ring3
+poll 6 #1.0 ring1
+end #1.0 ring1
+round 3
+wake #5.0 Manual
+wake #4.0 Manual
+wake #2.0 Manual
+poll 7 #4.0 ring4
+end #4.0 ring4
+poll 8 #2.0 ring2
+end #2.0 ring2
+poll 9 #0.0 ring0
+end #0.0 ring0
+round 4
+wake #5.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 10 #3.0 ring3
+end #3.0 ring3
+poll 11 #1.0 ring1
+end #1.0 ring1
+poll 12 #5.0 ring5
+end #5.0 ring5
+round 5
+wake #4.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 13 #4.0 ring4
+end #4.0 ring4
+poll 14 #2.0 ring2
+end #2.0 ring2
+poll 15 #0.0 ring0
+end #0.0 ring0
+round 6
+wake #5.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 16 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 17 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 18 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 7
+wake #4.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 19 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 20 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+poll 21 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring3 hops=11
+log ring1 hops=10
+log ring4 hops=9
+log ring2 hops=8
+log ring0 hops=7
+log ring3 hops=6
+log ring1 hops=5
+log ring5 hops=4
+log ring4 hops=3
+log ring2 hops=2
+log ring0 hops=1
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+log ring4 hops=0
+log ring2 hops=0
+log ring0 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=3 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring3 hops=11
+log ring1 hops=10
+log ring4 hops=9
+log ring2 hops=8
+log ring0 hops=7
+log ring3 hops=6
+log ring1 hops=5
+log ring5 hops=4
+log ring4 hops=3
+log ring2 hops=2
+log ring0 hops=1
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+log ring4 hops=0
+log ring2 hops=0
+log ring0 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=1 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+round 2
+wake #5.0 Manual
+poll 2 #3.0 ring3
+end #3.0 ring3
+round 3
+wake #4.0 Manual
+poll 3 #4.0 ring4
+end #4.0 ring4
+round 4
+wake #5.0 Manual
+poll 4 #2.0 ring2
+end #2.0 ring2
+round 5
+wake #3.0 Manual
+poll 5 #3.0 ring3
+end #3.0 ring3
+round 6
+wake #4.0 Manual
+poll 6 #4.0 ring4
+end #4.0 ring4
+round 7
+wake #5.0 Manual
+poll 7 #1.0 ring1
+end #1.0 ring1
+round 8
+wake #2.0 Manual
+poll 8 #2.0 ring2
+end #2.0 ring2
+round 9
+wake #3.0 Manual
+poll 9 #3.0 ring3
+end #3.0 ring3
+round 10
+wake #4.0 Manual
+poll 10 #4.0 ring4
+end #4.0 ring4
+round 11
+wake #5.0 Manual
+poll 11 #0.0 ring0
+end #0.0 ring0
+round 12
+wake #1.0 Manual
+poll 12 #1.0 ring1
+end #1.0 ring1
+round 13
+wake #2.0 Manual
+poll 13 #2.0 ring2
+end #2.0 ring2
+round 14
+wake #3.0 Manual
+poll 14 #3.0 ring3
+end #3.0 ring3
+round 15
+wake #4.0 Manual
+poll 15 #4.0 ring4
+end #4.0 ring4
+round 16
+wake #5.0 Manual
+poll 16 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 17
+wake #0.0 Manual
+poll 17 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 18
+wake #1.0 Manual
+poll 18 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 19
+wake #2.0 Manual
+poll 19 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 20
+wake #3.0 Manual
+poll 20 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 21
+wake #4.0 Manual
+poll 21 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring4 hops=13
+log ring2 hops=12
+log ring3 hops=11
+log ring4 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos budget=1 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring4 hops=13
+log ring2 hops=12
+log ring3 hops=11
+log ring4 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=18446744073709551615 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+poll 2 #3.0 ring3
+end #3.0 ring3
+poll 3 #2.0 ring2
+end #2.0 ring2
+poll 4 #1.0 ring1
+end #1.0 ring1
+poll 5 #0.0 ring0
+end #0.0 ring0
+poll 6 #5.0 ring5
+end #5.0 ring5
+round 2
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 7 #4.0 ring4
+end #4.0 ring4
+poll 8 #3.0 ring3
+end #3.0 ring3
+poll 9 #2.0 ring2
+end #2.0 ring2
+poll 10 #1.0 ring1
+end #1.0 ring1
+poll 11 #5.0 ring5
+end #5.0 ring5
+poll 12 #0.0 ring0
+end #0.0 ring0
+round 3
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 13 #4.0 ring4
+end #4.0 ring4
+poll 14 #3.0 ring3
+end #3.0 ring3
+poll 15 #2.0 ring2
+end #2.0 ring2
+poll 16 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 17 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+poll 18 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 4
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+poll 19 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 20 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 21 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring1 hops=12
+log ring0 hops=11
+log ring5 hops=10
+log ring4 hops=9
+log ring3 hops=8
+log ring2 hops=7
+log ring1 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring4 hops=3
+log ring3 hops=2
+log ring2 hops=1
+log ring1 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=18446744073709551615 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring1 hops=12
+log ring0 hops=11
+log ring5 hops=10
+log ring4 hops=9
+log ring3 hops=8
+log ring2 hops=7
+log ring1 hops=6
+log ring5 hops=5
+log ring0 hops=4
+log ring4 hops=3
+log ring3 hops=2
+log ring2 hops=1
+log ring1 hops=0
+log ring5 hops=0
+log ring0 hops=0
+log ring4 hops=0
+log ring3 hops=0
+log ring2 hops=0
+report rounds=4 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=3 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+poll 2 #3.0 ring3
+end #3.0 ring3
+poll 3 #2.0 ring2
+end #2.0 ring2
+round 2
+wake #5.0 Manual
+wake #4.0 Manual
+wake #3.0 Manual
+poll 4 #4.0 ring4
+end #4.0 ring4
+poll 5 #3.0 ring3
+end #3.0 ring3
+poll 6 #1.0 ring1
+end #1.0 ring1
+round 3
+wake #5.0 Manual
+wake #4.0 Manual
+wake #2.0 Manual
+poll 7 #4.0 ring4
+end #4.0 ring4
+poll 8 #2.0 ring2
+end #2.0 ring2
+poll 9 #0.0 ring0
+end #0.0 ring0
+round 4
+wake #5.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 10 #3.0 ring3
+end #3.0 ring3
+poll 11 #1.0 ring1
+end #1.0 ring1
+poll 12 #5.0 ring5
+end #5.0 ring5
+round 5
+wake #4.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 13 #4.0 ring4
+end #4.0 ring4
+poll 14 #2.0 ring2
+end #2.0 ring2
+poll 15 #0.0 ring0
+end #0.0 ring0
+round 6
+wake #5.0 Manual
+wake #3.0 Manual
+wake #1.0 Manual
+poll 16 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+poll 17 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+poll 18 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 7
+wake #4.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 19 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+poll 20 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+poll 21 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring3 hops=11
+log ring1 hops=10
+log ring4 hops=9
+log ring2 hops=8
+log ring0 hops=7
+log ring3 hops=6
+log ring1 hops=5
+log ring5 hops=4
+log ring4 hops=3
+log ring2 hops=2
+log ring0 hops=1
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+log ring4 hops=0
+log ring2 hops=0
+log ring0 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=3 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring2 hops=13
+log ring4 hops=12
+log ring3 hops=11
+log ring1 hops=10
+log ring4 hops=9
+log ring2 hops=8
+log ring0 hops=7
+log ring3 hops=6
+log ring1 hops=5
+log ring5 hops=4
+log ring4 hops=3
+log ring2 hops=2
+log ring0 hops=1
+log ring3 hops=0
+log ring1 hops=0
+log ring5 hops=0
+log ring4 hops=0
+log ring2 hops=0
+log ring0 hops=0
+report rounds=7 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=1 traced=true
+spawn #0.0 ring0
+spawn #1.0 ring1
+spawn #2.0 ring2
+spawn #3.0 ring3
+spawn #4.0 ring4
+spawn #5.0 ring5
+round 1
+poll 1 #4.0 ring4
+end #4.0 ring4
+round 2
+wake #5.0 Manual
+poll 2 #3.0 ring3
+end #3.0 ring3
+round 3
+wake #4.0 Manual
+poll 3 #4.0 ring4
+end #4.0 ring4
+round 4
+wake #5.0 Manual
+poll 4 #2.0 ring2
+end #2.0 ring2
+round 5
+wake #3.0 Manual
+poll 5 #3.0 ring3
+end #3.0 ring3
+round 6
+wake #4.0 Manual
+poll 6 #4.0 ring4
+end #4.0 ring4
+round 7
+wake #5.0 Manual
+poll 7 #1.0 ring1
+end #1.0 ring1
+round 8
+wake #2.0 Manual
+poll 8 #2.0 ring2
+end #2.0 ring2
+round 9
+wake #3.0 Manual
+poll 9 #3.0 ring3
+end #3.0 ring3
+round 10
+wake #4.0 Manual
+poll 10 #4.0 ring4
+end #4.0 ring4
+round 11
+wake #5.0 Manual
+poll 11 #0.0 ring0
+end #0.0 ring0
+round 12
+wake #1.0 Manual
+poll 12 #1.0 ring1
+end #1.0 ring1
+round 13
+wake #2.0 Manual
+poll 13 #2.0 ring2
+end #2.0 ring2
+round 14
+wake #3.0 Manual
+poll 14 #3.0 ring3
+end #3.0 ring3
+round 15
+wake #4.0 Manual
+poll 15 #4.0 ring4
+end #4.0 ring4
+round 16
+wake #5.0 Manual
+poll 16 #5.0 ring5
+end #5.0 ring5
+done #5.0 ring5 Completed
+round 17
+wake #0.0 Manual
+poll 17 #0.0 ring0
+end #0.0 ring0
+done #0.0 ring0 Completed
+round 18
+wake #1.0 Manual
+poll 18 #1.0 ring1
+end #1.0 ring1
+done #1.0 ring1 Completed
+round 19
+wake #2.0 Manual
+poll 19 #2.0 ring2
+end #2.0 ring2
+done #2.0 ring2 Completed
+round 20
+wake #3.0 Manual
+poll 20 #3.0 ring3
+end #3.0 ring3
+done #3.0 ring3 Completed
+round 21
+wake #4.0 Manual
+poll 21 #4.0 ring4
+end #4.0 ring4
+done #4.0 ring4 Completed
+log ring4 hops=15
+log ring3 hops=14
+log ring4 hops=13
+log ring2 hops=12
+log ring3 hops=11
+log ring4 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== ring biased_qos_then_age budget=1 traced=false
+log ring4 hops=15
+log ring3 hops=14
+log ring4 hops=13
+log ring2 hops=12
+log ring3 hops=11
+log ring4 hops=10
+log ring1 hops=9
+log ring2 hops=8
+log ring3 hops=7
+log ring4 hops=6
+log ring0 hops=5
+log ring1 hops=4
+log ring2 hops=3
+log ring3 hops=2
+log ring4 hops=1
+log ring5 hops=0
+log ring0 hops=0
+log ring1 hops=0
+log ring2 hops=0
+log ring3 hops=0
+log ring4 hops=0
+report rounds=21 polls=21 completed=6 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=18446744073709551615 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #4.0 d
+end #4.0 d
+poll 6 #5.0 all
+end #5.0 all
+poll 7 #6.0 sel
+end #6.0 sel
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+poll 8 #7.0 child0
+end #7.0 child0
+poll 9 #8.0 child1
+end #8.0 child1
+poll 10 #9.0 child2
+end #9.0 child2
+poll 11 #10.0 child3
+end #10.0 child3
+poll 12 #11.0 child4
+end #11.0 child4
+poll 13 #12.0 child5
+end #12.0 child5
+poll 14 #13.0 child6
+end #13.0 child6
+poll 15 #0.0 parent
+end #0.0 parent
+poll 16 #1.0 a
+end #1.0 a
+poll 17 #2.0 b
+end #2.0 b
+poll 18 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 19 #4.0 d
+end #4.0 d
+round 3
+wake #7.0 Manual
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+wake #12.0 Manual
+wake #13.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+poll 20 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 21 #8.0 child1
+end #8.0 child1
+poll 22 #9.0 child2
+end #9.0 child2
+poll 23 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 24 #11.0 child4
+end #11.0 child4
+poll 25 #12.0 child5
+end #12.0 child5
+poll 26 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+poll 27 #0.0 parent
+end #0.0 parent
+poll 28 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 29 #2.0 b
+end #2.0 b
+poll 30 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 31 #4.0 d
+end #4.0 d
+round 4
+wake #8.0 Manual
+wake #9.0 Manual
+wake #11.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #5.0 Join
+wake #2.0 Manual
+wake #4.0 Manual
+poll 32 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 33 #9.0 child2
+end #9.0 child2
+poll 34 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 35 #12.0 child5
+end #12.0 child5
+poll 36 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 37 #5.0 all
+end #5.0 all
+poll 38 #2.0 b
+end #2.0 b
+poll 39 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 5
+wake #9.0 Manual
+wake #12.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 6
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=18446744073709551615 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=3 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #4.0 d
+end #4.0 d
+poll 6 #5.0 all
+end #5.0 all
+round 3
+wake #3.0 Manual
+wake #4.0 Manual
+poll 7 #6.0 sel
+end #6.0 sel
+poll 8 #7.0 child0
+end #7.0 child0
+poll 9 #8.0 child1
+end #8.0 child1
+round 4
+wake #7.0 Manual
+wake #8.0 Manual
+poll 10 #9.0 child2
+end #9.0 child2
+poll 11 #10.0 child3
+end #10.0 child3
+poll 12 #11.0 child4
+end #11.0 child4
+round 5
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+poll 13 #12.0 child5
+end #12.0 child5
+poll 14 #13.0 child6
+end #13.0 child6
+poll 15 #0.0 parent
+end #0.0 parent
+round 6
+wake #12.0 Manual
+wake #13.0 Manual
+wake #0.0 Manual
+poll 16 #1.0 a
+end #1.0 a
+poll 17 #2.0 b
+end #2.0 b
+poll 18 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 7
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+poll 19 #4.0 d
+end #4.0 d
+poll 20 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 21 #8.0 child1
+end #8.0 child1
+round 8
+wake #4.0 Manual
+wake #8.0 Manual
+poll 22 #9.0 child2
+end #9.0 child2
+poll 23 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 24 #11.0 child4
+end #11.0 child4
+round 9
+wake #9.0 Manual
+wake #11.0 Manual
+poll 25 #12.0 child5
+end #12.0 child5
+poll 26 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+poll 27 #0.0 parent
+end #0.0 parent
+round 10
+wake #12.0 Manual
+wake #0.0 Manual
+poll 28 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 29 #2.0 b
+end #2.0 b
+poll 30 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 11
+wake #5.0 Join
+wake #2.0 Manual
+poll 31 #4.0 d
+end #4.0 d
+poll 32 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 33 #9.0 child2
+end #9.0 child2
+round 12
+wake #4.0 Manual
+wake #9.0 Manual
+poll 34 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 35 #12.0 child5
+end #12.0 child5
+poll 36 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 13
+wake #12.0 Manual
+poll 37 #5.0 all
+end #5.0 all
+poll 38 #2.0 b
+end #2.0 b
+poll 39 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 14
+wake #2.0 Manual
+wake #6.0 Join
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 15
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=3 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=1 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+round 2
+wake #0.0 Manual
+poll 2 #1.0 a
+end #1.0 a
+round 3
+wake #1.0 Manual
+poll 3 #2.0 b
+end #2.0 b
+round 4
+wake #2.0 Manual
+poll 4 #3.0 c
+end #3.0 c
+round 5
+wake #3.0 Manual
+poll 5 #4.0 d
+end #4.0 d
+round 6
+wake #4.0 Manual
+poll 6 #5.0 all
+end #5.0 all
+round 7
+poll 7 #6.0 sel
+end #6.0 sel
+round 8
+poll 8 #7.0 child0
+end #7.0 child0
+round 9
+wake #7.0 Manual
+poll 9 #8.0 child1
+end #8.0 child1
+round 10
+wake #8.0 Manual
+poll 10 #9.0 child2
+end #9.0 child2
+round 11
+wake #9.0 Manual
+poll 11 #10.0 child3
+end #10.0 child3
+round 12
+wake #10.0 Manual
+poll 12 #11.0 child4
+end #11.0 child4
+round 13
+wake #11.0 Manual
+poll 13 #12.0 child5
+end #12.0 child5
+round 14
+wake #12.0 Manual
+poll 14 #13.0 child6
+end #13.0 child6
+round 15
+wake #13.0 Manual
+poll 15 #0.0 parent
+end #0.0 parent
+round 16
+wake #0.0 Manual
+poll 16 #1.0 a
+end #1.0 a
+round 17
+wake #1.0 Manual
+poll 17 #2.0 b
+end #2.0 b
+round 18
+wake #2.0 Manual
+poll 18 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 19
+wake #6.0 Join
+poll 19 #4.0 d
+end #4.0 d
+round 20
+wake #4.0 Manual
+poll 20 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+round 21
+poll 21 #8.0 child1
+end #8.0 child1
+round 22
+wake #8.0 Manual
+poll 22 #9.0 child2
+end #9.0 child2
+round 23
+wake #9.0 Manual
+poll 23 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 24
+poll 24 #11.0 child4
+end #11.0 child4
+round 25
+wake #11.0 Manual
+poll 25 #12.0 child5
+end #12.0 child5
+round 26
+wake #12.0 Manual
+poll 26 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+round 27
+poll 27 #0.0 parent
+end #0.0 parent
+round 28
+wake #0.0 Manual
+poll 28 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 29
+wake #5.0 Join
+poll 29 #2.0 b
+end #2.0 b
+round 30
+wake #2.0 Manual
+poll 30 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 31
+poll 31 #4.0 d
+end #4.0 d
+round 32
+wake #4.0 Manual
+poll 32 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 33
+poll 33 #9.0 child2
+end #9.0 child2
+round 34
+wake #9.0 Manual
+poll 34 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+round 35
+poll 35 #12.0 child5
+end #12.0 child5
+round 36
+wake #12.0 Manual
+poll 36 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 37
+poll 37 #5.0 all
+end #5.0 all
+round 38
+poll 38 #2.0 b
+end #2.0 b
+round 39
+wake #2.0 Manual
+poll 39 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 40
+wake #6.0 Join
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+round 41
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+round 42
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 43
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join fifo budget=1 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 1
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=18446744073709551615 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #6.0 sel
+end #6.0 sel
+poll 2 #5.0 all
+end #5.0 all
+poll 3 #4.0 d
+end #4.0 d
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #2.0 b
+end #2.0 b
+poll 6 #1.0 a
+end #1.0 a
+poll 7 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+round 2
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 8 #0.0 parent
+end #0.0 parent
+poll 9 #1.0 a
+end #1.0 a
+poll 10 #2.0 b
+end #2.0 b
+poll 11 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 12 #4.0 d
+end #4.0 d
+poll 13 #13.0 child6
+end #13.0 child6
+poll 14 #12.0 child5
+end #12.0 child5
+poll 15 #11.0 child4
+end #11.0 child4
+poll 16 #10.0 child3
+end #10.0 child3
+poll 17 #9.0 child2
+end #9.0 child2
+poll 18 #8.0 child1
+end #8.0 child1
+poll 19 #7.0 child0
+end #7.0 child0
+round 3
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+wake #13.0 Manual
+wake #12.0 Manual
+wake #11.0 Manual
+wake #10.0 Manual
+wake #9.0 Manual
+wake #8.0 Manual
+wake #7.0 Manual
+poll 20 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 21 #8.0 child1
+end #8.0 child1
+poll 22 #9.0 child2
+end #9.0 child2
+poll 23 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 24 #11.0 child4
+end #11.0 child4
+poll 25 #12.0 child5
+end #12.0 child5
+poll 26 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+poll 27 #4.0 d
+end #4.0 d
+poll 28 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 29 #2.0 b
+end #2.0 b
+poll 30 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 31 #0.0 parent
+end #0.0 parent
+round 4
+wake #8.0 Manual
+wake #9.0 Manual
+wake #11.0 Manual
+wake #12.0 Manual
+wake #4.0 Manual
+wake #2.0 Manual
+wake #5.0 Join
+wake #0.0 Manual
+poll 32 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 33 #5.0 all
+end #5.0 all
+poll 34 #2.0 b
+end #2.0 b
+poll 35 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+poll 36 #12.0 child5
+end #12.0 child5
+poll 37 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 38 #9.0 child2
+end #9.0 child2
+poll 39 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 5
+wake #2.0 Manual
+wake #6.0 Join
+wake #12.0 Manual
+wake #9.0 Manual
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 6
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log d 3
+log c 1
+log b 4
+log a 2
+log parent 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 3
+log child 2
+log child 1
+log child 3
+log child 2
+log child 1
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log d 1
+log b 2
+log a 0
+log parent 3
+log parent 4
+log b 1
+log d 0
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=18446744073709551615 traced=false
+log d 3
+log c 1
+log b 4
+log a 2
+log parent 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 3
+log child 2
+log child 1
+log child 3
+log child 2
+log child 1
+log child 0
+log child 1
+log child 2
+log child 0
+log child 1
+log child 2
+log child 0
+log d 1
+log b 2
+log a 0
+log parent 3
+log parent 4
+log b 1
+log d 0
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=3 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #6.0 sel
+end #6.0 sel
+poll 2 #5.0 all
+end #5.0 all
+poll 3 #4.0 d
+end #4.0 d
+round 2
+wake #4.0 Manual
+poll 4 #4.0 d
+end #4.0 d
+poll 5 #3.0 c
+end #3.0 c
+poll 6 #2.0 b
+end #2.0 b
+round 3
+wake #4.0 Manual
+wake #3.0 Manual
+wake #2.0 Manual
+poll 7 #2.0 b
+end #2.0 b
+poll 8 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 9 #4.0 d
+end #4.0 d
+round 4
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+poll 10 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+poll 11 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 12 #2.0 b
+end #2.0 b
+round 5
+wake #6.0 Join
+wake #2.0 Manual
+poll 13 #2.0 b
+end #2.0 b
+poll 14 #1.0 a
+end #1.0 a
+poll 15 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #6.1 child0
+defer #0.0 child1
+spawn #4.1 child1
+defer #0.0 child2
+spawn #3.1 child2
+defer #0.0 child3
+spawn #7.0 child3
+defer #0.0 child4
+spawn #8.0 child4
+defer #0.0 child5
+spawn #9.0 child5
+defer #0.0 child6
+spawn #10.0 child6
+round 6
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 16 #0.0 parent
+end #0.0 parent
+poll 17 #1.0 a
+end #1.0 a
+poll 18 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 7
+wake #0.0 Manual
+wake #1.0 Manual
+wake #5.0 Join
+poll 19 #5.0 all
+end #5.0 all
+poll 20 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 21 #0.0 parent
+end #0.0 parent
+round 8
+wake #5.0 Join
+wake #0.0 Manual
+poll 22 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 23 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+poll 24 #10.0 child6
+end #10.0 child6
+round 9
+wake #10.0 Manual
+poll 25 #10.0 child6
+end #10.0 child6
+done #10.0 child6 Completed
+poll 26 #9.0 child5
+end #9.0 child5
+poll 27 #8.0 child4
+end #8.0 child4
+round 10
+wake #9.0 Manual
+wake #8.0 Manual
+poll 28 #8.0 child4
+end #8.0 child4
+poll 29 #9.0 child5
+end #9.0 child5
+poll 30 #7.0 child3
+end #7.0 child3
+round 11
+wake #8.0 Manual
+wake #9.0 Manual
+wake #7.0 Manual
+poll 31 #7.0 child3
+end #7.0 child3
+done #7.0 child3 Completed
+poll 32 #9.0 child5
+end #9.0 child5
+poll 33 #8.0 child4
+end #8.0 child4
+done #8.0 child4 Completed
+round 12
+wake #9.0 Manual
+poll 34 #9.0 child5
+end #9.0 child5
+done #9.0 child5 Completed
+poll 35 #3.1 child2
+end #3.1 child2
+poll 36 #4.1 child1
+end #4.1 child1
+round 13
+wake #3.1 Manual
+wake #4.1 Manual
+poll 37 #4.1 child1
+end #4.1 child1
+poll 38 #3.1 child2
+end #3.1 child2
+poll 39 #6.1 child0
+end #6.1 child0
+round 14
+wake #4.1 Manual
+wake #3.1 Manual
+wake #6.1 Manual
+poll 40 #6.1 child0
+end #6.1 child0
+done #6.1 child0 Completed
+poll 41 #3.1 child2
+end #3.1 child2
+poll 42 #4.1 child1
+end #4.1 child1
+done #4.1 child1 Completed
+round 15
+wake #3.1 Manual
+poll 43 #3.1 child2
+end #3.1 child2
+done #3.1 child2 Completed
+log d 3
+log d 2
+log c 1
+log b 4
+log b 3
+log c 0
+log d 1
+log d 0
+log b 2
+log b 1
+log a 2
+log parent 1
+log parent 2
+log a 1
+log b 0
+log a 0
+log parent 3
+log parent 4
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+log child 3
+log child 2
+log child 1
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=3 traced=false
+log d 3
+log d 2
+log c 1
+log b 4
+log b 3
+log c 0
+log d 1
+log d 0
+log b 2
+log b 1
+log a 2
+log parent 1
+log parent 2
+log a 1
+log b 0
+log a 0
+log parent 3
+log parent 4
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+log child 3
+log child 2
+log child 1
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=1 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #6.0 sel
+end #6.0 sel
+round 2
+poll 2 #5.0 all
+end #5.0 all
+round 3
+poll 3 #4.0 d
+end #4.0 d
+round 4
+wake #4.0 Manual
+poll 4 #4.0 d
+end #4.0 d
+round 5
+wake #4.0 Manual
+poll 5 #4.0 d
+end #4.0 d
+round 6
+wake #4.0 Manual
+poll 6 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 7
+wake #6.0 Join
+poll 7 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 8
+poll 8 #3.0 c
+end #3.0 c
+round 9
+wake #3.0 Manual
+poll 9 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 10
+wake #6.0 Join
+poll 10 #2.0 b
+end #2.0 b
+round 11
+wake #2.0 Manual
+poll 11 #2.0 b
+end #2.0 b
+round 12
+wake #2.0 Manual
+poll 12 #2.0 b
+end #2.0 b
+round 13
+wake #2.0 Manual
+poll 13 #2.0 b
+end #2.0 b
+round 14
+wake #2.0 Manual
+poll 14 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 15
+wake #5.0 Join
+poll 15 #5.0 all
+end #5.0 all
+round 16
+poll 16 #1.0 a
+end #1.0 a
+round 17
+wake #1.0 Manual
+poll 17 #1.0 a
+end #1.0 a
+round 18
+wake #1.0 Manual
+poll 18 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 19
+wake #5.0 Join
+poll 19 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+round 20
+poll 20 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #5.1 child0
+defer #0.0 child1
+spawn #1.1 child1
+defer #0.0 child2
+spawn #2.1 child2
+defer #0.0 child3
+spawn #3.1 child3
+defer #0.0 child4
+spawn #6.1 child4
+defer #0.0 child5
+spawn #4.1 child5
+defer #0.0 child6
+spawn #7.0 child6
+round 21
+wake #0.0 Manual
+poll 21 #0.0 parent
+end #0.0 parent
+round 22
+wake #0.0 Manual
+poll 22 #0.0 parent
+end #0.0 parent
+round 23
+wake #0.0 Manual
+poll 23 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 24
+poll 24 #7.0 child6
+end #7.0 child6
+round 25
+wake #7.0 Manual
+poll 25 #7.0 child6
+end #7.0 child6
+done #7.0 child6 Completed
+round 26
+poll 26 #4.1 child5
+end #4.1 child5
+round 27
+wake #4.1 Manual
+poll 27 #4.1 child5
+end #4.1 child5
+round 28
+wake #4.1 Manual
+poll 28 #4.1 child5
+end #4.1 child5
+round 29
+wake #4.1 Manual
+poll 29 #4.1 child5
+end #4.1 child5
+done #4.1 child5 Completed
+round 30
+poll 30 #6.1 child4
+end #6.1 child4
+round 31
+wake #6.1 Manual
+poll 31 #6.1 child4
+end #6.1 child4
+round 32
+wake #6.1 Manual
+poll 32 #6.1 child4
+end #6.1 child4
+done #6.1 child4 Completed
+round 33
+poll 33 #3.1 child3
+end #3.1 child3
+round 34
+wake #3.1 Manual
+poll 34 #3.1 child3
+end #3.1 child3
+done #3.1 child3 Completed
+round 35
+poll 35 #2.1 child2
+end #2.1 child2
+round 36
+wake #2.1 Manual
+poll 36 #2.1 child2
+end #2.1 child2
+round 37
+wake #2.1 Manual
+poll 37 #2.1 child2
+end #2.1 child2
+round 38
+wake #2.1 Manual
+poll 38 #2.1 child2
+end #2.1 child2
+done #2.1 child2 Completed
+round 39
+poll 39 #1.1 child1
+end #1.1 child1
+round 40
+wake #1.1 Manual
+poll 40 #1.1 child1
+end #1.1 child1
+round 41
+wake #1.1 Manual
+poll 41 #1.1 child1
+end #1.1 child1
+done #1.1 child1 Completed
+round 42
+poll 42 #5.1 child0
+end #5.1 child0
+round 43
+wake #5.1 Manual
+poll 43 #5.1 child0
+end #5.1 child0
+done #5.1 child0 Completed
+log d 3
+log d 2
+log d 1
+log d 0
+log c 1
+log c 0
+log b 4
+log b 3
+log b 2
+log b 1
+log b 0
+log a 2
+log a 1
+log a 0
+log parent 1
+log parent 2
+log parent 3
+log parent 4
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 0
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 0
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join lifo budget=1 traced=false
+log d 3
+log d 2
+log d 1
+log d 0
+log c 1
+log c 0
+log b 4
+log b 3
+log b 2
+log b 1
+log b 0
+log a 2
+log a 1
+log a 0
+log parent 1
+log parent 2
+log parent 3
+log parent 4
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 0
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+log child 3
+log child 2
+log child 1
+log child 0
+log child 2
+log child 1
+log child 0
+log child 1
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=18446744073709551615 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #4.0 d
+end #4.0 d
+poll 6 #5.0 all
+end #5.0 all
+poll 7 #6.0 sel
+end #6.0 sel
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+poll 8 #8.0 child1
+end #8.0 child1
+poll 9 #9.0 child2
+end #9.0 child2
+poll 10 #10.0 child3
+end #10.0 child3
+poll 11 #11.0 child4
+end #11.0 child4
+poll 12 #12.0 child5
+end #12.0 child5
+poll 13 #13.0 child6
+end #13.0 child6
+poll 14 #0.0 parent
+end #0.0 parent
+poll 15 #1.0 a
+end #1.0 a
+poll 16 #2.0 b
+end #2.0 b
+poll 17 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 18 #4.0 d
+end #4.0 d
+poll 19 #7.0 child0
+end #7.0 child0
+round 3
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+wake #11.0 Manual
+wake #12.0 Manual
+wake #13.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+wake #7.0 Manual
+poll 20 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 21 #11.0 child4
+end #11.0 child4
+poll 22 #12.0 child5
+end #12.0 child5
+poll 23 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+poll 24 #0.0 parent
+end #0.0 parent
+poll 25 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 26 #2.0 b
+end #2.0 b
+poll 27 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 28 #4.0 d
+end #4.0 d
+poll 29 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 30 #8.0 child1
+end #8.0 child1
+poll 31 #9.0 child2
+end #9.0 child2
+round 4
+wake #11.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #5.0 Join
+wake #2.0 Manual
+wake #4.0 Manual
+wake #8.0 Manual
+wake #9.0 Manual
+poll 32 #5.0 all
+end #5.0 all
+poll 33 #2.0 b
+end #2.0 b
+poll 34 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+poll 35 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 36 #9.0 child2
+end #9.0 child2
+poll 37 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 38 #12.0 child5
+end #12.0 child5
+poll 39 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 5
+wake #2.0 Manual
+wake #6.0 Join
+wake #9.0 Manual
+wake #12.0 Manual
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 6
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 2
+log b 1
+log d 0
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=18446744073709551615 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 3
+log child 1
+log child 2
+log child 3
+log child 1
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 0
+log child 1
+log child 2
+log child 0
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 1
+log child 2
+log b 1
+log d 0
+log child 0
+log child 1
+log child 0
+log child 1
+log parent 4
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=3 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #4.0 d
+end #4.0 d
+poll 5 #5.0 all
+end #5.0 all
+poll 6 #6.0 sel
+end #6.0 sel
+round 3
+wake #4.0 Manual
+poll 7 #8.0 child1
+end #8.0 child1
+poll 8 #9.0 child2
+end #9.0 child2
+poll 9 #10.0 child3
+end #10.0 child3
+round 4
+wake #8.0 Manual
+wake #9.0 Manual
+wake #10.0 Manual
+poll 10 #12.0 child5
+end #12.0 child5
+poll 11 #13.0 child6
+end #13.0 child6
+poll 12 #0.0 parent
+end #0.0 parent
+round 5
+wake #12.0 Manual
+wake #13.0 Manual
+wake #0.0 Manual
+poll 13 #2.0 b
+end #2.0 b
+poll 14 #4.0 d
+end #4.0 d
+poll 15 #8.0 child1
+end #8.0 child1
+round 6
+wake #2.0 Manual
+wake #4.0 Manual
+wake #8.0 Manual
+poll 16 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 17 #12.0 child5
+end #12.0 child5
+poll 18 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+round 7
+wake #12.0 Manual
+poll 19 #2.0 b
+end #2.0 b
+poll 20 #4.0 d
+end #4.0 d
+poll 21 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 8
+wake #2.0 Manual
+wake #4.0 Manual
+poll 22 #2.0 b
+end #2.0 b
+poll 23 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+poll 24 #3.0 c
+end #3.0 c
+round 9
+wake #2.0 Manual
+wake #6.0 Join
+wake #3.0 Manual
+poll 25 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 26 #7.0 child0
+end #7.0 child0
+poll 27 #11.0 child4
+end #11.0 child4
+round 10
+wake #6.0 Join
+wake #7.0 Manual
+wake #11.0 Manual
+poll 28 #9.0 child2
+end #9.0 child2
+poll 29 #0.0 parent
+end #0.0 parent
+poll 30 #12.0 child5
+end #12.0 child5
+round 11
+wake #9.0 Manual
+wake #0.0 Manual
+wake #12.0 Manual
+poll 31 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 32 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 33 #11.0 child4
+end #11.0 child4
+round 12
+wake #11.0 Manual
+poll 34 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 35 #1.0 a
+end #1.0 a
+poll 36 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 13
+wake #1.0 Manual
+wake #5.0 Join
+poll 37 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 38 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 39 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+round 14
+wake #5.0 Join
+poll 40 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 41 #9.0 child2
+end #9.0 child2
+round 15
+wake #9.0 Manual
+poll 42 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+log parent 1
+log a 2
+log b 4
+log d 3
+log child 2
+log child 3
+log child 1
+log child 3
+log child 1
+log parent 2
+log b 3
+log d 2
+log child 1
+log child 0
+log child 2
+log child 0
+log b 2
+log d 1
+log child 0
+log b 1
+log d 0
+log c 1
+log c 0
+log child 1
+log child 2
+log child 2
+log parent 3
+log child 1
+log child 0
+log child 1
+log child 0
+log a 1
+log b 0
+log child 0
+log a 0
+log parent 4
+log child 1
+log child 0
+report rounds=15 polls=42 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=3 traced=false
+log parent 1
+log a 2
+log b 4
+log d 3
+log child 2
+log child 3
+log child 1
+log child 3
+log child 1
+log parent 2
+log b 3
+log d 2
+log child 1
+log child 0
+log child 2
+log child 0
+log b 2
+log d 1
+log child 0
+log b 1
+log d 0
+log c 1
+log c 0
+log child 1
+log child 2
+log child 2
+log parent 3
+log child 1
+log child 0
+log child 1
+log child 0
+log a 1
+log b 0
+log child 0
+log a 0
+log parent 4
+log child 1
+log child 0
+report rounds=15 polls=42 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=1 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+round 2
+wake #0.0 Manual
+poll 2 #2.0 b
+end #2.0 b
+round 3
+wake #2.0 Manual
+poll 3 #4.0 d
+end #4.0 d
+round 4
+wake #4.0 Manual
+poll 4 #6.0 sel
+end #6.0 sel
+round 5
+poll 5 #8.0 child1
+end #8.0 child1
+round 6
+wake #8.0 Manual
+poll 6 #10.0 child3
+end #10.0 child3
+round 7
+wake #10.0 Manual
+poll 7 #12.0 child5
+end #12.0 child5
+round 8
+wake #12.0 Manual
+poll 8 #0.0 parent
+end #0.0 parent
+round 9
+wake #0.0 Manual
+poll 9 #4.0 d
+end #4.0 d
+round 10
+wake #4.0 Manual
+poll 10 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 11
+poll 11 #0.0 parent
+end #0.0 parent
+round 12
+wake #0.0 Manual
+poll 12 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 13
+poll 13 #3.0 c
+end #3.0 c
+round 14
+wake #3.0 Manual
+poll 14 #7.0 child0
+end #7.0 child0
+round 15
+wake #7.0 Manual
+poll 15 #11.0 child4
+end #11.0 child4
+round 16
+wake #11.0 Manual
+poll 16 #2.0 b
+end #2.0 b
+round 17
+wake #2.0 Manual
+poll 17 #12.0 child5
+end #12.0 child5
+round 18
+wake #12.0 Manual
+poll 18 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 19
+wake #6.0 Join
+poll 19 #11.0 child4
+end #11.0 child4
+round 20
+wake #11.0 Manual
+poll 20 #12.0 child5
+end #12.0 child5
+round 21
+wake #12.0 Manual
+poll 21 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+round 22
+poll 22 #5.0 all
+end #5.0 all
+round 23
+poll 23 #4.0 d
+end #4.0 d
+round 24
+wake #4.0 Manual
+poll 24 #2.0 b
+end #2.0 b
+round 25
+wake #2.0 Manual
+poll 25 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+round 26
+poll 26 #9.0 child2
+end #9.0 child2
+round 27
+wake #9.0 Manual
+poll 27 #8.0 child1
+end #8.0 child1
+round 28
+wake #8.0 Manual
+poll 28 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 29
+poll 29 #1.0 a
+end #1.0 a
+round 30
+wake #1.0 Manual
+poll 30 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+round 31
+poll 31 #13.0 child6
+end #13.0 child6
+round 32
+wake #13.0 Manual
+poll 32 #2.0 b
+end #2.0 b
+round 33
+wake #2.0 Manual
+poll 33 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 34
+poll 34 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+round 35
+poll 35 #1.0 a
+end #1.0 a
+round 36
+wake #1.0 Manual
+poll 36 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 37
+wake #5.0 Join
+poll 37 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 38
+wake #6.0 Join
+poll 38 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 39
+wake #5.0 Join
+poll 39 #9.0 child2
+end #9.0 child2
+round 40
+wake #9.0 Manual
+poll 40 #9.0 child2
+end #9.0 child2
+round 41
+wake #9.0 Manual
+poll 41 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+round 42
+poll 42 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+log parent 1
+log b 4
+log d 3
+log child 2
+log child 1
+log child 3
+log parent 2
+log d 2
+log child 0
+log parent 3
+log parent 4
+log c 1
+log child 1
+log child 2
+log b 3
+log child 2
+log c 0
+log child 1
+log child 1
+log child 0
+log d 1
+log b 2
+log child 0
+log child 3
+log child 1
+log a 2
+log child 0
+log child 1
+log b 1
+log child 0
+log child 0
+log a 1
+log a 0
+log d 0
+log b 0
+log child 2
+log child 1
+log child 0
+report rounds=42 polls=42 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join round_robin budget=1 traced=false
+log parent 1
+log b 4
+log d 3
+log child 2
+log child 1
+log child 3
+log parent 2
+log d 2
+log child 0
+log parent 3
+log parent 4
+log c 1
+log child 1
+log child 2
+log b 3
+log child 2
+log c 0
+log child 1
+log child 1
+log child 0
+log d 1
+log b 2
+log child 0
+log child 3
+log child 1
+log a 2
+log child 0
+log child 1
+log b 1
+log child 0
+log child 0
+log a 1
+log a 0
+log d 0
+log b 0
+log child 2
+log child 1
+log child 0
+report rounds=42 polls=42 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=18446744073709551615 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #4.0 d
+end #4.0 d
+poll 6 #5.0 all
+end #5.0 all
+poll 7 #6.0 sel
+end #6.0 sel
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+poll 8 #8.0 child1
+end #8.0 child1
+poll 9 #11.0 child4
+end #11.0 child4
+poll 10 #9.0 child2
+end #9.0 child2
+poll 11 #12.0 child5
+end #12.0 child5
+poll 12 #0.0 parent
+end #0.0 parent
+poll 13 #1.0 a
+end #1.0 a
+poll 14 #2.0 b
+end #2.0 b
+poll 15 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 16 #4.0 d
+end #4.0 d
+poll 17 #7.0 child0
+end #7.0 child0
+poll 18 #10.0 child3
+end #10.0 child3
+poll 19 #13.0 child6
+end #13.0 child6
+round 3
+wake #8.0 Manual
+wake #11.0 Manual
+wake #9.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+wake #7.0 Manual
+wake #10.0 Manual
+wake #13.0 Manual
+poll 20 #8.0 child1
+end #8.0 child1
+poll 21 #11.0 child4
+end #11.0 child4
+poll 22 #9.0 child2
+end #9.0 child2
+poll 23 #12.0 child5
+end #12.0 child5
+poll 24 #0.0 parent
+end #0.0 parent
+poll 25 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 26 #2.0 b
+end #2.0 b
+poll 27 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 28 #4.0 d
+end #4.0 d
+poll 29 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 30 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 31 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+round 4
+wake #8.0 Manual
+wake #11.0 Manual
+wake #9.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #5.0 Join
+wake #2.0 Manual
+wake #4.0 Manual
+poll 32 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 33 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 34 #9.0 child2
+end #9.0 child2
+poll 35 #12.0 child5
+end #12.0 child5
+poll 36 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 37 #5.0 all
+end #5.0 all
+poll 38 #2.0 b
+end #2.0 b
+poll 39 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 5
+wake #9.0 Manual
+wake #12.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 6
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 2
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 1
+log child 1
+log child 1
+log child 1
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 0
+log child 0
+log child 0
+log child 0
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=18446744073709551615 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 2
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 1
+log child 1
+log child 1
+log child 1
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 0
+log child 0
+log child 0
+log child 0
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=3 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #8.0 child1
+end #8.0 child1
+poll 5 #11.0 child4
+end #11.0 child4
+poll 6 #3.0 c
+end #3.0 c
+round 3
+wake #8.0 Manual
+wake #11.0 Manual
+wake #3.0 Manual
+poll 7 #8.0 child1
+end #8.0 child1
+poll 8 #11.0 child4
+end #11.0 child4
+poll 9 #4.0 d
+end #4.0 d
+round 4
+wake #8.0 Manual
+wake #11.0 Manual
+wake #4.0 Manual
+poll 10 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 11 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 12 #5.0 all
+end #5.0 all
+round 5
+poll 13 #6.0 sel
+end #6.0 sel
+poll 14 #9.0 child2
+end #9.0 child2
+poll 15 #12.0 child5
+end #12.0 child5
+round 6
+wake #9.0 Manual
+wake #12.0 Manual
+poll 16 #0.0 parent
+end #0.0 parent
+poll 17 #1.0 a
+end #1.0 a
+poll 18 #2.0 b
+end #2.0 b
+round 7
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 19 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 20 #4.0 d
+end #4.0 d
+poll 21 #9.0 child2
+end #9.0 child2
+round 8
+wake #6.0 Join
+wake #4.0 Manual
+wake #9.0 Manual
+poll 22 #12.0 child5
+end #12.0 child5
+poll 23 #0.0 parent
+end #0.0 parent
+poll 24 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 9
+wake #12.0 Manual
+wake #0.0 Manual
+wake #5.0 Join
+poll 25 #2.0 b
+end #2.0 b
+poll 26 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 27 #4.0 d
+end #4.0 d
+round 10
+wake #2.0 Manual
+wake #4.0 Manual
+poll 28 #9.0 child2
+end #9.0 child2
+poll 29 #12.0 child5
+end #12.0 child5
+poll 30 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 11
+wake #9.0 Manual
+wake #12.0 Manual
+poll 31 #5.0 all
+end #5.0 all
+poll 32 #2.0 b
+end #2.0 b
+poll 33 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 12
+wake #2.0 Manual
+wake #6.0 Join
+poll 34 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 35 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 36 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 13
+wake #5.0 Join
+poll 37 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+poll 38 #7.0 child0
+end #7.0 child0
+poll 39 #10.0 child3
+end #10.0 child3
+round 14
+wake #7.0 Manual
+wake #10.0 Manual
+poll 40 #13.0 child6
+end #13.0 child6
+poll 41 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 42 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 15
+wake #13.0 Manual
+poll 43 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+log parent 1
+log a 2
+log b 4
+log child 2
+log child 2
+log c 1
+log child 1
+log child 1
+log d 3
+log child 0
+log child 0
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=3 traced=false
+log parent 1
+log a 2
+log b 4
+log child 2
+log child 2
+log c 1
+log child 1
+log child 1
+log d 3
+log child 0
+log child 0
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=1 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+round 2
+wake #0.0 Manual
+poll 2 #8.0 child1
+end #8.0 child1
+round 3
+wake #8.0 Manual
+poll 3 #11.0 child4
+end #11.0 child4
+round 4
+wake #11.0 Manual
+poll 4 #8.0 child1
+end #8.0 child1
+round 5
+wake #8.0 Manual
+poll 5 #11.0 child4
+end #11.0 child4
+round 6
+wake #11.0 Manual
+poll 6 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 7
+poll 7 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+round 8
+poll 8 #1.0 a
+end #1.0 a
+round 9
+wake #1.0 Manual
+poll 9 #2.0 b
+end #2.0 b
+round 10
+wake #2.0 Manual
+poll 10 #3.0 c
+end #3.0 c
+round 11
+wake #3.0 Manual
+poll 11 #4.0 d
+end #4.0 d
+round 12
+wake #4.0 Manual
+poll 12 #5.0 all
+end #5.0 all
+round 13
+poll 13 #6.0 sel
+end #6.0 sel
+round 14
+poll 14 #9.0 child2
+end #9.0 child2
+round 15
+wake #9.0 Manual
+poll 15 #12.0 child5
+end #12.0 child5
+round 16
+wake #12.0 Manual
+poll 16 #0.0 parent
+end #0.0 parent
+round 17
+wake #0.0 Manual
+poll 17 #1.0 a
+end #1.0 a
+round 18
+wake #1.0 Manual
+poll 18 #2.0 b
+end #2.0 b
+round 19
+wake #2.0 Manual
+poll 19 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 20
+wake #6.0 Join
+poll 20 #4.0 d
+end #4.0 d
+round 21
+wake #4.0 Manual
+poll 21 #9.0 child2
+end #9.0 child2
+round 22
+wake #9.0 Manual
+poll 22 #12.0 child5
+end #12.0 child5
+round 23
+wake #12.0 Manual
+poll 23 #0.0 parent
+end #0.0 parent
+round 24
+wake #0.0 Manual
+poll 24 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 25
+wake #5.0 Join
+poll 25 #2.0 b
+end #2.0 b
+round 26
+wake #2.0 Manual
+poll 26 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 27
+poll 27 #4.0 d
+end #4.0 d
+round 28
+wake #4.0 Manual
+poll 28 #9.0 child2
+end #9.0 child2
+round 29
+wake #9.0 Manual
+poll 29 #12.0 child5
+end #12.0 child5
+round 30
+wake #12.0 Manual
+poll 30 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 31
+poll 31 #5.0 all
+end #5.0 all
+round 32
+poll 32 #2.0 b
+end #2.0 b
+round 33
+wake #2.0 Manual
+poll 33 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 34
+wake #6.0 Join
+poll 34 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+round 35
+poll 35 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+round 36
+poll 36 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 37
+wake #5.0 Join
+poll 37 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+round 38
+poll 38 #7.0 child0
+end #7.0 child0
+round 39
+wake #7.0 Manual
+poll 39 #10.0 child3
+end #10.0 child3
+round 40
+wake #10.0 Manual
+poll 40 #13.0 child6
+end #13.0 child6
+round 41
+wake #13.0 Manual
+poll 41 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+round 42
+poll 42 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 43
+poll 43 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+log parent 1
+log child 2
+log child 2
+log child 1
+log child 1
+log child 0
+log child 0
+log a 2
+log b 4
+log c 1
+log d 3
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos budget=1 traced=false
+log parent 1
+log child 2
+log child 2
+log child 1
+log child 1
+log child 0
+log child 0
+log a 2
+log b 4
+log c 1
+log d 3
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=18446744073709551615 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+poll 4 #3.0 c
+end #3.0 c
+poll 5 #4.0 d
+end #4.0 d
+poll 6 #5.0 all
+end #5.0 all
+poll 7 #6.0 sel
+end #6.0 sel
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #3.0 Manual
+wake #4.0 Manual
+poll 8 #8.0 child1
+end #8.0 child1
+poll 9 #11.0 child4
+end #11.0 child4
+poll 10 #9.0 child2
+end #9.0 child2
+poll 11 #12.0 child5
+end #12.0 child5
+poll 12 #0.0 parent
+end #0.0 parent
+poll 13 #1.0 a
+end #1.0 a
+poll 14 #2.0 b
+end #2.0 b
+poll 15 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 16 #4.0 d
+end #4.0 d
+poll 17 #7.0 child0
+end #7.0 child0
+poll 18 #10.0 child3
+end #10.0 child3
+poll 19 #13.0 child6
+end #13.0 child6
+round 3
+wake #8.0 Manual
+wake #11.0 Manual
+wake #9.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+wake #4.0 Manual
+wake #7.0 Manual
+wake #10.0 Manual
+wake #13.0 Manual
+poll 20 #8.0 child1
+end #8.0 child1
+poll 21 #11.0 child4
+end #11.0 child4
+poll 22 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 23 #9.0 child2
+end #9.0 child2
+poll 24 #12.0 child5
+end #12.0 child5
+poll 25 #0.0 parent
+end #0.0 parent
+poll 26 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 27 #2.0 b
+end #2.0 b
+poll 28 #4.0 d
+end #4.0 d
+poll 29 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 30 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+poll 31 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+round 4
+wake #8.0 Manual
+wake #11.0 Manual
+wake #9.0 Manual
+wake #12.0 Manual
+wake #0.0 Manual
+wake #5.0 Join
+wake #2.0 Manual
+wake #4.0 Manual
+poll 32 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 33 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 34 #5.0 all
+end #5.0 all
+poll 35 #9.0 child2
+end #9.0 child2
+poll 36 #12.0 child5
+end #12.0 child5
+poll 37 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 38 #2.0 b
+end #2.0 b
+poll 39 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 5
+wake #9.0 Manual
+wake #12.0 Manual
+wake #2.0 Manual
+wake #6.0 Join
+poll 40 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 41 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 42 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 6
+wake #5.0 Join
+poll 43 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 2
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 1
+log child 1
+log child 1
+log child 1
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 0
+log child 0
+log child 0
+log child 0
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=18446744073709551615 traced=false
+log parent 1
+log a 2
+log b 4
+log c 1
+log d 3
+log child 2
+log child 2
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 1
+log child 1
+log child 1
+log child 1
+log child 1
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 0
+log child 0
+log child 0
+log child 0
+log child 0
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+report rounds=6 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=3 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+poll 2 #1.0 a
+end #1.0 a
+poll 3 #2.0 b
+end #2.0 b
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #8.0 child1
+end #8.0 child1
+poll 5 #11.0 child4
+end #11.0 child4
+poll 6 #3.0 c
+end #3.0 c
+round 3
+wake #8.0 Manual
+wake #11.0 Manual
+wake #3.0 Manual
+poll 7 #8.0 child1
+end #8.0 child1
+poll 8 #11.0 child4
+end #11.0 child4
+poll 9 #4.0 d
+end #4.0 d
+round 4
+wake #8.0 Manual
+wake #11.0 Manual
+wake #4.0 Manual
+poll 10 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+poll 11 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+poll 12 #5.0 all
+end #5.0 all
+round 5
+poll 13 #6.0 sel
+end #6.0 sel
+poll 14 #9.0 child2
+end #9.0 child2
+poll 15 #12.0 child5
+end #12.0 child5
+round 6
+wake #9.0 Manual
+wake #12.0 Manual
+poll 16 #0.0 parent
+end #0.0 parent
+poll 17 #1.0 a
+end #1.0 a
+poll 18 #2.0 b
+end #2.0 b
+round 7
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 19 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+poll 20 #4.0 d
+end #4.0 d
+poll 21 #9.0 child2
+end #9.0 child2
+round 8
+wake #6.0 Join
+wake #4.0 Manual
+wake #9.0 Manual
+poll 22 #12.0 child5
+end #12.0 child5
+poll 23 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+poll 24 #0.0 parent
+end #0.0 parent
+round 9
+wake #12.0 Manual
+wake #0.0 Manual
+poll 25 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+poll 26 #2.0 b
+end #2.0 b
+poll 27 #4.0 d
+end #4.0 d
+round 10
+wake #5.0 Join
+wake #2.0 Manual
+wake #4.0 Manual
+poll 28 #5.0 all
+end #5.0 all
+poll 29 #9.0 child2
+end #9.0 child2
+poll 30 #12.0 child5
+end #12.0 child5
+round 11
+wake #9.0 Manual
+wake #12.0 Manual
+poll 31 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+poll 32 #2.0 b
+end #2.0 b
+poll 33 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 12
+wake #2.0 Manual
+wake #6.0 Join
+poll 34 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+poll 35 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+poll 36 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 13
+wake #5.0 Join
+poll 37 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+poll 38 #7.0 child0
+end #7.0 child0
+poll 39 #10.0 child3
+end #10.0 child3
+round 14
+wake #7.0 Manual
+wake #10.0 Manual
+poll 40 #13.0 child6
+end #13.0 child6
+poll 41 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+poll 42 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 15
+wake #13.0 Manual
+poll 43 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+log parent 1
+log a 2
+log b 4
+log child 2
+log child 2
+log c 1
+log child 1
+log child 1
+log d 3
+log child 0
+log child 0
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=3 traced=false
+log parent 1
+log a 2
+log b 4
+log child 2
+log child 2
+log c 1
+log child 1
+log child 1
+log d 3
+log child 0
+log child 0
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=15 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=1 traced=true
+spawn #0.0 parent
+spawn #1.0 a
+spawn #2.0 b
+spawn #3.0 c
+spawn #4.0 d
+spawn #5.0 all
+spawn #6.0 sel
+round 1
+poll 1 #0.0 parent
+end #0.0 parent
+defer #0.0 child0
+spawn #7.0 child0
+defer #0.0 child1
+spawn #8.0 child1
+defer #0.0 child2
+spawn #9.0 child2
+defer #0.0 child3
+spawn #10.0 child3
+defer #0.0 child4
+spawn #11.0 child4
+defer #0.0 child5
+spawn #12.0 child5
+defer #0.0 child6
+spawn #13.0 child6
+round 2
+wake #0.0 Manual
+poll 2 #8.0 child1
+end #8.0 child1
+round 3
+wake #8.0 Manual
+poll 3 #11.0 child4
+end #11.0 child4
+round 4
+wake #11.0 Manual
+poll 4 #8.0 child1
+end #8.0 child1
+round 5
+wake #8.0 Manual
+poll 5 #11.0 child4
+end #11.0 child4
+round 6
+wake #11.0 Manual
+poll 6 #8.0 child1
+end #8.0 child1
+done #8.0 child1 Completed
+round 7
+poll 7 #11.0 child4
+end #11.0 child4
+done #11.0 child4 Completed
+round 8
+poll 8 #1.0 a
+end #1.0 a
+round 9
+wake #1.0 Manual
+poll 9 #2.0 b
+end #2.0 b
+round 10
+wake #2.0 Manual
+poll 10 #3.0 c
+end #3.0 c
+round 11
+wake #3.0 Manual
+poll 11 #4.0 d
+end #4.0 d
+round 12
+wake #4.0 Manual
+poll 12 #5.0 all
+end #5.0 all
+round 13
+poll 13 #6.0 sel
+end #6.0 sel
+round 14
+poll 14 #9.0 child2
+end #9.0 child2
+round 15
+wake #9.0 Manual
+poll 15 #12.0 child5
+end #12.0 child5
+round 16
+wake #12.0 Manual
+poll 16 #0.0 parent
+end #0.0 parent
+round 17
+wake #0.0 Manual
+poll 17 #1.0 a
+end #1.0 a
+round 18
+wake #1.0 Manual
+poll 18 #2.0 b
+end #2.0 b
+round 19
+wake #2.0 Manual
+poll 19 #3.0 c
+end #3.0 c
+done #3.0 c Completed
+round 20
+wake #6.0 Join
+poll 20 #4.0 d
+end #4.0 d
+round 21
+wake #4.0 Manual
+poll 21 #6.0 sel
+end #6.0 sel
+done #6.0 sel Completed
+round 22
+poll 22 #9.0 child2
+end #9.0 child2
+round 23
+wake #9.0 Manual
+poll 23 #12.0 child5
+end #12.0 child5
+round 24
+wake #12.0 Manual
+poll 24 #0.0 parent
+end #0.0 parent
+round 25
+wake #0.0 Manual
+poll 25 #1.0 a
+end #1.0 a
+done #1.0 a Completed
+round 26
+wake #5.0 Join
+poll 26 #5.0 all
+end #5.0 all
+round 27
+poll 27 #2.0 b
+end #2.0 b
+round 28
+wake #2.0 Manual
+poll 28 #4.0 d
+end #4.0 d
+round 29
+wake #4.0 Manual
+poll 29 #9.0 child2
+end #9.0 child2
+round 30
+wake #9.0 Manual
+poll 30 #12.0 child5
+end #12.0 child5
+round 31
+wake #12.0 Manual
+poll 31 #0.0 parent
+end #0.0 parent
+done #0.0 parent Completed
+round 32
+poll 32 #2.0 b
+end #2.0 b
+round 33
+wake #2.0 Manual
+poll 33 #4.0 d
+end #4.0 d
+done #4.0 d Completed
+round 34
+wake #6.0 Join
+poll 34 #9.0 child2
+end #9.0 child2
+done #9.0 child2 Completed
+round 35
+poll 35 #12.0 child5
+end #12.0 child5
+done #12.0 child5 Completed
+round 36
+poll 36 #2.0 b
+end #2.0 b
+done #2.0 b Completed
+round 37
+wake #5.0 Join
+poll 37 #5.0 all
+end #5.0 all
+done #5.0 all Completed
+round 38
+poll 38 #7.0 child0
+end #7.0 child0
+round 39
+wake #7.0 Manual
+poll 39 #10.0 child3
+end #10.0 child3
+round 40
+wake #10.0 Manual
+poll 40 #13.0 child6
+end #13.0 child6
+round 41
+wake #13.0 Manual
+poll 41 #7.0 child0
+end #7.0 child0
+done #7.0 child0 Completed
+round 42
+poll 42 #10.0 child3
+end #10.0 child3
+done #10.0 child3 Completed
+round 43
+poll 43 #13.0 child6
+end #13.0 child6
+done #13.0 child6 Completed
+log parent 1
+log child 2
+log child 2
+log child 1
+log child 1
+log child 0
+log child 0
+log a 2
+log b 4
+log c 1
+log d 3
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== spawn_join biased_qos_then_age budget=1 traced=false
+log parent 1
+log child 2
+log child 2
+log child 1
+log child 1
+log child 0
+log child 0
+log a 2
+log b 4
+log c 1
+log d 3
+log child 3
+log child 3
+log parent 2
+log a 1
+log b 3
+log c 0
+log d 2
+log child 2
+log child 2
+log parent 3
+log a 0
+log b 2
+log d 1
+log child 1
+log child 1
+log parent 4
+log b 1
+log d 0
+log child 0
+log child 0
+log b 0
+log child 1
+log child 1
+log child 1
+log child 0
+log child 0
+log child 0
+report rounds=43 polls=43 completed=14 cancelled=0 panicked=0 stalled=[]
+== cancel fifo budget=18446744073709551615 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #0.0 stubborn
+end #0.0 stubborn
+poll 5 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #0.0 Manual
+wake #0.0 Cancel
+wake #2.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #0.0 Manual
+wake #2.0 Manual
+poll 9 #0.0 stubborn
+end #0.0 stubborn
+poll 10 #2.0 bystander
+end #2.0 bystander
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+wake #2.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel fifo budget=18446744073709551615 traced=false
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel fifo budget=3 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #0.0 stubborn
+end #0.0 stubborn
+poll 5 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #0.0 Manual
+wake #0.0 Cancel
+wake #2.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #0.0 Manual
+wake #2.0 Manual
+poll 9 #0.0 stubborn
+end #0.0 stubborn
+poll 10 #2.0 bystander
+end #2.0 bystander
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+wake #2.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel fifo budget=3 traced=false
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel fifo budget=1 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #0.0 Manual
+poll 2 #1.0 canceller
+end #1.0 canceller
+round 3
+wake #1.0 Manual
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #2.0 Manual
+poll 4 #0.0 stubborn
+end #0.0 stubborn
+round 5
+wake #0.0 Manual
+poll 5 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+round 6
+wake #0.0 Cancel
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+round 8
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 9
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+round 10
+wake #2.0 Manual
+poll 10 #2.0 bystander
+end #2.0 bystander
+round 11
+wake #2.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 12
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=12 polls=12 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel fifo budget=1 traced=false
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=12 polls=12 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=18446744073709551615 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #2.0 bystander
+end #2.0 bystander
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 4 #0.0 stubborn
+end #0.0 stubborn
+poll 5 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #0.0 Manual
+wake #0.0 Cancel
+wake #2.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #0.0 stubborn
+end #0.0 stubborn
+poll 10 #2.0 bystander
+end #2.0 bystander
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+wake #2.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log bystander 6
+log canceller 1
+log stubborn 1 cancelled=false
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log bystander 4
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=18446744073709551615 traced=false
+log bystander 6
+log canceller 1
+log stubborn 1 cancelled=false
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log bystander 4
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=3 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #2.0 bystander
+end #2.0 bystander
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #2.0 Manual
+wake #1.0 Manual
+wake #0.0 Manual
+poll 4 #0.0 stubborn
+end #0.0 stubborn
+poll 5 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #0.0 Manual
+wake #0.0 Cancel
+wake #2.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #0.0 stubborn
+end #0.0 stubborn
+poll 10 #2.0 bystander
+end #2.0 bystander
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+wake #2.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log bystander 6
+log canceller 1
+log stubborn 1 cancelled=false
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log bystander 4
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=3 traced=false
+log bystander 6
+log canceller 1
+log stubborn 1 cancelled=false
+log stubborn 2 cancelled=false
+log canceller 2
+log bystander 5
+log bystander 4
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=1 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #2.0 bystander
+end #2.0 bystander
+round 2
+wake #2.0 Manual
+poll 2 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #2.0 Manual
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #2.0 Manual
+poll 4 #2.0 bystander
+end #2.0 bystander
+round 5
+wake #2.0 Manual
+poll 5 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+round 8
+poll 8 #1.0 canceller
+end #1.0 canceller
+round 9
+wake #1.0 Manual
+poll 9 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+round 10
+wake #0.0 Cancel
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 11
+wake #0.0 Manual
+poll 11 #0.0 stubborn
+end #0.0 stubborn
+round 12
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+log bystander 6
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+log canceller 1
+log canceller 2
+log stubborn 1 cancelled=true
+log stubborn 2 cancelled=true
+report rounds=12 polls=11 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel lifo budget=1 traced=false
+log bystander 6
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+log canceller 1
+log canceller 2
+log stubborn 1 cancelled=true
+log stubborn 2 cancelled=true
+report rounds=12 polls=11 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=18446744073709551615 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #0.0 Manual
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=18446744073709551615 traced=false
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=3 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+poll 2 #1.0 canceller
+end #1.0 canceller
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 2
+wake #0.0 Manual
+wake #1.0 Manual
+wake #2.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #0.0 Manual
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=3 traced=false
+log stubborn 1 cancelled=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log stubborn 3 cancelled=true
+log bystander 4
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=1 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #0.0 Manual
+poll 2 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #2.0 Manual
+poll 3 #2.0 bystander
+end #2.0 bystander
+round 4
+wake #2.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+round 5
+wake #1.0 Manual
+poll 5 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 7 #0.0 stubborn
+end #0.0 stubborn
+round 8
+wake #0.0 Manual
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 9
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+round 10
+wake #2.0 Manual
+poll 10 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+round 11
+wake #0.0 Cancel
+poll 11 #0.0 stubborn
+end #0.0 stubborn
+round 12
+wake #0.0 Manual
+poll 12 #0.0 stubborn
+end #0.0 stubborn
+round 13
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #0.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log stubborn 1 cancelled=false
+log bystander 6
+log bystander 5
+log canceller 1
+log bystander 4
+log bystander 3
+log stubborn 2 cancelled=false
+log bystander 2
+log bystander 1
+log canceller 2
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 0
+report rounds=13 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel round_robin budget=1 traced=false
+log stubborn 1 cancelled=false
+log bystander 6
+log bystander 5
+log canceller 1
+log bystander 4
+log bystander 3
+log stubborn 2 cancelled=false
+log bystander 2
+log bystander 1
+log canceller 2
+log stubborn 3 cancelled=true
+log stubborn 4 cancelled=true
+log bystander 0
+report rounds=13 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=18446744073709551615 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+poll 2 #2.0 bystander
+end #2.0 bystander
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=18446744073709551615 traced=false
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=3 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+poll 2 #2.0 bystander
+end #2.0 bystander
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=3 traced=false
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=1 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+round 2
+wake #1.0 Manual
+poll 2 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #2.0 Manual
+poll 3 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+round 4
+wake #0.0 Cancel
+poll 4 #2.0 bystander
+end #2.0 bystander
+round 5
+wake #2.0 Manual
+poll 5 #2.0 bystander
+end #2.0 bystander
+round 6
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+round 8
+wake #2.0 Manual
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 9
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=9 polls=9 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos budget=1 traced=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=9 polls=9 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=18446744073709551615 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+poll 2 #2.0 bystander
+end #2.0 bystander
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=18446744073709551615 traced=false
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=3 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+poll 2 #2.0 bystander
+end #2.0 bystander
+poll 3 #0.0 stubborn
+end #0.0 stubborn
+round 2
+wake #1.0 Manual
+wake #2.0 Manual
+wake #0.0 Manual
+poll 4 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+poll 5 #2.0 bystander
+end #2.0 bystander
+poll 6 #0.0 stubborn
+end #0.0 stubborn
+round 3
+wake #0.0 Cancel
+wake #2.0 Manual
+wake #0.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+poll 8 #0.0 stubborn
+end #0.0 stubborn
+round 4
+wake #2.0 Manual
+wake #0.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+poll 10 #0.0 stubborn
+end #0.0 stubborn
+round 5
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+wake #0.0 Manual
+poll 11 #2.0 bystander
+end #2.0 bystander
+round 6
+wake #2.0 Manual
+poll 12 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 13 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=3 traced=false
+log canceller 1
+log bystander 6
+log stubborn 1 cancelled=false
+log canceller 2
+log bystander 5
+log stubborn 2 cancelled=true
+log bystander 4
+log stubborn 3 cancelled=true
+log bystander 3
+log stubborn 4 cancelled=true
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=7 polls=13 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=1 traced=true
+spawn #0.0 stubborn
+spawn #1.0 canceller
+spawn #2.0 bystander
+round 1
+poll 1 #1.0 canceller
+end #1.0 canceller
+round 2
+wake #1.0 Manual
+poll 2 #2.0 bystander
+end #2.0 bystander
+round 3
+wake #2.0 Manual
+poll 3 #1.0 canceller
+end #1.0 canceller
+cancel_request #0.0 UserRequest Some(3) None
+done #1.0 canceller Completed
+round 4
+wake #0.0 Cancel
+poll 4 #2.0 bystander
+end #2.0 bystander
+round 5
+wake #2.0 Manual
+poll 5 #2.0 bystander
+end #2.0 bystander
+round 6
+cancel #0.0 TimeoutTicks
+done #0.0 stubborn Cancelled
+wake #2.0 Manual
+poll 6 #2.0 bystander
+end #2.0 bystander
+round 7
+wake #2.0 Manual
+poll 7 #2.0 bystander
+end #2.0 bystander
+round 8
+wake #2.0 Manual
+poll 8 #2.0 bystander
+end #2.0 bystander
+round 9
+wake #2.0 Manual
+poll 9 #2.0 bystander
+end #2.0 bystander
+done #2.0 bystander Completed
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=9 polls=9 completed=2 cancelled=1 panicked=0 stalled=[]
+== cancel biased_qos_then_age budget=1 traced=false
+log canceller 1
+log bystander 6
+log canceller 2
+log bystander 5
+log bystander 4
+log bystander 3
+log bystander 2
+log bystander 1
+log bystander 0
+report rounds=9 polls=9 completed=2 cancelled=1 panicked=0 stalled=[]

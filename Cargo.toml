@@ -24,6 +24,11 @@ loom = "0.7"
 [dev-dependencies]
 # The 1BRC example mmaps its input file. Not a runtime dependency.
 memmap2 = "0.9"
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+
+[[bench]]
+name = "scheduler"
+harness = false
 
 [lib]
 name = "scope"
