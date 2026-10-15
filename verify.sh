@@ -18,6 +18,7 @@ MIRIFLAGS="-Zmiri-disable-isolation" cargo +nightly miri test --test kernel -- -
 echo
 echo "== loom (cross-thread wake/cancel model check) =="
 RUSTFLAGS="--cfg loom" cargo test --test loom_wake --release
+RUSTFLAGS="--cfg loom" cargo test --lib --release
 
 
 echo

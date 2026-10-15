@@ -4,7 +4,10 @@
 //!
 //! 1. [`WakeBus`] — a tiny std-only `Mutex<VecDeque> + Condvar` channel carrying
 //!    reason-tagged [`SchedulerMsg`]s. Being a plain `Mutex`/`Condvar` it is
-//!    also what `--cfg loom` swaps out to model every wake interleaving.
+//!    also what `--cfg loom` swaps out to model every wake interleaving. The
+//!    scheduler takes everything queued in one lock (it trades its empty buffer
+//!    for the queue), and a send only signals the condvar when a receiver is
+//!    blocked on it.
 //!
 //! 2. [`scheduler_waker`] — a **real `std::task::Waker`** minted from an
 //!    `Arc<WakeSignal>` through `waker_tables`, which builds the waker's vtable
@@ -21,8 +24,8 @@ use crate::sync::{lock, Arc, Condvar, Mutex};
 use std::collections::VecDeque;
 #[cfg(not(loom))]
 use std::task::Waker;
-#[cfg(not(loom))]
-use std::time::Duration;
+#[cfg(any(test, not(loom)))]
+use {crate::sync::MutexGuard, std::time::Duration};
 
 // The real-Waker machinery is a std concept and is not what loom model-checks;
 // under `--cfg loom` only WakeBus + the message types compile.
@@ -63,8 +66,18 @@ pub enum SchedulerMsg {
     },
 }
 
+/// What the bus lock guards.
+struct Queue {
+    msgs: VecDeque<SchedulerMsg>,
+    /// Receivers blocked in `cv.wait_timeout` right now. It changes only under
+    /// the lock, and a receiver counts itself before its wait releases the lock,
+    /// so a sender that reads 0 knows no receiver can be between its empty
+    /// check and its wait: there is nobody to notify.
+    waiting: usize,
+}
+
 struct Inner {
-    queue: Mutex<VecDeque<SchedulerMsg>>,
+    queue: Mutex<Queue>,
     cv: Condvar,
 }
 
@@ -88,7 +101,7 @@ impl WakeBus {
     pub fn new() -> Self {
         Self {
             inner: Arc::new(Inner {
-                queue: Mutex::new(VecDeque::new()),
+                queue: Mutex::new(Queue { msgs: VecDeque::new(), waiting: 0 }),
                 cv: Condvar::new(),
             }),
         }
@@ -98,8 +111,10 @@ impl WakeBus {
     /// Enqueue a message and notify a blocked receiver.
     pub fn send(&self, msg: SchedulerMsg) {
         let mut q = lock(&self.inner.queue);
-        q.push_back(msg);
-        self.inner.cv.notify_one();
+        q.msgs.push_back(msg);
+        if q.waiting > 0 {
+            self.inner.cv.notify_one();
+        }
     }
 
     #[inline]
@@ -111,25 +126,52 @@ impl WakeBus {
     #[inline]
     /// Dequeue the oldest message without blocking.
     pub fn try_recv(&self) -> Option<SchedulerMsg> {
-        lock(&self.inner.queue).pop_front()
+        lock(&self.inner.queue).msgs.pop_front()
     }
 
     #[inline]
     /// Whether nothing is queued.
     pub fn is_empty(&self) -> bool {
-        lock(&self.inner.queue).is_empty()
+        lock(&self.inner.queue).msgs.is_empty()
+    }
+
+    /// Move every queued message onto the back of `into`, oldest first, under
+    /// one lock. When `into` is empty (the scheduler's case) the two buffers
+    /// just trade places, so the lock is held for a swap and, once both have
+    /// grown, neither allocates again.
+    #[inline]
+    pub(crate) fn take_all(&self, into: &mut VecDeque<SchedulerMsg>) {
+        let mut q = lock(&self.inner.queue);
+        if into.is_empty() {
+            std::mem::swap(&mut q.msgs, into);
+        } else {
+            into.append(&mut q.msgs);
+        }
+    }
+
+    /// Lock the queue and, if it is empty, wait once on the condvar until a
+    /// send notifies or `timeout` passes (a spurious wake also ends the wait).
+    /// The queue may still be empty in the returned guard. Under loom the wait
+    /// never times out, so a missed notify shows up as a deadlock.
+    #[cfg(any(test, not(loom)))]
+    fn wait_nonempty(&self, timeout: Duration) -> MutexGuard<'_, Queue> {
+        let mut q = lock(&self.inner.queue);
+        if q.msgs.is_empty() {
+            q.waiting += 1;
+            q = match self.inner.cv.wait_timeout(q, timeout) {
+                Ok((q, _)) => q,
+                Err(poisoned) => poisoned.into_inner().0,
+            };
+            q.waiting -= 1;
+        }
+        q
     }
 
     /// Blocking wait bounded by `timeout`. Not used under loom (which has no
     /// wall clock); loom paths only ever `try_recv`.
     #[cfg(not(loom))]
     pub fn recv_timeout(&self, timeout: Duration) -> WakeRecv {
-        let mut q = lock(&self.inner.queue);
-        if let Some(m) = q.pop_front() {
-            return WakeRecv::Msg(m);
-        }
-        let (mut q, _res) = self.inner.cv.wait_timeout(q, timeout).unwrap_or_else(|poisoned| poisoned.into_inner());
-        match q.pop_front() {
+        match self.wait_nonempty(timeout).msgs.pop_front() {
             Some(m) => WakeRecv::Msg(m),
             None => WakeRecv::Timeout,
         }
@@ -198,5 +240,107 @@ mod tests {
         assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id, reason: WakeReason::Io }));
         assert_eq!(bus.try_recv(), Some(SchedulerMsg::Wake { id, reason: WakeReason::Io }));
         assert_eq!(bus.try_recv(), None);
+    }
+
+    #[test]
+    fn take_all_keeps_fifo_order_behind_leftovers() {
+        let bus = WakeBus::new();
+        let w = |i| SchedulerMsg::Wake { id: TaskId::new(i, 0), reason: WakeReason::Manual };
+        let mut buf = VecDeque::new();
+
+        bus.send(w(0));
+        bus.send(w(1));
+        bus.take_all(&mut buf);
+        assert_eq!(buf, [w(0), w(1)]);
+        assert!(bus.is_empty());
+
+        // A batch not fully applied stays in front of anything sent since.
+        assert_eq!(buf.pop_front(), Some(w(0)));
+        bus.send(w(2));
+        bus.take_all(&mut buf);
+        assert_eq!(buf, [w(1), w(2)]);
+
+        // The empty buffer the bus got back still takes sends.
+        buf.clear();
+        bus.send(w(3));
+        assert_eq!(bus.try_recv(), Some(w(3)));
+        bus.take_all(&mut buf);
+        assert!(buf.is_empty());
+    }
+
+    #[test]
+    fn a_blocked_receiver_is_woken_by_a_send_from_another_thread() {
+        let bus = WakeBus::new();
+        let tx = bus.clone();
+        let id = TaskId::new(2, 0);
+        let sender = std::thread::spawn(move || {
+            std::thread::sleep(Duration::from_millis(20));
+            tx.wake(id, WakeReason::Io);
+        });
+        let start = std::time::Instant::now();
+        let mut got = None;
+        while got.is_none() && start.elapsed() < Duration::from_secs(30) {
+            if let WakeRecv::Msg(m) = bus.recv_timeout(Duration::from_secs(30)) {
+                got = Some(m);
+            }
+        }
+        sender.join().unwrap();
+        assert_eq!(got, Some(SchedulerMsg::Wake { id, reason: WakeReason::Io }));
+        assert!(start.elapsed() < Duration::from_secs(10), "the send did not wake the receiver");
+    }
+}
+
+/// Loom model of the blocked-receiver handoff: `send` skips `notify_one` when it
+/// sees no receiver counted as waiting, and these prove no interleaving loses
+/// the wake. Loom's `wait_timeout` never times out, so a lost notify leaves the
+/// receiver blocked forever and loom fails the model as a deadlock.
+///
+/// Run:  RUSTFLAGS="--cfg loom" cargo test --lib --release
+#[cfg(all(test, loom))]
+mod loom_tests {
+    use super::*;
+
+    fn recv_blocking(bus: &WakeBus) -> SchedulerMsg {
+        loop {
+            if let Some(m) = bus.wait_nonempty(Duration::MAX).msgs.pop_front() {
+                return m;
+            }
+        }
+    }
+
+    #[test]
+    fn a_receiver_blocked_on_an_empty_bus_always_gets_the_send() {
+        loom::model(|| {
+            let bus = WakeBus::new();
+            let tx = bus.clone();
+            let id = TaskId::new(5, 0);
+            let producer = loom::thread::spawn(move || tx.wake(id, WakeReason::Io));
+            assert_eq!(recv_blocking(&bus), SchedulerMsg::Wake { id, reason: WakeReason::Io });
+            producer.join().unwrap();
+        });
+    }
+
+    #[test]
+    fn two_senders_two_blocking_receives_lose_nothing() {
+        loom::model(|| {
+            let bus = WakeBus::new();
+            let (a, b) = (TaskId::new(0, 0), TaskId::new(1, 0));
+            let tx_a = bus.clone();
+            let tx_b = bus.clone();
+            let pa = loom::thread::spawn(move || tx_a.wake(a, WakeReason::Timer));
+            let pb = loom::thread::spawn(move || tx_b.wake(b, WakeReason::Inbox));
+            let mut got = [recv_blocking(&bus), recv_blocking(&bus)];
+            got.sort_by_key(|SchedulerMsg::Wake { id, .. }| *id);
+            assert_eq!(
+                got,
+                [
+                    SchedulerMsg::Wake { id: a, reason: WakeReason::Timer },
+                    SchedulerMsg::Wake { id: b, reason: WakeReason::Inbox },
+                ]
+            );
+            pa.join().unwrap();
+            pb.join().unwrap();
+            assert!(bus.is_empty());
+        });
     }
 }

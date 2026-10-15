@@ -29,7 +29,7 @@ use crate::timer::SleepTask;
 use crate::trace::Tracer;
 use crate::wake::{SchedulerMsg, WakeBus, WakeReason};
 use std::cmp::Reverse;
-use std::collections::BinaryHeap;
+use std::collections::{BinaryHeap, VecDeque};
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::time::{Duration, Instant};
 
@@ -115,6 +115,9 @@ pub struct Scope<'env, R> {
     resources: &'env mut R,
     slab: TaskSlab<TaskEntry<'env, R>>,
     bus: WakeBus,
+    /// Wakes taken off the bus and not yet applied. `drain_bus` trades this
+    /// (empty) buffer for the bus queue in one lock, then applies it unlocked.
+    wake_batch: VecDeque<SchedulerMsg>,
 
     sleep_heap: BinaryHeap<Reverse<(Instant, TaskId)>>,
     cancel_tick_heap: BinaryHeap<Reverse<(u64, TaskId)>>,
@@ -192,6 +195,7 @@ impl<'env, R> Scope<'env, R> {
             resources,
             slab: TaskSlab::new(),
             bus: WakeBus::new(),
+            wake_batch: VecDeque::new(),
             sleep_heap: BinaryHeap::new(),
             cancel_tick_heap: BinaryHeap::new(),
             cancel_time_heap: BinaryHeap::new(),
@@ -637,8 +641,30 @@ impl<'env, R> Scope<'env, R> {
         polled
     }
 
+    /// Apply every queued wake, oldest first: one lock takes the whole queue,
+    /// then the batch is applied with the lock released.
     fn drain_bus(&mut self) {
-        while let Some(SchedulerMsg::Wake { id, reason }) = self.bus.try_recv() {
+        loop {
+            // A batch cut short by a panicking tracer is still here, ahead of
+            // anything sent since; `take_all` appends behind it.
+            self.bus.take_all(&mut self.wake_batch);
+            if self.wake_batch.is_empty() {
+                return;
+            }
+            self.apply_wake_batch();
+            // A tracer hook is the only code on this thread that can send while
+            // a batch is applied; look again so its wakes land this round, as
+            // they did when every wake was popped one lock at a time. With no
+            // tracer, only another thread can have sent since the take, and
+            // that wake is just as valid next round.
+            if self.tracer.is_none() {
+                return;
+            }
+        }
+    }
+
+    fn apply_wake_batch(&mut self) {
+        while let Some(SchedulerMsg::Wake { id, reason }) = self.wake_batch.pop_front() {
             if let Some(t) = self.tracer.as_mut() {
                 t.on_wake(id, reason);
             }
