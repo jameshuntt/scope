@@ -218,8 +218,9 @@ by 4.3% or less, and we do not claim a speed change for it.
 
   Now `drain_bus` swaps its empty `VecDeque` (`wake_batch`) for the bus queue under one lock. It applies
   the batch with the lock released, oldest first, as before. With a tracer attached it takes the queue
-  once more after applying. A tracer hook is the only code on the scheduler thread that can send while a
-  batch is applied, so this keeps those wakes in the same round, as taking them one at a time did.
+  again after each batch, until a take comes back empty. A tracer hook is the only code on the scheduler
+  thread that can send while a batch is applied, so this keeps those wakes in the same round, as taking
+  them one at a time did.
   `send` calls `notify_one` only when `Queue::waiting` is above zero. A receiver counts itself under the
   lock before its wait releases the lock, so a sender that reads 0 has nobody to wake.
   - After: [src/scope.rs L644-684 @ 513cb50](https://github.com/jameshuntt/scope/blob/513cb506a7cbec53351d27459db014224f2abef8/src/scope.rs#L644-L684), `drain_bus` taking the whole queue with `take_all`, and

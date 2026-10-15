@@ -1,4 +1,4 @@
-// One runnable task among many parked ones: `idle` tasks park on their first poll; two tasks pass
+// Two runnable tasks among many parked ones: `idle` tasks park on their first poll; two tasks pass
 // 2000 wakes back and forth; when the hops run out the last one wakes every parked task.
 use scope::{Cx, Scope, ScopedTask, TaskId, TaskPoll, WakeReason};
 use std::time::Instant;
