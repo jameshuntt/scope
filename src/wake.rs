@@ -167,8 +167,16 @@ impl WakeBus {
         q
     }
 
-    /// Blocking wait bounded by `timeout`. Not used under loom (which has no
-    /// wall clock); loom paths only ever `try_recv`.
+    /// Block until something is queued or `timeout` passes, and leave it on
+    /// the bus for the next drain. Returns at once if something is queued.
+    #[cfg(not(loom))]
+    pub(crate) fn wait_timeout(&self, timeout: Duration) {
+        drop(self.wait_nonempty(timeout));
+    }
+
+    /// Blocking wait bounded by `timeout`. Not compiled under loom (which has
+    /// no wall clock); the loom tests below drive the same wait through
+    /// `wait_nonempty`.
     #[cfg(not(loom))]
     pub fn recv_timeout(&self, timeout: Duration) -> WakeRecv {
         match self.wait_nonempty(timeout).msgs.pop_front() {

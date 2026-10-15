@@ -560,18 +560,16 @@ impl<'env, R> Scope<'env, R> {
                 break;
             }
             if polled == 0 {
-                if !self.bus.is_empty() {
-                    continue;
-                }
                 match self.next_deadline() {
+                    // Sleep until the deadline or a wake from another thread,
+                    // whichever comes first; the wake stays queued for the
+                    // next round's drain.
                     #[cfg(not(loom))]
-                    Some(wait) => {
-                        let _ = self.bus.recv_timeout(wait);
-                        continue;
-                    }
-                    #[cfg(loom)]
-                    Some(_) => break,
-                    None => break,
+                    Some(wait) => self.bus.wait_timeout(wait),
+                    // No deadline (and no wall clock under loom): only a wake
+                    // already queued can make progress.
+                    _ if self.bus.is_empty() => break,
+                    _ => {}
                 }
             }
         }
@@ -592,15 +590,13 @@ impl<'env, R> Scope<'env, R> {
                 if Instant::now() >= deadline {
                     return false;
                 }
-                if !self.bus.is_empty() {
-                    continue;
-                }
                 let remain = deadline.saturating_duration_since(Instant::now());
                 let wait = match self.next_deadline() {
                     Some(t) => t.min(remain),
                     None => remain,
                 };
-                let _ = self.bus.recv_timeout(wait);
+                // Returns at once if a wake is queued; never takes it off the bus.
+                self.bus.wait_timeout(wait);
             }
         }
     }

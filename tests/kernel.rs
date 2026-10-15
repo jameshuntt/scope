@@ -216,6 +216,47 @@ fn a_real_external_waker_resumes_a_parked_task() {
     });
 }
 
+// Parks on its first poll and hands its real waker to a thread that fires it
+// shortly after. Once woken it hard-stops the long keepalive sleep.
+struct WokenFromAThread {
+    keepalive: scope::TaskId,
+    started: bool,
+}
+impl<'env, R> ScopedTask<'env, R> for WokenFromAThread {
+    fn poll(&mut self, cx: &mut Cx<'_, 'env, R>) -> TaskPoll {
+        if !self.started {
+            self.started = true;
+            let waker = cx.waker();
+            std::thread::spawn(move || {
+                std::thread::sleep(Duration::from_millis(50));
+                waker.wake();
+            });
+            return TaskPoll::Pending;
+        }
+        cx.cancel_escalate_with_reason(
+            self.keepalive,
+            scope::CancelEscalation::immediate(),
+            scope::CancelReason::UserRequest,
+        );
+        TaskPoll::Ready
+    }
+}
+
+#[test]
+fn a_wake_from_another_thread_during_runs_idle_wait_is_not_lost() {
+    // `run` blocks on the bus until the 10 s sleep is due; the other thread's
+    // wake lands during that wait and must still reach the task.
+    let start = std::time::Instant::now();
+    let mut env = ();
+    let report = run_scoped(&mut env, |s| {
+        let keepalive = s.sleep("keepalive", Duration::from_secs(10)).task;
+        s.spawn_named("woken", WokenFromAThread { keepalive, started: false });
+    });
+    assert!(report.stalled.is_empty(), "{report:?}");
+    assert_eq!((report.completed, report.cancelled), (1, 1), "{report:?}");
+    assert!(start.elapsed() < Duration::from_secs(5), "the run waited out the sleep: {report:?}");
+}
+
 // Parks forever and never arranges a wake — a buggy task.
 struct DeadPark;
 impl<'env, R> ScopedTask<'env, R> for DeadPark {
