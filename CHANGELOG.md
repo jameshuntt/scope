@@ -59,13 +59,19 @@ We checked it three ways:
     `&mut u64` with no lock.
   - [tests/kernel.rs L326-365 @ e9f73c3](https://github.com/jameshuntt/scope/blob/e9f73c31020cd59736b8b59c47a930f153cf7063/tests/kernel.rs#L326-L365): `tasks_hold_distinct_mut_borrows_of_stack_data_across_suspension`.
     Each task holds its own `&'env mut Vec` across yields while they interleave.
-- The `run_scoped` doc examples now pin the bound from both sides. A borrow of data that outlives the scope
-  compiles. The same task borrowing data that dies first fails with E0597 and nothing else. See Fixed
-  below.
+- The `run_scoped` doc examples now pin the bound from both sides. A borrow of data that outlives the
+  scope compiles. The same task borrowing data that dies first fails with E0597 and nothing else. See
+  Fixed below.
 
-No line containing `unsafe` in `src/` changed from 0.2.2 to 0.3.1.
-`git diff d2b31b7 782814c -- src | grep '^[-+].*unsafe'` prints two lines, the old and new wording of one
-doc comment in `src/scope.rs`:
+Neither 0.2.2 nor 0.3.1 writes out an `unsafe` block, fn or impl in `src/`. Outside comments,
+`git grep -n unsafe` on `src/` at d2b31b7 and at e9f73c3 finds only `#![deny(unsafe_code)]` in `lib.rs`,
+`#![allow(unsafe_code)]` in `wake.rs`, and the import and call of `derive_arc_unsafe_wakeable!` in
+`wake.rs`. The `unsafe` code is what `waker_tables`' macros generate in `wake.rs`. The
+`derive_arc_unsafe_wakeable!(WakeSignal, emit)` line reads the same in both, though 0.3.0 moved to
+`waker_tables` 0.3. The `declare_raw_waker_vtable!` call went away in 0.3.0 (see that version below).
+
+One changed line has the word `unsafe` in it, a doc comment in `src/scope.rs`.
+`git diff d2b31b7 e9f73c3 -- src | grep '^[-+].*unsafe'` prints its old and new wording:
 
 ```
 -//! * Zero `unsafe`: the mid-poll callbacks record *intents* into local buffers
@@ -113,7 +119,7 @@ Everything outside `wake` is still `#![deny(unsafe_code)]`.
   - [benches/scheduler.rs L25-26 @ 19b484b](https://github.com/jameshuntt/scope/blob/19b484b84cff1f4853ce89602ddb5b5822bc8b67/benches/scheduler.rs#L25-L26): the comment that says one link is runnable at a time.
   - [README.md L158-159 @ e9f73c3](https://github.com/jameshuntt/scope/blob/e9f73c31020cd59736b8b59c47a930f153cf7063/README.md#L158-L159): the README label.
   - Not in 0.2.2. It came in with 19b484b, part of 0.3.1. The case the comment describes is measured by
-    the sparse probe, under the runnable set entry below.
+    [`proofs/sparse-probe`](proofs/sparse-probe/README), under the runnable set entry below.
 
 ### Changed
 
@@ -170,9 +176,10 @@ lines and what it changed on its own, measured against the commit before it. c4f
 by 4.3% or less, and we do not claim a speed change for it.
 
 - **Poll path: no name clone, no `Arc` traffic, reused intent buffers.** Every poll cloned the task's
-  name (`e.name.clone()`, a `String` allocation) and its cancel cell's `Arc`. It built `Cx` with another
-  clone of the bus `Arc`. Both `Arc`s were dropped again when the poll ended. It also made four new
-  `Vec`s for the intents, so a poll that spawned, slept, subscribed or cancelled allocated them fresh.
+  name (`e.name.clone()`, a `String` allocation) and its cancel cell's `Arc`. It built `Cx` with a clone
+  of the bus `Arc` and a second clone of the cell `Arc`. All three `Arc` clones were dropped again when
+  the poll ended. It also made four new `Vec`s for the intents, so a poll that spawned, slept,
+  subscribed or cancelled allocated them fresh.
   - Before: [src/scope.rs L695-701 @ 19b484b](https://github.com/jameshuntt/scope/blob/19b484b84cff1f4853ce89602ddb5b5822bc8b67/src/scope.rs#L695-L701), the name and the cancel cell cloned at the start of the
     poll.
   - Before: [src/scope.rs L716-721 @ 19b484b](https://github.com/jameshuntt/scope/blob/19b484b84cff1f4853ce89602ddb5b5822bc8b67/src/scope.rs#L716-L721), the four new intent `Vec`s.
@@ -195,8 +202,8 @@ by 4.3% or less, and we do not claim a speed change for it.
 
   The entry the cell is borrowed from stays in the slab for the whole poll, because the slab is borrowed
   shared for that long. The compiler checks it, and `#![deny(unsafe_code)]` covers `scope.rs`.
-  - Proof: schedule golden passes at cfb873a. Measured against 19b484b: `yield_storm` 13.5% to 21.4% less
-    time, `sparse_wake_ring` 19.3% to 22.2%, `spawn_churn` 19.3% to 23.5%, `join_all` 12.6% to 14.7%.
+  - Proof: `schedule_golden` passes at cfb873a. Measured against 19b484b: `yield_storm` 13.5% to 21.4%
+    less time, `sparse_wake_ring` 19.3% to 22.2%, `spawn_churn` 19.3% to 23.5%, `join_all` 12.6% to 14.7%.
     `join_all/100`'s 13.9% is less than the 18.1% that bench moved between two runs of 19b484b, so it
     proves nothing by itself. `join_all/10`'s 12.6% is only a little more than its 11.1%. `mailbox`
     moved 2.0% and 2.9%, near the 1.4% and 2.1% it moved between the two runs of 19b484b, and we do not
@@ -237,42 +244,44 @@ by 4.3% or less, and we do not claim a speed change for it.
     `if q.waiting > 0` to `if q.waiting > 1` in `send` and both models fail. [src/wake.rs L115 @ e9f73c3](https://github.com/jameshuntt/scope/blob/e9f73c31020cd59736b8b59c47a930f153cf7063/src/wake.rs#L115)
     is the line it changes. The one-sender model reports
     `deadlock; threads = [(Id(0), Blocked(Location(None))), (Id(1), Terminated)]`.
-  - Schedule golden passes at 513cb50. Measured against cfb873a: `mailbox` 14.0% and 16.1% less time.
+  - `schedule_golden` passes at 513cb50. Measured against cfb873a: `mailbox` 14.0% and 16.1% less time.
     That bench sends 100 or 10,000 messages before `run()`, and each send queues a wake on the bus. Every
     other bench moved between -6.6% and +3.8%, and we do not claim those.
 - **Round overhead: clock only for a pending deadline, one slab lookup per id, smaller task entry.**
   Every round read the clock up to three times with no timer or cancel deadline pending.
   `fire_expired_cancel_times`, `fire_expired_timers` and `next_deadline` each called `Instant::now()`
-  before looking at their heap. The poll loop and the timer pass looked a task up twice, with `get` to
-  check it and `get_mut` to change it. The wake apply called `get_mut` twice. `TaskEntry` was 144 bytes
-  and a slab slot 152, with `cancel_tick_deadline` an `Option<u64>`. `build_report` went through
-  `live_ids()` and looked every id up again. `live_ids` walked every slot to the end of the slab.
+  before looking at their heap. The poll loop in `round` and `fire_expired_timers` looked a task up
+  twice, with `get` to check it and `get_mut` to change it. `apply_wake_batch` called `get_mut` twice.
+  `TaskEntry` was 144 bytes and a slab slot 152, with `cancel_tick_deadline` an `Option<u64>`.
+  `build_report` went through `live_ids()` and looked every id up again. `live_ids` walked every slot
+  to the end of the slab.
   - Before: [src/scope.rs L952-953 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L952-L953), `fire_expired_cancel_times` reading the clock first.
   - Before: [src/scope.rs L974-975 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L974-L975), `fire_expired_timers` reading the clock first.
   - Before: [src/scope.rs L995-996 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L995-L996), `next_deadline` reading the clock first.
-  - Before: [src/scope.rs L623-633 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L623-L633), the poll loop: `get`, then `get_mut`.
-  - Before: [src/scope.rs L667-678 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L667-L678), the wake apply: `get_mut` twice.
-  - Before: [src/scope.rs L981-990 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L981-L990), the timer pass: `get`, then `get_mut`.
+  - Before: [src/scope.rs L623-633 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L623-L633), the poll loop in `round`: `get`, then `get_mut`.
+  - Before: [src/scope.rs L667-678 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L667-L678), `apply_wake_batch`: `get_mut` twice.
+  - Before: [src/scope.rs L981-990 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L981-L990), `fire_expired_timers`: `get`, then `get_mut`.
   - Before: [src/scope.rs L73-86 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L73-L86), `TaskEntry` with `cancel_tick_deadline: Option<u64>`.
   - Before: [src/ids.rs L32-35 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/ids.rs#L32-L35), `Slot`.
   - Before: [src/ids.rs L120-128 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/ids.rs#L120-L128), `live_ids` walking every slot.
   - Before: [src/scope.rs L1008-1014 @ da655cf](https://github.com/jameshuntt/scope/blob/da655cf5434a7a33d427615f6dd89505781b4d9a/src/scope.rs#L1008-L1014), `build_report` looking each id up again.
 
-  Now the timer and cancel passes return before reading the clock when their heap is empty.
-  `next_deadline` returns `None` before reading it. The poll loop, the wake apply and the timer pass look
-  each id up once, and so do `cancel_now_with_reason`, `request_cancel` and `schedule_cancel_deadlines`.
-  `TaskEntry` is `repr(C)`, with what a round reads for every live task first: `runnable_seq`,
-  `last_polled`, `name`, `runnable`, `state`, `qos`. `cancel_tick_deadline` is `Option<NonZeroU64>`. The
-  deadline is the tick count plus a budget of at least one, so it is never zero. `Slot` is `repr(C)`
-  with `generation` first. `TaskSlab::entries()` (crate-private) gives `(TaskId, &T)` and stops once it
-  has seen `len` live entries. `live_ids` and `build_report` use it.
+  Now `fire_expired_cancel_times` and `fire_expired_timers` return before reading the clock when their
+  heap is empty. `next_deadline` returns `None` before reading it. The poll loop in `round`,
+  `apply_wake_batch` and `fire_expired_timers` look each id up once, and so do
+  `cancel_now_with_reason`, `request_cancel` and `schedule_cancel_deadlines`. `TaskEntry` is
+  `repr(C)`, with what a round reads for every live task first: `runnable_seq`, `last_polled`, `name`,
+  `runnable`, `state`, `qos`. `cancel_tick_deadline` is `Option<NonZeroU64>`. The deadline is the tick
+  count plus a budget of at least one, so it is never zero. `Slot` is `repr(C)` with `generation` first.
+  `TaskSlab::entries()` (crate-private) gives `(TaskId, &T)` and stops once it has seen `len` live
+  entries. `live_ids` and `build_report` use it.
   - After: [src/scope.rs L931-936 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L931-L936), `fire_expired_cancel_times` returning early on an empty
     heap.
   - After: [src/scope.rs L957-962 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L957-L962), `fire_expired_timers` returning early on an empty heap.
   - After: [src/scope.rs L978-988 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L978-L988), `next_deadline` returning `None` before the clock.
-  - After: [src/scope.rs L620-623 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L620-L623), the poll loop: one `get_mut`.
-  - After: [src/scope.rs L657-663 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L657-L663), the wake apply: one `get_mut`.
-  - After: [src/scope.rs L968-974 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L968-L974), the timer pass: one `get_mut`.
+  - After: [src/scope.rs L620-623 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L620-L623), the poll loop in `round`: one `get_mut`.
+  - After: [src/scope.rs L657-663 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L657-L663), `apply_wake_batch`: one `get_mut`.
+  - After: [src/scope.rs L968-974 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L968-L974), `fire_expired_timers`: one `get_mut`.
   - After: [src/scope.rs L74-93 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/scope.rs#L74-L93), `TaskEntry` as `repr(C)` with the per-round fields first.
   - After: [src/ids.rs L32-39 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/ids.rs#L32-L39), `Slot` as `repr(C)` with `generation` first.
   - After: [src/ids.rs L124-141 @ c4fe22d](https://github.com/jameshuntt/scope/blob/c4fe22d20534104ed26b1311789f6cb7b622f21d/src/ids.rs#L124-L141), `live_ids` built on `entries()`, which stops after `len` live
@@ -281,14 +290,20 @@ by 4.3% or less, and we do not claim a speed change for it.
   - Commit [c4fe22d](https://github.com/jameshuntt/scope/commit/c4fe22d20534104ed26b1311789f6cb7b622f21d).
   - Proof: [`proofs/entry-size`](proofs/entry-size/README) prints
     `TaskEntry 144 bytes, slab slot 152 bytes` at da655cf and `TaskEntry 136 bytes, slab slot 144 bytes`
-    at c4fe22d, on aarch64-apple-darwin. Schedule golden passes at c4fe22d. Measured against da655cf,
+    at c4fe22d, on aarch64-apple-darwin. `schedule_golden` passes at c4fe22d. Measured against da655cf,
     every bench moved between -4.3% and +3.6%, and we do not claim a speed change from it.
-  - Regression, never published: with 1000 parked tasks, c4fe22d made the sparse probe (below) slower.
-    In three runs each, da655cf took 1,419.5 to 1,440.0 µs and c4fe22d took 1,965.6 to 2,003.8 µs, 36.5%
-    to 41.2% more. With 100 parked tasks c4fe22d took 252.2 to 253.7 µs against 243.9 to 246.8 µs, 2.2% to
-    4.0% more. With 10 it was faster: 94.0 to 96.2 µs against 109.5 to 118.7 µs. 967b616 removes the
-    per-round scan of every live task, and 0.3.1 does not show the slowdown (231.6 to 236.4 µs at 1000).
-    We have not found which part of c4fe22d causes it. Not in 0.2.2; it came in with c4fe22d.
+  - Regression, never published: with 1000 parked tasks, c4fe22d is slower than da655cf in
+    [`proofs/sparse-probe`](proofs/sparse-probe/README) (below). It was slower in every run, but by how
+    much moved a lot from run to run. In the first three runs each, da655cf took 1,419.5 to 1,440.0 µs
+    and c4fe22d took 1,965.6 to 2,003.8 µs. In eight more runs each, the two taken in turn, da655cf took
+    1,443.2 to 1,461.0 µs and c4fe22d took 1,555.2 to 1,929.4 µs, 7.2% to 32.6% more run for run. So it
+    is slower at 1000 every time, but we cannot give one figure for how much.
+  - With 100 parked tasks we claim no difference. In the eight runs c4fe22d took 236.3 to 256.2 µs
+    against 242.7 to 256.4 µs, and it was faster in 3 of them. With 10 parked tasks c4fe22d was faster
+    in every run: 93.0 to 97.1 µs against 108.6 to 117.3 µs. All eleven runs are in the probe's README.
+  - 967b616 removes the per-round scan of every live task, and 0.3.1 does not show the slowdown (231.6
+    to 236.4 µs at 1000). We have not found which part of c4fe22d causes it. Not in 0.2.2; it came in
+    with c4fe22d.
 - **Runnable set: a round costs the runnable tasks, not every live one.** Each round called
   `order_runnable`. It built a `Vec` of every live task (`live_ids`), looked each one up to keep the
   runnable ones, and sorted those with comparators that looked both tasks up again on every comparison.
@@ -307,15 +322,15 @@ by 4.3% or less, and we do not claim a speed change for it.
   the poll budget stay queued with `runnable_seq` unchanged. A finished task's stale id is dropped at
   the next reorder.
   - After: [src/scope.rs L118-196 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L118-L196), `order_key` and `RunQueue`.
-  - After: [src/scope.rs L689-716 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L689-L716), the round: `reorder`, then `take_next` up to the budget.
-  - After: [src/scope.rs L741-754 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L741-L754), a wake applied from the bus entering the task.
-  - After: [src/scope.rs L360 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L360), a spawn entering the task.
+  - After: [src/scope.rs L689-716 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L689-L716), `round`: `reorder`, then `take_next` up to the budget.
+  - After: [src/scope.rs L741-754 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L741-L754), `apply_wake_batch` putting a woken task in `RunQueue`.
+  - After: [src/scope.rs L360 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L360), `insert_task` putting a spawned task in `RunQueue`.
   - Commit [967b616](https://github.com/jameshuntt/scope/commit/967b616129a566c1fc8eabf3148b1ed08b2159c6).
   - Proof: the old full scan is kept under `cfg(test)` as `full_scan_order`, and in test builds every
     round asserts that its order equals it. `runnable_set_orders_like_a_full_scan` drives a seeded random
     workload under all 5 orderings and budgets `usize::MAX`, 1 and 3: spawns, wakes of live and finished
     tasks, timers, finish waiters, soft cancels that escalate by tick, and hard cancels between rounds.
-    `cargo test --lib` passes it at 967b616 and at e9f73c3. Schedule golden passes at 967b616.
+    `cargo test --lib` passes it at 967b616 and at e9f73c3. `schedule_golden` passes at 967b616.
   - [src/scope.rs L1098-1141 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L1098-L1141): `full_scan_order`, the old order.
   - [src/scope.rs L691-704 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L691-L704): the assert in each round of a test build.
   - [src/scope.rs L1234-1284 @ 967b616](https://github.com/jameshuntt/scope/blob/967b616129a566c1fc8eabf3148b1ed08b2159c6/src/scope.rs#L1234-L1284): `runnable_set_orders_like_a_full_scan`.
@@ -334,6 +349,9 @@ by 4.3% or less, and we do not claim a speed change for it.
     | 10 | 151.0 µs | 152.0 µs | 109.9 µs | 96.0 µs | 72.9 µs | 72.5 µs |
     | 100 | 269.9 µs | 265.2 µs | 244.0 µs | 253.5 µs | 88.2 µs | 88.2 µs |
     | 1000 | 1,373.6 µs | 1,368.9 µs | 1,429.8 µs | 1,967.8 µs | 233.9 µs | 235.3 µs |
+
+    The c4fe22d cells come from its first three runs. In eight later runs it took 1,555.2 to 1,929.4 µs
+    at 1000, and at 100 it overlapped da655cf. See the regression note under the round overhead entry.
 
     From 0.3.0 to 0.3.1 that is 52.3%, 66.7% and 82.8% less time.
   - In 0.2.2: `cd proofs/sparse-probe/0.2.2 && cargo run --release` gave
@@ -384,8 +402,8 @@ The README's 0.3.1 section and the version bump are in [e9f73c3](https://github.
 - **The `run_scoped` doc test that must not compile now fails for the borrow and nothing else.** The
   example was a `compile_fail` test whose closure had no type on its argument (`move |_cx|`). rustc
   rejects that closure on its own, with "implementation of `FnOnce` is not general enough" and the same
-  for `FnMut`, whatever it borrows and with no borrow at all. So the test passed for the wrong reason, and it would have kept
-  passing with a legal borrow.
+  for `FnMut`, whatever it borrows and with no borrow at all. So the test passed for the wrong reason,
+  and it would have kept passing with a legal borrow.
   - Before: [src/scope.rs L248-263 @ 407684b](https://github.com/jameshuntt/scope/blob/407684bdc7f1bcc360afaf38acf4783f72b3484a/src/scope.rs#L248-L263), the old `compile_fail` example with `move |_cx|`.
 
   Now there are two examples that differ only in where the borrowed `String` lives. The first borrows

@@ -24,3 +24,24 @@ in turn, on one Apple Silicon Mac with other work running (2026-10-15):
 | 10 | 148.9, 159.2, 151.0 | 152.0, 153.2, 150.1 | 109.9, 109.5, 118.7 | 96.0, 96.2, 94.0 | 73.0, 72.9, 72.8 | 73.3, 72.5, 72.3 |
 | 100 | 265.2, 269.9, 270.4 | 268.2, 263.8, 265.2 | 243.9, 246.8, 244.0 | 252.2, 253.7, 253.5 | 88.2, 88.3, 88.2 | 87.5, 88.2, 88.2 |
 | 1000 | 1373.5, 1373.6, 1377.9 | 1368.9, 1382.9, 1368.1 | 1419.5, 1429.8, 1440.0 | 1965.6, 2003.8, 1967.8 | 237.3, 233.8, 233.9 | 231.6, 235.3, 236.4 |
+
+The gap between `da655cf` and `c4fe22d` at 1000 parked moved a lot, so those two ran eight more times
+each, taken in turn, on the same Mac later that day (2026-10-15, load average about 6). Each was built
+once in its own fresh target dir, then:
+
+    for v in da655cf c4fe22d; do (cd $v && cargo build --release --locked); done
+    for i in 1 2 3 4 5 6 7 8; do for v in da655cf c4fe22d; do $v/target/release/sparse_probe; done; done
+
+`median_us`, runs 1 to 8:
+
+| parked | version | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 10 | da655cf | 111.1 | 110.5 | 111.0 | 117.3 | 108.6 | 110.6 | 110.9 | 111.0 |
+| 10 | c4fe22d | 94.8 | 96.1 | 96.0 | 94.0 | 97.0 | 93.0 | 95.5 | 97.1 |
+| 100 | da655cf | 247.0 | 245.4 | 249.7 | 256.4 | 243.7 | 247.8 | 248.3 | 242.7 |
+| 100 | c4fe22d | 254.0 | 256.2 | 253.8 | 238.0 | 236.9 | 253.3 | 236.3 | 250.7 |
+| 1000 | da655cf | 1454.8 | 1449.3 | 1454.3 | 1461.0 | 1443.2 | 1450.4 | 1450.3 | 1455.1 |
+| 1000 | c4fe22d | 1929.4 | 1750.7 | 1710.5 | 1717.3 | 1584.4 | 1691.2 | 1555.2 | 1715.4 |
+
+At 1000, `c4fe22d` is slower in every run, by 7.2% to 32.6% run for run. At 100, `c4fe22d` is faster in
+runs 4, 5 and 7 and slower in the rest. At 10, `c4fe22d` is faster in every run.
