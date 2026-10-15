@@ -1,0 +1,12 @@
+# entry-size
+
+The size of a task entry, and of a slab slot holding one, before and after c4fe22d. `TaskEntry` and
+`Slot` are private, so `run.sh` copies the tree at da655cf and at c4fe22d to a temp dir, adds a test
+that prints both sizes, and runs it.
+
+    proofs/entry-size/run.sh
+
+On aarch64-apple-darwin:
+
+    da655cf: TaskEntry 144 bytes, slab slot 152 bytes
+    c4fe22d: TaskEntry 136 bytes, slab slot 144 bytes

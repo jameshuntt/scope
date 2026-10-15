@@ -1,0 +1,26 @@
+# sparse-probe
+
+Two runnable tasks among many parked ones. In `sparse_probe.rs`, `idle` tasks park on their first poll,
+two tasks pass 2000 wakes back and forth, and then the last one wakes every parked task so the run
+finishes. It prints rounds, polls, completed tasks and the median time of 101 runs, for 10, 100 and 1000
+parked tasks.
+
+Each folder runs it against one version of scope: `0.2.2`, `0.3.0` and `0.3.1` from crates.io, and the
+commits `da655cf`, `c4fe22d` and `967b616` from GitHub. `Cargo.lock` pins each one.
+
+    cd proofs/sparse-probe/0.3.1 && cargo run --release
+
+Every version prints `rounds=1002`, and the same polls and completed counts:
+
+    idle=10 rounds=1002 polls=2022 completed=12 median_us=…
+    idle=100 rounds=1002 polls=2202 completed=102 median_us=…
+    idle=1000 rounds=1002 polls=4002 completed=1002 median_us=…
+
+The times depend on the machine. These are the `median_us` values from three runs of each version, taken
+in turn, on one Apple Silicon Mac with other work running (2026-10-15):
+
+| parked | 0.2.2 | 0.3.0 | da655cf | c4fe22d | 967b616 | 0.3.1 |
+|---:|---|---|---|---|---|---|
+| 10 | 148.9, 159.2, 151.0 | 152.0, 153.2, 150.1 | 109.9, 109.5, 118.7 | 96.0, 96.2, 94.0 | 73.0, 72.9, 72.8 | 73.3, 72.5, 72.3 |
+| 100 | 265.2, 269.9, 270.4 | 268.2, 263.8, 265.2 | 243.9, 246.8, 244.0 | 252.2, 253.7, 253.5 | 88.2, 88.3, 88.2 | 87.5, 88.2, 88.2 |
+| 1000 | 1373.5, 1373.6, 1377.9 | 1368.9, 1382.9, 1368.1 | 1419.5, 1429.8, 1440.0 | 1965.6, 2003.8, 1967.8 | 237.3, 233.8, 233.9 | 231.6, 235.3, 236.4 |

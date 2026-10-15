@@ -1,0 +1,13 @@
+[package]
+name = "lost-wake"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "../lost_wake.rs"
+
+[dependencies]
+scope = { git = "https://github.com/jameshuntt/scope", rev = "513cb506a7cbec53351d27459db014224f2abef8" }
+
+[workspace]

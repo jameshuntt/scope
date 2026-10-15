@@ -1,0 +1,13 @@
+# ring-count
+
+The `sparse_wake_ring` workload from `benches/scheduler.rs`, run once per ring size against scope 0.3.1,
+printing rounds and polls.
+
+    cd proofs/ring-count && cargo run --release
+
+    links=10 rounds=201 polls=2010 polls_per_round=10
+    links=100 rounds=21 polls=2100 polls_per_round=100
+    links=1000 rounds=3 polls=3000 polls_per_round=1000
+
+Every round polls every link, so the bench is not the "one runnable task among many idle ones" its
+comment describes.

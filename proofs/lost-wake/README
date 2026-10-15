@@ -1,0 +1,17 @@
+# lost-wake
+
+`lost_wake.rs` has two tests. The first is `a_wake_from_another_thread_during_runs_idle_wait_is_not_lost`
+from `tests/kernel.rs` at da655cf, unchanged. The second does the same through `run_until()`: a task parks,
+another thread fires its real `Waker` 50 ms later, and `run_until(3 s)` should finish right after.
+
+Each folder runs the two tests against one version of scope: `0.2.2`, `0.3.0` and `0.3.1` from crates.io,
+and the commits `513cb50` and `da655cf` from GitHub. `Cargo.lock` pins each one.
+
+    cd proofs/lost-wake/0.2.2 && cargo test
+
+On 0.2.2, 0.3.0 and 513cb50 both tests fail, in 10 s, with:
+
+    RunReport { rounds: 5, polls: 3, completed: 1, cancelled: 0, panicked: 0, stalled: [(TaskId { slot: 1, generation: 0 }, "woken")] }
+    finished=false after 3.00…s
+
+On da655cf and 0.3.1: `test result: ok. 2 passed`, in about 0.06 s.

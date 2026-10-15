@@ -1,0 +1,20 @@
+# proofs
+
+The programs and scripts behind the claims in `CHANGELOG.md` that the repo's own tests do not cover.
+Each folder's README gives the command and what it prints. The Cargo projects pin the exact scope
+version they test, from crates.io or a commit on GitHub, and each is its own workspace.
+
+- `lost-wake/`: a wake from another thread during the idle wait of `run()` and `run_until()`.
+- `borrow-doctest/`: the 0.2.2 `run_scoped` doc test that must not compile, and why it proves nothing.
+- `doctest-error-code/`: stable rustdoc does not check the error code on a `compile_fail` test.
+- `rust-version/`: scope 0.2.2 does not build on Rust 1.80.
+- `sparse-probe/`: a round's cost with two runnable tasks and many parked ones, per version.
+- `ring-count/`: rounds and polls of the `sparse_wake_ring` bench workload.
+- `golden-lifo/`: the golden schedule test fails when one ordering's key changes.
+- `loom-notify/`: the loom models fail when `send` skips a needed notify.
+- `entry-size/`: `TaskEntry` and slab slot sizes before and after c4fe22d.
+- `bench-per-commit/`: the criterion logs per commit, and the loop and script that made and read them.
+
+The READMEs here have no `.md` extension on purpose. `include` in the crate's `Cargo.toml` lists
+`README.md`, which matches a file of that name in any folder, so a `README.md` here would go into the
+published package.

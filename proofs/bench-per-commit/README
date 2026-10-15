@@ -1,0 +1,14 @@
+# bench-per-commit
+
+`logs/` holds the criterion output the changelog quotes. `cargo bench --locked --bench scheduler` ran at
+19b484b, cfb873a, 513cb50, da655cf, c4fe22d, 967b616 and e9f73c3, one after another, then at 19b484b a
+second time. 407684b was not benched. `logs/progress.txt` has each run's start and end time and the
+load average. It was one Apple Silicon Mac with other work running.
+
+    python3 proofs/bench-per-commit/compare.py 19b484b:e9f73c3 19b484b:19b484b_again
+
+prints the change in criterion's point estimate for each bench.
+
+`run.sh` is the loop that made the logs. That run used a copy of each commit's tree under one folder.
+This copy makes the trees with `git archive` in a temp dir and writes the new logs to another temp dir,
+so `logs/` stays as it is. The whole loop took 27 minutes.

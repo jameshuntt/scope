@@ -1,0 +1,196 @@
+   Compiling scope v0.3.1 (/private/tmp/claude-501/changelog-scope-wt/e9f73c3)
+    Finished `bench` profile [optimized] target(s) in 0.98s
+     Running benches/scheduler.rs (/private/tmp/claude-501/changelog-scope-target-bench/release/deps/scheduler-6b2f9914b166d99b)
+Benchmarking yield_storm/biased_qos_then_age/10
+Benchmarking yield_storm/biased_qos_then_age/10: Warming up for 3.0000 s
+Benchmarking yield_storm/biased_qos_then_age/10: Collecting 100 samples in estimated 5.0248 s (616k iterations)
+Benchmarking yield_storm/biased_qos_then_age/10: Analyzing
+yield_storm/biased_qos_then_age/10
+                        time:   [8.1056 µs 8.1288 µs 8.1558 µs]
+                        thrpt:  [25.749 Melem/s 25.834 Melem/s 25.908 Melem/s]
+Found 9 outliers among 100 measurements (9.00%)
+  1 (1.00%) low mild
+  5 (5.00%) high mild
+  3 (3.00%) high severe
+Benchmarking yield_storm/biased_qos_then_age/100
+Benchmarking yield_storm/biased_qos_then_age/100: Warming up for 3.0000 s
+Benchmarking yield_storm/biased_qos_then_age/100: Collecting 100 samples in estimated 5.1629 s (71k iterations)
+Benchmarking yield_storm/biased_qos_then_age/100: Analyzing
+yield_storm/biased_qos_then_age/100
+                        time:   [73.123 µs 73.211 µs 73.297 µs]
+                        thrpt:  [28.650 Melem/s 28.684 Melem/s 28.719 Melem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+  1 (1.00%) high severe
+Benchmarking yield_storm/biased_qos_then_age/1000
+Benchmarking yield_storm/biased_qos_then_age/1000: Warming up for 3.0000 s
+Benchmarking yield_storm/biased_qos_then_age/1000: Collecting 100 samples in estimated 7.8690 s (10k iterations)
+Benchmarking yield_storm/biased_qos_then_age/1000: Analyzing
+yield_storm/biased_qos_then_age/1000
+                        time:   [773.84 µs 775.89 µs 778.33 µs]
+                        thrpt:  [26.981 Melem/s 27.066 Melem/s 27.137 Melem/s]
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) high mild
+  1 (1.00%) high severe
+Benchmarking yield_storm/round_robin/10
+Benchmarking yield_storm/round_robin/10: Warming up for 3.0000 s
+Benchmarking yield_storm/round_robin/10: Collecting 100 samples in estimated 5.0341 s (596k iterations)
+Benchmarking yield_storm/round_robin/10: Analyzing
+yield_storm/round_robin/10
+                        time:   [8.3908 µs 8.4038 µs 8.4180 µs]
+                        thrpt:  [24.947 Melem/s 24.989 Melem/s 25.027 Melem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  1 (1.00%) low mild
+  3 (3.00%) high mild
+Benchmarking yield_storm/round_robin/100
+Benchmarking yield_storm/round_robin/100: Warming up for 3.0000 s
+Benchmarking yield_storm/round_robin/100: Collecting 100 samples in estimated 5.1783 s (71k iterations)
+Benchmarking yield_storm/round_robin/100: Analyzing
+yield_storm/round_robin/100
+                        time:   [73.504 µs 73.870 µs 74.241 µs]
+                        thrpt:  [28.286 Melem/s 28.428 Melem/s 28.570 Melem/s]
+Found 14 outliers among 100 measurements (14.00%)
+  7 (7.00%) high mild
+  7 (7.00%) high severe
+Benchmarking yield_storm/round_robin/1000
+Benchmarking yield_storm/round_robin/1000: Warming up for 3.0000 s
+Benchmarking yield_storm/round_robin/1000: Collecting 100 samples in estimated 7.8643 s (10k iterations)
+Benchmarking yield_storm/round_robin/1000: Analyzing
+yield_storm/round_robin/1000
+                        time:   [782.89 µs 784.80 µs 786.80 µs]
+                        thrpt:  [26.690 Melem/s 26.758 Melem/s 26.824 Melem/s]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+Benchmarking yield_storm/fifo/10
+Benchmarking yield_storm/fifo/10: Warming up for 3.0000 s
+Benchmarking yield_storm/fifo/10: Collecting 100 samples in estimated 5.0175 s (616k iterations)
+Benchmarking yield_storm/fifo/10: Analyzing
+yield_storm/fifo/10     time:   [7.9720 µs 7.9896 µs 8.0097 µs]
+                        thrpt:  [26.218 Melem/s 26.284 Melem/s 26.342 Melem/s]
+Found 9 outliers among 100 measurements (9.00%)
+  4 (4.00%) high mild
+  5 (5.00%) high severe
+Benchmarking yield_storm/fifo/100
+Benchmarking yield_storm/fifo/100: Warming up for 3.0000 s
+Benchmarking yield_storm/fifo/100: Collecting 100 samples in estimated 5.0644 s (71k iterations)
+Benchmarking yield_storm/fifo/100: Analyzing
+yield_storm/fifo/100    time:   [71.851 µs 72.007 µs 72.160 µs]
+                        thrpt:  [29.102 Melem/s 29.164 Melem/s 29.227 Melem/s]
+Found 2 outliers among 100 measurements (2.00%)
+  1 (1.00%) high mild
+  1 (1.00%) high severe
+Benchmarking yield_storm/fifo/1000
+Benchmarking yield_storm/fifo/1000: Warming up for 3.0000 s
+Benchmarking yield_storm/fifo/1000: Collecting 100 samples in estimated 7.6292 s (10k iterations)
+Benchmarking yield_storm/fifo/1000: Analyzing
+yield_storm/fifo/1000   time:   [775.47 µs 780.27 µs 784.91 µs]
+                        thrpt:  [26.755 Melem/s 26.914 Melem/s 27.080 Melem/s]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+Benchmarking sparse_wake_ring/10
+Benchmarking sparse_wake_ring/10: Warming up for 3.0000 s
+Benchmarking sparse_wake_ring/10: Collecting 100 samples in estimated 5.0823 s (81k iterations)
+Benchmarking sparse_wake_ring/10: Analyzing
+sparse_wake_ring/10     time:   [61.971 µs 62.222 µs 62.527 µs]
+                        thrpt:  [31.986 Melem/s 32.143 Melem/s 32.273 Melem/s]
+Found 5 outliers among 100 measurements (5.00%)
+  2 (2.00%) high mild
+  3 (3.00%) high severe
+Benchmarking sparse_wake_ring/100
+Benchmarking sparse_wake_ring/100: Warming up for 3.0000 s
+Benchmarking sparse_wake_ring/100: Collecting 100 samples in estimated 5.1878 s (71k iterations)
+Benchmarking sparse_wake_ring/100: Analyzing
+sparse_wake_ring/100    time:   [72.446 µs 72.520 µs 72.595 µs]
+                        thrpt:  [27.550 Melem/s 27.579 Melem/s 27.607 Melem/s]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+Benchmarking sparse_wake_ring/1000
+Benchmarking sparse_wake_ring/1000: Warming up for 3.0000 s
+Benchmarking sparse_wake_ring/1000: Collecting 100 samples in estimated 5.9321 s (30k iterations)
+Benchmarking sparse_wake_ring/1000: Analyzing
+sparse_wake_ring/1000   time:   [196.71 µs 197.44 µs 198.23 µs]
+                        thrpt:  [10.089 Melem/s 10.130 Melem/s 10.167 Melem/s]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+
+Benchmarking spawn_churn/100
+Benchmarking spawn_churn/100: Warming up for 3.0000 s
+Benchmarking spawn_churn/100: Collecting 100 samples in estimated 5.0201 s (434k iterations)
+Benchmarking spawn_churn/100: Analyzing
+spawn_churn/100         time:   [11.530 µs 11.562 µs 11.598 µs]
+                        thrpt:  [8.6221 Melem/s 8.6488 Melem/s 8.6729 Melem/s]
+Found 5 outliers among 100 measurements (5.00%)
+  4 (4.00%) high mild
+  1 (1.00%) high severe
+Benchmarking spawn_churn/1000
+Benchmarking spawn_churn/1000: Warming up for 3.0000 s
+Benchmarking spawn_churn/1000: Collecting 100 samples in estimated 5.0453 s (50k iterations)
+Benchmarking spawn_churn/1000: Analyzing
+spawn_churn/1000        time:   [99.248 µs 99.525 µs 99.846 µs]
+                        thrpt:  [10.015 Melem/s 10.048 Melem/s 10.076 Melem/s]
+Found 13 outliers among 100 measurements (13.00%)
+  2 (2.00%) low mild
+  7 (7.00%) high mild
+  4 (4.00%) high severe
+Benchmarking spawn_churn/10000
+Benchmarking spawn_churn/10000: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 5.5s, enable flat sampling, or reduce sample count to 60.
+Benchmarking spawn_churn/10000: Collecting 100 samples in estimated 5.5033 s (5050 iterations)
+Benchmarking spawn_churn/10000: Analyzing
+spawn_churn/10000       time:   [1.0692 ms 1.0728 ms 1.0767 ms]
+                        thrpt:  [9.2875 Melem/s 9.3211 Melem/s 9.3525 Melem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  3 (3.00%) high mild
+  1 (1.00%) high severe
+
+Benchmarking join_all/10
+Benchmarking join_all/10: Warming up for 3.0000 s
+Benchmarking join_all/10: Collecting 100 samples in estimated 5.0176 s (1.2M iterations)
+Benchmarking join_all/10: Analyzing
+join_all/10             time:   [4.2150 µs 4.2263 µs 4.2378 µs]
+                        thrpt:  [2.3597 Melem/s 2.3661 Melem/s 2.3725 Melem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  3 (3.00%) high mild
+  1 (1.00%) high severe
+Benchmarking join_all/100
+Benchmarking join_all/100: Warming up for 3.0000 s
+Benchmarking join_all/100: Collecting 100 samples in estimated 5.0188 s (141k iterations)
+Benchmarking join_all/100: Analyzing
+join_all/100            time:   [34.180 µs 34.507 µs 34.933 µs]
+                        thrpt:  [2.8626 Melem/s 2.8980 Melem/s 2.9257 Melem/s]
+Found 6 outliers among 100 measurements (6.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+  4 (4.00%) high severe
+Benchmarking join_all/1000
+Benchmarking join_all/1000: Warming up for 3.0000 s
+Benchmarking join_all/1000: Collecting 100 samples in estimated 5.2782 s (15k iterations)
+Benchmarking join_all/1000: Analyzing
+join_all/1000           time:   [326.77 µs 328.40 µs 330.21 µs]
+                        thrpt:  [3.0283 Melem/s 3.0451 Melem/s 3.0603 Melem/s]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high severe
+
+Benchmarking mailbox/100
+Benchmarking mailbox/100: Warming up for 3.0000 s
+Benchmarking mailbox/100: Collecting 100 samples in estimated 5.0056 s (2.0M iterations)
+Benchmarking mailbox/100: Analyzing
+mailbox/100             time:   [2.5099 µs 2.5208 µs 2.5332 µs]
+                        thrpt:  [39.475 Melem/s 39.669 Melem/s 39.842 Melem/s]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high severe
+Benchmarking mailbox/10000
+Benchmarking mailbox/10000: Warming up for 3.0000 s
+Benchmarking mailbox/10000: Collecting 100 samples in estimated 5.1076 s (30k iterations)
+Benchmarking mailbox/10000: Analyzing
+mailbox/10000           time:   [171.11 µs 172.87 µs 174.98 µs]
+                        thrpt:  [57.149 Melem/s 57.848 Melem/s 58.443 Melem/s]
+Found 10 outliers among 100 measurements (10.00%)
+  4 (4.00%) high mild
+  6 (6.00%) high severe
+

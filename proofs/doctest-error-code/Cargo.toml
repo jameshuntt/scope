@@ -1,0 +1,10 @@
+[package]
+name = "doctest-error-code"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+scope = "=0.3.1"
+
+[workspace]

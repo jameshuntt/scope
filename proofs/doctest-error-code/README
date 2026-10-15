@@ -1,0 +1,10 @@
+# doctest-error-code
+
+Does rustdoc check the error code on a `compile_fail,E0597` doc test? `src/lib.rs` holds 0.3.1's
+`run_scoped` example that must not compile, marked with the wrong code, `E0308`. Pinned to scope 0.3.1.
+
+    cd proofs/doctest-error-code
+    cargo test --doc             # stable 1.97.1: compile fail ... ok
+    cargo +nightly test --doc    # nightly: FAILED, Some expected error codes were not found: ["E0308"]
+
+So stable passes a `compile_fail` test whatever code it names, and only nightly checks the code.

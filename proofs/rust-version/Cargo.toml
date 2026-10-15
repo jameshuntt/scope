@@ -1,0 +1,10 @@
+[package]
+name = "rust-version-check"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+scope = "=0.2.2"
+
+[workspace]

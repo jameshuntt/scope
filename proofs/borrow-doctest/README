@@ -1,0 +1,23 @@
+# borrow-doctest
+
+The `run_scoped` doc test that must not compile, copied from scope 0.2.2, next to three variants of it.
+Pinned to scope 0.2.2.
+
+    cd proofs/borrow-doctest && cargo test --doc
+
+All 4 pass. The one that matters is
+
+    test src/lib.rs - legal_borrow_untyped_closure (line 28) - compile fail ... ok
+
+That is a legal borrow, with the closure written the way the 0.2.2 test writes it (`move |_cx|`), and it
+does not compile either. So the 0.2.2 test passes whether the borrow is legal or not.
+
+What each version of the code fails with (stable rustc 1.97.1):
+
+    cargo build --example as_written          # 5 errors: E0597, and 4 "implementation of `FnOnce`/`FnMut` is not general enough"
+    cargo build --example legal_untyped       # 4 errors: the same 4 "not general enough", no E0597
+    cargo build --example no_borrow_untyped   # 4 errors: the same 4, with no borrow at all
+    cargo build --example illegal_typed       # 1 error: E0597
+    cargo run --example legal_typed           # prints completed=1
+
+Plain `cargo test` also builds the examples, and four of them are meant not to compile.

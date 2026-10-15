@@ -1,0 +1,14 @@
+[package]
+name = "sparse-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "sparse_probe"
+path = "../sparse_probe.rs"
+
+[dependencies]
+scope = { git = "https://github.com/jameshuntt/scope", rev = "c4fe22d20534104ed26b1311789f6cb7b622f21d" }
+
+[workspace]

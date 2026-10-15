@@ -1,0 +1,20 @@
+# loom-notify
+
+Do the two loom models in `src/wake.rs` catch a `send` that skips its notify? `run.sh` copies the tree at
+e9f73c3 (the 0.3.1 release) to a temp dir, runs `RUSTFLAGS="--cfg loom" cargo test --lib --release`,
+then changes `if q.waiting > 0` to `if q.waiting > 1` in `WakeBus::send` (`src/wake.rs` line 115) and
+runs it again.
+
+    proofs/loom-notify/run.sh
+
+    == as released
+    test result: ok. 4 passed; 0 failed; ...
+    == with the change
+    ...
+    test wake::loom_tests::a_receiver_blocked_on_an_empty_bus_always_gets_the_send ... FAILED
+    test wake::loom_tests::two_senders_two_blocking_receives_lose_nothing ... FAILED
+    deadlock; threads = [(Id(0), Blocked(Location(None))), (Id(1), Terminated)]
+    deadlock; threads = [(Id(0), Blocked(Location(None))), (Id(1), Terminated), (Id(2), Terminated)]
+    test result: FAILED. 2 passed; 2 failed; ...
+
+The first deadlock line is the one-sender model, the second the two-sender model.

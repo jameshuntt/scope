@@ -1,0 +1,13 @@
+[package]
+name = "lost-wake"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+path = "../lost_wake.rs"
+
+[dependencies]
+scope = "=0.3.0"
+
+[workspace]

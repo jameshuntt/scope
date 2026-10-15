@@ -1,0 +1,19 @@
+# golden-lifo
+
+Does `tests/schedule_golden.rs` catch a schedule change? `run.sh` copies the tree at e9f73c3 (the 0.3.1
+release) to a temp dir, runs the golden test, then gives `WakeOrdering::Lifo` the FIFO key in `order_key`
+(`src/scope.rs` line 136) and runs it again.
+
+    proofs/golden-lifo/run.sh
+
+    == as released
+    test result: ok. 1 passed; 0 failed; ...
+    == with the change
+    136c136
+    <         WakeOrdering::Lifo => (0, 0, u64::MAX - e.runnable_seq),
+    ---
+    >         WakeOrdering::Lifo => (0, 0, e.runnable_seq),
+    schedule changed; first differing line Some(753): now Some("poll 1 #0.0 y0"), recorded Some("poll 1 #11.0 y11")
+    test result: FAILED. 0 passed; 1 failed; ...
+
+`Some(753)` counts from 0, so the first differing line is line 754 of `tests/golden/schedule.txt`.

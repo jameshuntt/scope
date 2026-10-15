@@ -1,0 +1,10 @@
+# rust-version
+
+scope 0.2.2 declares `rust-version = "1.80"`. This program depends on scope `=0.2.2`, and `Cargo.lock`
+pins `waker_tables` 0.1.4, the version 0.2.2 resolves to.
+
+    cd proofs/rust-version
+    cargo +1.80 check --locked   # exit 101: failed to parse manifest at `.../waker_tables-0.1.4/Cargo.toml`, feature `edition2024` is required
+    cargo +1.85 check --locked   # builds
+
+`cargo +1.83 check --locked` fails the same way as 1.80.
