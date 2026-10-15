@@ -145,6 +145,10 @@ cross-thread wake and cancel handoff is model-checked with Loom
 (`RUSTFLAGS="--cfg loom" cargo test --test loom_wake --release`), and the kernel
 runs clean under Miri.
 
+GitHub Actions run all of this on every push (the tests including the pinned schedule, clippy,
+docs, Rust 1.85, Miri, loom, and the NEON example on an ARM runner), and publish a `v*` tag only when
+every check passes.
+
 ## What it is not
 
 A thread pool. Tasks borrow the environment because exactly one thread polls

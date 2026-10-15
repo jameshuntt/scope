@@ -1,0 +1,117 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  schedule:
+    # Weekly: the newest compatible dependency versions, which is what a new user of the crate gets.
+    - cron: "23 6 * * 1"
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      # Includes tests/schedule_golden.rs: the exact schedule recorded from 0.3.0.
+      - run: cargo test --all-targets --locked
+      - run: cargo test --doc --locked
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo doc --no-deps --locked
+        env:
+          RUSTDOCFLAGS: -D warnings
+      - run: cargo bench --no-run --locked
+      - name: Build the package exactly as publish would
+        run: cargo package --locked
+
+  arm:
+    # The 1BRC example's NEON code only builds on aarch64.
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: cargo test --all-targets --locked
+      - run: cargo clippy --all-targets --locked -- -D warnings
+
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85
+      - run: cargo test --all-targets --locked
+
+  miri:
+    runs-on: ubuntu-latest
+    env:
+      # The kernel tests read the clock, which Miri allows only without isolation.
+      MIRIFLAGS: -Zmiri-disable-isolation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: miri
+      - run: cargo miri setup
+      - run: cargo miri test --lib --locked
+      # sleep_task waits on the wall clock, which is too slow under Miri.
+      - run: cargo miri test --test kernel --locked -- --skip sleep_task
+
+  loom:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: --cfg loom
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: cargo test --test loom_wake --release --locked
+      - run: cargo test --lib --release --locked
+      - run: cargo clippy --lib --release --locked -- -D warnings
+
+  latest-deps:
+    # Not a publish gate: a third-party release should not block a tag, but it should show up here.
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [stable, "1.85"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - run: cargo update
+      - run: cargo test --all-targets
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test, arm, msrv, miri, loom]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # Pinned to commits: this job can get a crates.io token. The runner's own stable cargo is used.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Tag matches Cargo.toml version
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != v$version"; exit 1; }
+      - uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1
+        id: auth
+      - run: cargo publish --locked
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
