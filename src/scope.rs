@@ -242,11 +242,31 @@ pub fn scoped<'env, R, Ret>(
 /// point, like `std::thread::scope`.
 ///
 /// Tasks may borrow data living outside the scope (including `&mut`, held in
-/// the task struct across suspensions). The compiler enforces the bound: a
-/// task cannot borrow data that dies before the scope finishes —
+/// the task struct across suspensions):
 ///
-/// ```compile_fail
-/// use scope::{run_scoped, FnTask, TaskPoll};
+/// ```
+/// use scope::{run_scoped, Cx, FnTask, TaskPoll};
+///
+/// let mut env = ();
+/// let outside = String::from("outlives the scope");
+/// let r = &outside; // borrow of data that outlives the scope
+/// run_scoped(&mut env, |s| {
+///     s.spawn_named(
+///         "ok",
+///         FnTask(move |_cx: &mut Cx<'_, '_, ()>| {
+///             let _ = r.len();
+///             TaskPoll::Ready
+///         }),
+///     );
+/// });
+/// ```
+///
+/// The compiler enforces the bound: a task cannot borrow data that dies before
+/// the scope finishes. The same task, borrowing data that dies first, is
+/// rejected for exactly that reason (E0597, "does not live long enough"):
+///
+/// ```compile_fail,E0597
+/// use scope::{run_scoped, Cx, FnTask, TaskPoll};
 ///
 /// let mut env = ();
 /// run_scoped(&mut env, |s| {
@@ -254,7 +274,7 @@ pub fn scoped<'env, R, Ret>(
 ///     let r = &local; // borrow of closure-local data
 ///     s.spawn_named(
 ///         "bad",
-///         FnTask(move |_cx| {
+///         FnTask(move |_cx: &mut Cx<'_, '_, ()>| {
 ///             let _ = r.len(); // task would read it after `local` is dropped
 ///             TaskPoll::Ready
 ///         }),

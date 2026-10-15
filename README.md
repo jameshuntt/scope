@@ -152,6 +152,21 @@ them; a work-stealing variant would be a different runtime, not a feature of
 this one. Use OS threads around scopes (one runtime per thread, as the 1BRC
 example does), not scopes across threads.
 
+## 0.3.1
+
+- The scheduler takes 12% to 42% less time on the crate's benchmarks (`cargo bench --bench
+  scheduler`, against 0.3.0): 33% to 42% for many tasks yielding under the default policy, 25% to 41%
+  for wake-driven work among many idle tasks, 22% to 27% for spawning, 12% to 16% for join and
+  mailboxes. A round now costs the runnable tasks instead of every live one; a poll no longer copies
+  the task's name or touches reference counts; the wake queue is drained in one lock.
+- Fixed: when `run()` or `run_until()` had nothing to poll and waited, a wake from another thread that
+  ended the wait was taken off the queue and dropped, so the task was reported stalled.
+- The schedule is unchanged: `tests/schedule_golden.rs` pins every poll, wake, spawn, finish and round
+  for 4 workloads under all 5 policies and 3 poll budgets, recorded from 0.3.0.
+- The borrowing guarantee now has a real test: the `run_scoped` doc example that must fail to compile
+  fails only for "does not live long enough" (E0597); before, it failed for an unrelated type error and
+  would have passed even for a legal borrow.
+
 ## 0.3.0
 
 Built on `waker_tables` 0.3: `scheduler_waker` gets a vtable built from `WakeSignal` itself, so
