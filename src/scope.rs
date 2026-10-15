@@ -115,6 +115,86 @@ impl<'env, R> Default for PollIntents<'env, R> {
     }
 }
 
+/// The next runnable sequence number. Spawns and wakes draw from one counter,
+/// so `runnable_seq` orders tasks by when they last became runnable.
+fn next_seq(counter: &mut u64) -> u64 {
+    *counter = counter.wrapping_add(1);
+    *counter
+}
+
+/// A runnable task's place under the active [`WakeOrdering`], read from its
+/// entry once per round; smaller sorts first. The [`TaskId`] stored beside it
+/// breaks ties in slot order, the order of the stable sort over every live
+/// task this replaces.
+type OrderKey = (u8, u64, u64);
+
+fn order_key<R>(ordering: WakeOrdering, e: &TaskEntry<'_, R>) -> OrderKey {
+    // `u8::MAX - priority` puts higher QoS first; `u64::MAX - seq` puts newer first.
+    let qos = u8::MAX - e.qos.priority();
+    match ordering {
+        WakeOrdering::Fifo | WakeOrdering::RoundRobin => (0, 0, e.runnable_seq),
+        WakeOrdering::Lifo => (0, 0, u64::MAX - e.runnable_seq),
+        WakeOrdering::BiasedQoS => (qos, 0, e.runnable_seq),
+        WakeOrdering::BiasedQoSThenAge => (qos, e.last_polled, e.runnable_seq),
+    }
+}
+
+/// The runnable set, kept up to date as tasks change, so a round costs the
+/// runnable tasks and not every live one.
+///
+/// A task enters (`enter`) when its `runnable` flag goes true: at spawn, and
+/// when `drain_bus` takes a wake for an idle task (timer, finish-waiter and
+/// cancel wakes all arrive that way). `reorder` sorts every member into `order`
+/// for the round, which takes them from `order[next..]` and clears the flag of
+/// each one it polls; that is how a polled task leaves. A task that finishes
+/// leaves its stale id behind, and the next `reorder` drops it. Tasks the poll
+/// budget did not reach stay in `order[next..]` and join the next `reorder`
+/// with their `runnable_seq` unchanged.
+///
+/// Invariant: every live task whose `runnable` flag is set appears exactly
+/// once in `entered` and `order[next..]` together, and no other live task does.
+#[derive(Default)]
+struct RunQueue {
+    /// Tasks that became runnable since the last `reorder` (plus stale ids).
+    entered: Vec<TaskId>,
+    /// This round's order. Kept across rounds so its buffer is reused.
+    order: Vec<(OrderKey, TaskId)>,
+    /// The first entry of `order` the round has not taken.
+    next: usize,
+    /// The `RoundRobin` rotation, advanced once per round with a runnable task.
+    rr_cursor: usize,
+}
+
+impl RunQueue {
+    fn enter(&mut self, id: TaskId) {
+        self.entered.push(id);
+    }
+
+    /// Order the whole runnable set for this round. `key` gives a member's
+    /// sort key, or `None` when its id is stale or it is no longer runnable.
+    fn reorder(&mut self, ordering: WakeOrdering, key: impl Fn(TaskId) -> Option<OrderKey>) {
+        let RunQueue { entered, order, next, rr_cursor } = self;
+        entered.extend(order.drain(*next..).map(|(_, id)| id));
+        order.clear();
+        *next = 0;
+        order.extend(entered.drain(..).filter_map(|id| Some((key(id)?, id))));
+        // Every id is distinct, so the order is total and unstable sorting is exact.
+        order.sort_unstable();
+        if ordering == WakeOrdering::RoundRobin && !order.is_empty() {
+            let rotate = *rr_cursor % order.len();
+            order.rotate_left(rotate);
+            *rr_cursor = rr_cursor.wrapping_add(1);
+        }
+    }
+
+    /// The next task in this round's order, if any is left.
+    fn take_next(&mut self) -> Option<TaskId> {
+        let &(_, id) = self.order.get(self.next)?;
+        self.next += 1;
+        Some(id)
+    }
+}
+
 /// The runtime: the tasks, the wake bus, the timer and cancel heaps, and the
 /// exclusive borrow of the environment `R` that every poll receives. Build one
 /// with [`scoped`] or [`run_scoped`], or directly with [`Scope::new`].
@@ -125,6 +205,7 @@ pub struct Scope<'env, R> {
     /// Wakes taken off the bus and not yet applied. `drain_bus` trades this
     /// (empty) buffer for the bus queue in one lock, then applies it unlocked.
     wake_batch: VecDeque<SchedulerMsg>,
+    runq: RunQueue,
 
     sleep_heap: BinaryHeap<Reverse<(Instant, TaskId)>>,
     cancel_tick_heap: BinaryHeap<Reverse<(u64, TaskId)>>,
@@ -136,7 +217,6 @@ pub struct Scope<'env, R> {
 
     tick_count: u64,
     seq_counter: u64,
-    rr_cursor: usize,
     poll_seq: u64,
 
     completed: usize,
@@ -203,6 +283,7 @@ impl<'env, R> Scope<'env, R> {
             slab: TaskSlab::new(),
             bus: WakeBus::new(),
             wake_batch: VecDeque::new(),
+            runq: RunQueue::default(),
             sleep_heap: BinaryHeap::new(),
             cancel_tick_heap: BinaryHeap::new(),
             cancel_time_heap: BinaryHeap::new(),
@@ -211,7 +292,6 @@ impl<'env, R> Scope<'env, R> {
             intents: PollIntents::default(),
             tick_count: 0,
             seq_counter: 0,
-            rr_cursor: 0,
             poll_seq: 0,
             completed: 0,
             cancelled: 0,
@@ -254,11 +334,6 @@ impl<'env, R> Scope<'env, R> {
 
     // ---------------- spawning ----------------
 
-    fn next_seq(&mut self) -> u64 {
-        self.seq_counter = self.seq_counter.wrapping_add(1);
-        self.seq_counter
-    }
-
     fn insert_task(
         &mut self,
         name: String,
@@ -266,7 +341,7 @@ impl<'env, R> Scope<'env, R> {
         cell: Arc<CancelCell>,
         task: Box<dyn ScopedTask<'env, R> + 'env>,
     ) -> TaskId {
-        let seq = self.next_seq();
+        let seq = next_seq(&mut self.seq_counter);
         let id = self.slab.insert(TaskEntry {
             runnable_seq: seq,
             last_polled: 0,
@@ -282,6 +357,7 @@ impl<'env, R> Scope<'env, R> {
             cancel_tick_deadline: None,
         });
         // The name moved into the entry; a tracer reads it from there.
+        self.runq.enter(id);
         if let Some(t) = self.tracer.as_mut() {
             if let Some(e) = self.slab.get(id) {
                 t.on_spawn(id, &e.name);
@@ -611,12 +687,25 @@ impl<'env, R> Scope<'env, R> {
         self.drain_bus();
 
         let budget = self.config.max_polls_per_round;
-        let ids = self.order_runnable();
+        let ordering = self.config.wake_ordering;
+        #[cfg(test)]
+        let expected = self.full_scan_order(self.runq.rr_cursor);
+        let slab = &self.slab;
+        self.runq.reorder(ordering, |id| {
+            slab.get(id)
+                .filter(|e| e.runnable && e.state == TaskState::Alive)
+                .map(|e| order_key(ordering, e))
+        });
+        #[cfg(test)]
+        assert!(
+            self.runq.order.iter().map(|&(_, id)| id).eq(expected.iter().copied()),
+            "round {}: the runnable set's order differs from a full scan",
+            self.tick_count
+        );
         let mut polled = 0;
-        for id in ids {
-            if polled >= budget {
-                break; // contention: the rest wait for a later round
-            }
+        // Past the budget, the rest stay in `runq` and wait for a later round.
+        while polled < budget {
+            let Some(id) = self.runq.take_next() else { break };
             match self.slab.get_mut(id) {
                 Some(e) if e.runnable && e.state == TaskState::Alive => e.runnable = false,
                 _ => continue,
@@ -657,62 +746,11 @@ impl<'env, R> Scope<'env, R> {
             if let Some(e) = self.slab.get_mut(id) {
                 if e.state == TaskState::Alive && !e.runnable {
                     e.runnable = true;
-                    self.seq_counter = self.seq_counter.wrapping_add(1);
-                    e.runnable_seq = self.seq_counter;
+                    e.runnable_seq = next_seq(&mut self.seq_counter);
+                    self.runq.enter(id);
                 }
             }
         }
-    }
-
-    fn order_runnable(&mut self) -> Vec<TaskId> {
-        let mut ids: Vec<TaskId> = self
-            .slab
-            .live_ids()
-            .into_iter()
-            .filter(|id| {
-                self.slab
-                    .get(*id)
-                    .map(|e| e.runnable && e.state == TaskState::Alive)
-                    .unwrap_or(false)
-            })
-            .collect();
-
-        let seq = |s: &Self, id: TaskId| s.slab.get(id).map(|e| e.runnable_seq).unwrap_or(0);
-        let qos = |s: &Self, id: TaskId| s.slab.get(id).map(|e| e.qos.priority()).unwrap_or(0);
-        let last = |s: &Self, id: TaskId| s.slab.get(id).map(|e| e.last_polled).unwrap_or(0);
-
-        match self.config.wake_ordering {
-            WakeOrdering::Fifo => {
-                ids.sort_by_key(|a| seq(self, *a));
-            }
-            WakeOrdering::Lifo => {
-                ids.sort_by_key(|a| std::cmp::Reverse(seq(self, *a)));
-            }
-            WakeOrdering::RoundRobin => {
-                ids.sort_by_key(|a| seq(self, *a));
-                if !ids.is_empty() {
-                    let rotate = self.rr_cursor % ids.len();
-                    ids.rotate_left(rotate);
-                    self.rr_cursor = self.rr_cursor.wrapping_add(1);
-                }
-            }
-            WakeOrdering::BiasedQoS => {
-                ids.sort_by(|a, b| {
-                    qos(self, *b)
-                        .cmp(&qos(self, *a))
-                        .then_with(|| seq(self, *a).cmp(&seq(self, *b)))
-                });
-            }
-            WakeOrdering::BiasedQoSThenAge => {
-                ids.sort_by(|a, b| {
-                    qos(self, *b)
-                        .cmp(&qos(self, *a))
-                        .then_with(|| last(self, *a).cmp(&last(self, *b)))
-                        .then_with(|| seq(self, *a).cmp(&seq(self, *b)))
-                });
-            }
-        }
-        ids
     }
 
     fn poll_one(&mut self, id: TaskId) {
@@ -1052,5 +1090,196 @@ impl<T, Out, F> Drop for OutputTask<T, Out, F> {
             JoinError::Panicked
         };
         *lock(&self.slot) = Some(Err(err));
+    }
+}
+
+// ---------------- tests ----------------
+
+#[cfg(test)]
+impl<'env, R> Scope<'env, R> {
+    /// The order every round used before the runnable set was kept up to date:
+    /// scan every live task, keep the runnable ones in slot order, then stable
+    /// sort them with comparators that read the slab. `round` checks its own
+    /// order against this under `cfg(test)`.
+    fn full_scan_order(&self, rr_cursor: usize) -> Vec<TaskId> {
+        let mut ids: Vec<TaskId> = self
+            .slab
+            .live_ids()
+            .into_iter()
+            .filter(|id| {
+                self.slab
+                    .get(*id)
+                    .map(|e| e.runnable && e.state == TaskState::Alive)
+                    .unwrap_or(false)
+            })
+            .collect();
+        let seq = |id: TaskId| self.slab.get(id).map(|e| e.runnable_seq).unwrap_or(0);
+        let qos = |id: TaskId| self.slab.get(id).map(|e| e.qos.priority()).unwrap_or(0);
+        let last = |id: TaskId| self.slab.get(id).map(|e| e.last_polled).unwrap_or(0);
+        match self.config.wake_ordering {
+            WakeOrdering::Fifo => ids.sort_by_key(|a| seq(*a)),
+            WakeOrdering::Lifo => ids.sort_by_key(|a| Reverse(seq(*a))),
+            WakeOrdering::RoundRobin => {
+                ids.sort_by_key(|a| seq(*a));
+                if !ids.is_empty() {
+                    let rotate = rr_cursor % ids.len();
+                    ids.rotate_left(rotate);
+                }
+            }
+            WakeOrdering::BiasedQoS => ids.sort_by(|a, b| {
+                qos(*b).cmp(&qos(*a)).then_with(|| seq(*a).cmp(&seq(*b)))
+            }),
+            WakeOrdering::BiasedQoSThenAge => ids.sort_by(|a, b| {
+                qos(*b)
+                    .cmp(&qos(*a))
+                    .then_with(|| last(*a).cmp(&last(*b)))
+                    .then_with(|| seq(*a).cmp(&seq(*b)))
+            }),
+        }
+        ids
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const CLASSES: [QoSClass; 5] = [
+        QoSClass::Background,
+        QoSClass::Batch,
+        QoSClass::Standard,
+        QoSClass::Interactive,
+        QoSClass::Realtime,
+    ];
+
+    /// A deterministic pseudo-random stream (64-bit LCG).
+    struct Lcg(u64);
+
+    impl Lcg {
+        fn below(&mut self, n: u64) -> u64 {
+            self.0 = self.0.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            (self.0 >> 33) % n.max(1)
+        }
+    }
+
+    /// What the tasks share: the random stream and every task id seen so far
+    /// (finished ones included, so wakes and cancels also hit stale ids).
+    struct Env {
+        rng: Lcg,
+        ids: Vec<TaskId>,
+        polls: u64,
+    }
+
+    impl Env {
+        fn any_id(&mut self) -> TaskId {
+            let i = self.rng.below(self.ids.len() as u64) as usize;
+            self.ids[i]
+        }
+    }
+
+    /// Does one random thing per poll. Many branches leave it idle until some
+    /// other task wakes it, so most rounds have few runnable tasks among many.
+    struct Chaos {
+        left: u32,
+        registered: bool,
+    }
+
+    impl<'env> ScopedTask<'env, Env> for Chaos {
+        fn poll(&mut self, cx: &mut Cx<'_, 'env, Env>) -> TaskPoll {
+            cx.resources.polls += 1;
+            if !self.registered {
+                self.registered = true;
+                let id = cx.id();
+                if !cx.resources.ids.contains(&id) {
+                    cx.resources.ids.push(id);
+                }
+            }
+            if self.left == 0 || cx.is_cancelled() {
+                return TaskPoll::Ready;
+            }
+            self.left -= 1;
+            match cx.resources.rng.below(9) {
+                0 | 1 => return cx.yield_now(),
+                2 => {
+                    let t = cx.resources.any_id();
+                    cx.wake(t);
+                }
+                3 => {
+                    if cx.resources.ids.len() < 120 {
+                        let qos = CLASSES[cx.resources.rng.below(5) as usize];
+                        cx.spawn_later_qos("child", qos, Chaos { left: 3, registered: false });
+                    }
+                    cx.wake_self();
+                }
+                4 => {
+                    let t = cx.resources.any_id();
+                    cx.cancel(t);
+                }
+                5 => {
+                    let t = cx.resources.any_id();
+                    cx.subscribe_to_finish(t);
+                }
+                6 => cx.sleep_for(Duration::ZERO),
+                7 => {
+                    let t = cx.resources.any_id();
+                    cx.wake(t);
+                    cx.wake_self();
+                }
+                _ => {} // idle until someone wakes it
+            }
+            TaskPoll::Pending
+        }
+    }
+
+    /// The runnable set must order every round exactly as a full scan of every
+    /// live task would, under every ordering and poll budget, through spawns,
+    /// wakes (also of finished tasks), timers, finish waiters, soft cancels
+    /// that escalate by tick, and hard cancels between rounds.
+    #[test]
+    fn runnable_set_orders_like_a_full_scan() {
+        // Miri runs one small workload per ordering and budget; natively, six full ones.
+        let (runs, roots_n, max_rounds, min_polls) =
+            if cfg!(miri) { (1, 10, 60, 100) } else { (6, 24, 400, 1000) };
+        let mut total_polls = 0;
+        for ordering in WakeOrdering::ALL {
+            for budget in [usize::MAX, 1, 3] {
+                for run in 0..runs {
+                    let seed = run * 7919 + budget.min(100) as u64;
+                    let mut env = Env { rng: Lcg(seed), ids: Vec::new(), polls: 0 };
+                    let mut outside = Lcg(run + 17);
+                    {
+                        let config =
+                            SchedulerConfig::with_ordering(ordering).with_poll_budget(budget);
+                        let mut scope = Scope::with_config(&mut env, config);
+                        scope.set_default_cancel_after_ticks(2);
+                        let mut roots = Vec::new();
+                        for _ in 0..roots_n {
+                            let qos = CLASSES[outside.below(5) as usize];
+                            let root = Chaos { left: 8, registered: false };
+                            roots.push(scope.spawn_named_qos("root", qos, root));
+                        }
+                        let mut idle = 0;
+                        for _ in 0..max_rounds {
+                            match scope.tick() {
+                                TickOutcome::Done => break,
+                                TickOutcome::Idle => idle += 1,
+                                TickOutcome::Progress(_) => idle = 0,
+                            }
+                            if idle > 3 {
+                                break;
+                            }
+                            let target = roots[outside.below(roots.len() as u64) as usize];
+                            match outside.below(12) {
+                                0 => scope.cancel_now(target),
+                                1 => scope.request_cancel(target, CancelReason::UserRequest),
+                                _ => {}
+                            }
+                        }
+                    }
+                    total_polls += env.polls;
+                }
+            }
+        }
+        assert!(total_polls > min_polls, "the workload barely ran: {total_polls} polls");
     }
 }
