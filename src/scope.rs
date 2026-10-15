@@ -1140,7 +1140,8 @@ impl<'env, R> Scope<'env, R> {
     }
 }
 
-#[cfg(test)]
+// A whole Scope outside a loom model; the loom build checks the bus on its own.
+#[cfg(all(test, not(loom)))]
 mod tests {
     use super::*;
 
