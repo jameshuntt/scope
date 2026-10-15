@@ -145,9 +145,11 @@ impl CancelEscalation {
     }
 }
 
-/// Shared, thread-safe cancellation state for one task. The task holds an
-/// `Arc<CancelCell>` (read via `Cx::is_cancelled`); the scope holds the other
-/// `Arc` and flips it. This is the atomic pair loom explores.
+/// Shared, thread-safe cancellation state for one task. The scope holds it in an
+/// `Arc` and flips it; each poll lends it to the task through `Cx` (read via
+/// `Cx::is_cancelled`), and a task spawned with a result handle keeps its own
+/// `Arc` so it can report the reason when it is dropped. This is the atomic
+/// pair loom explores.
 #[derive(Debug)]
 pub struct CancelCell {
     flag: AtomicBool,

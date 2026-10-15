@@ -10,9 +10,10 @@
 //!   (structured concurrency), and reports any tasks that could not finish
 //!   instead of hanging.
 //! * Waking rides the [`WakeBus`] / real-`Waker` substrate.
-//! * Zero `unsafe`: the mid-poll callbacks record *intents* into local buffers
+//! * Zero `unsafe`: the mid-poll callbacks record *intents* into buffers
 //!   applied after the poll, so no closure needs `&mut` into the scheduler while
-//!   a task holds the environment borrow.
+//!   a task holds the environment borrow. The scope keeps those buffers and
+//!   reuses them from poll to poll.
 
 use crate::cancel::{CancelCell, CancelEscalation, CancelReason};
 use crate::combinators::{
@@ -87,8 +88,24 @@ struct TaskEntry<'env, R> {
 struct SpawnReq<'env, R> {
     name: String,
     qos: QoSClass,
-    cell: Arc<CancelCell>,
     task: Box<dyn ScopedTask<'env, R> + 'env>,
+}
+
+/// What a task asked for during its poll, applied once the poll returns. The
+/// buffers live in the [`Scope`] so their capacity is reused from poll to poll;
+/// they are empty between polls.
+struct PollIntents<'env, R> {
+    finish_subs: Vec<(TaskId, TaskId)>,
+    spawns: Vec<SpawnReq<'env, R>>,
+    sleeps: Vec<(TaskId, Instant)>,
+    cancels: Vec<(TaskId, CancelEscalation, CancelReason)>,
+}
+
+// By hand: `#[derive(Default)]` would demand `R: Default`.
+impl<'env, R> Default for PollIntents<'env, R> {
+    fn default() -> Self {
+        Self { finish_subs: Vec::new(), spawns: Vec::new(), sleeps: Vec::new(), cancels: Vec::new() }
+    }
 }
 
 /// The runtime: the tasks, the wake bus, the timer and cancel heaps, and the
@@ -105,6 +122,7 @@ pub struct Scope<'env, R> {
 
     config: SchedulerConfig,
     tracer: Option<Box<dyn Tracer>>,
+    intents: PollIntents<'env, R>,
 
     tick_count: u64,
     seq_counter: u64,
@@ -179,6 +197,7 @@ impl<'env, R> Scope<'env, R> {
             cancel_time_heap: BinaryHeap::new(),
             config,
             tracer: None,
+            intents: PollIntents::default(),
             tick_count: 0,
             seq_counter: 0,
             rr_cursor: 0,
@@ -238,7 +257,7 @@ impl<'env, R> Scope<'env, R> {
     ) -> TaskId {
         let seq = self.next_seq();
         let id = self.slab.insert(TaskEntry {
-            name: name.clone(),
+            name,
             qos,
             state: TaskState::Alive,
             task: Some(task),
@@ -251,8 +270,11 @@ impl<'env, R> Scope<'env, R> {
             cancel_tick_deadline: None,
             cancel_time_deadline: None,
         });
+        // The name moved into the entry; a tracer reads it from there.
         if let Some(t) = self.tracer.as_mut() {
-            t.on_spawn(id, &name);
+            if let Some(e) = self.slab.get(id) {
+                t.on_spawn(id, &e.name);
+            }
         }
         id
     }
@@ -692,37 +714,39 @@ impl<'env, R> Scope<'env, R> {
         self.polls += 1;
         let seq = self.poll_seq;
 
-        let (name, cell) = match self.slab.get(id) {
-            Some(e) => (e.name.clone(), e.cancel.clone()),
-            None => {
-                self.tracer = tracer;
-                return;
-            }
+        // One lookup to announce the poll, stamp it and take the task out. The
+        // name is only read when a tracer is attached, and then only borrowed.
+        let Some(e) = self.slab.get_mut(id) else {
+            self.tracer = tracer;
+            return;
         };
         if let Some(t) = tracer.as_mut() {
-            t.on_poll_begin(seq, id, &name);
+            t.on_poll_begin(seq, id, &e.name);
         }
-        if let Some(e) = self.slab.get_mut(id) {
-            e.last_polled = self.tick_count;
-        }
-        let mut task = match self.slab.get_mut(id).and_then(|e| e.task.take()) {
-            Some(t) => t,
-            None => {
-                self.tracer = tracer;
-                return;
-            }
+        e.last_polled = self.tick_count;
+        let Some(mut task) = e.task.take() else {
+            self.tracer = tracer;
+            return;
         };
 
         // Intents recorded during poll, applied after — keeps every hook off of
         // `&mut self.slab` so no `unsafe` is needed to satisfy the borrow checker.
-        let mut finish_subs: Vec<(TaskId, TaskId)> = Vec::new();
-        let mut spawn_reqs: Vec<SpawnReq<'env, R>> = Vec::new();
-        let mut sleep_reqs: Vec<(TaskId, Instant)> = Vec::new();
-        let mut cancel_reqs: Vec<(TaskId, CancelEscalation, CancelReason)> = Vec::new();
+        // The buffers are lent out of the scope for this poll and handed back
+        // empty, so their capacity carries over to the next poll.
+        let mut intents = std::mem::take(&mut self.intents);
 
         let res = {
             let slab = &self.slab;
             let bus = &self.bus;
+            // The entry is still in the slab: nothing removes one while the slab
+            // is borrowed shared, as it is for the whole poll. `Cx` borrows the
+            // entry's cancel cell from here, and the tracer its name.
+            let Some(entry) = slab.get(id) else {
+                self.tracer = tracer;
+                self.intents = intents;
+                return;
+            };
+            let PollIntents { finish_subs, spawns, sleeps, cancels } = &mut intents;
 
             let mut subscribe_finish =
                 |waiter: TaskId, target: TaskId| finish_subs.push((waiter, target));
@@ -730,11 +754,11 @@ impl<'env, R> Scope<'env, R> {
                                    name: String,
                                    qos: QoSClass,
                                    task: Box<dyn ScopedTask<'env, R> + 'env>| {
-                spawn_reqs.push(SpawnReq { name, qos, cell: Arc::new(CancelCell::new()), task });
+                spawns.push(SpawnReq { name, qos, task });
             };
             let mut query_state =
                 |qid: TaskId| slab.get(qid).map(|e| e.state).unwrap_or(TaskState::Completed);
-            let mut subscribe_sleep_until = |tid: TaskId, dl: Instant| sleep_reqs.push((tid, dl));
+            let mut subscribe_sleep_until = |tid: TaskId, dl: Instant| sleeps.push((tid, dl));
             let mut request_cancel =
                 |target: TaskId, esc: CancelEscalation, reason: CancelReason| {
                     if let Some(e) = slab.get(target) {
@@ -743,14 +767,14 @@ impl<'env, R> Scope<'env, R> {
                             bus.wake(target, WakeReason::Cancel);
                         }
                     }
-                    cancel_reqs.push((target, esc, reason));
+                    cancels.push((target, esc, reason));
                 };
 
             let mut cx = Cx {
                 resources: &mut *self.resources,
                 id,
-                bus: bus.clone(),
-                cancel: cell.clone(),
+                bus,
+                cancel: &entry.cancel,
                 subscribe_finish: &mut subscribe_finish,
                 defer_spawn: &mut defer_spawn,
                 query_state: &mut query_state,
@@ -758,36 +782,38 @@ impl<'env, R> Scope<'env, R> {
                 request_cancel: &mut request_cancel,
             };
 
-            catch_unwind(AssertUnwindSafe(|| task.poll(&mut cx)))
-        };
+            let res = catch_unwind(AssertUnwindSafe(|| task.poll(&mut cx)));
 
-        if let Some(t) = tracer.as_mut() {
-            t.on_poll_end(id, &name);
-        }
+            if let Some(t) = tracer.as_mut() {
+                t.on_poll_end(id, &entry.name);
+            }
+            res
+        };
         self.tracer = tracer;
 
         // Apply recorded intents.
-        for (waiter, target) in finish_subs {
+        for (waiter, target) in intents.finish_subs.drain(..) {
             match self.slab.get_mut(target) {
                 Some(e) => e.finish_waiters.push(waiter),
                 None => self.bus.wake(waiter, WakeReason::Join),
             }
         }
-        for (tid, dl) in sleep_reqs {
+        for (tid, dl) in intents.sleeps.drain(..) {
             if let Some(e) = self.slab.get_mut(tid) {
                 e.sleeping_until = Some(dl);
                 self.sleep_heap.push(Reverse((dl, tid)));
             }
         }
-        for req in spawn_reqs {
+        for req in intents.spawns.drain(..) {
             if let Some(t) = self.tracer.as_mut() {
                 t.on_defer_spawn(id, &req.name);
             }
-            self.insert_task(req.name, req.qos, req.cell, req.task);
+            self.insert_task(req.name, req.qos, Arc::new(CancelCell::new()), req.task);
         }
-        for (target, esc, reason) in cancel_reqs {
+        for (target, esc, reason) in intents.cancels.drain(..) {
             self.schedule_cancel_deadlines(target, esc, reason);
         }
+        self.intents = intents;
 
         // Handle the poll result.
         match res {

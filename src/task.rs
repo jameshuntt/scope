@@ -10,7 +10,6 @@
 use crate::cancel::{CancelCell, CancelEscalation, CancelReason};
 use crate::ids::TaskId;
 use crate::policy::QoSClass;
-use crate::sync::Arc;
 use crate::wake::{WakeBus, WakeReason};
 #[cfg(not(loom))]
 use crate::wake::scheduler_waker;
@@ -74,8 +73,10 @@ pub struct Cx<'poll, 'env, R> {
     pub resources: &'poll mut R,
 
     pub(crate) id: TaskId,
-    pub(crate) bus: WakeBus,
-    pub(crate) cancel: Arc<CancelCell>,
+    // The scope's wake bus and this task's cancel cell, borrowed for the poll
+    // like `resources`: building a `Cx` touches no reference count.
+    pub(crate) bus: &'poll WakeBus,
+    pub(crate) cancel: &'poll CancelCell,
 
     pub(crate) subscribe_finish: &'poll mut dyn FnMut(TaskId, TaskId),
     pub(crate) defer_spawn:
