@@ -293,12 +293,15 @@ by 4.3% or less, and we do not claim a speed change for it.
     `TaskEntry 144 bytes, slab slot 152 bytes` at da655cf and `TaskEntry 136 bytes, slab slot 144 bytes`
     at c4fe22d, on aarch64-apple-darwin. `schedule_golden` passes at c4fe22d. Measured against da655cf,
     every bench moved between -4.3% and +3.6%, and we do not claim a speed change from it.
-  - Regression, never published: with 1000 parked tasks, c4fe22d is slower than da655cf in
-    [`proofs/sparse-probe`](proofs/sparse-probe/README) (below). It was slower in every run, but by how
-    much moved a lot from run to run. In the first three runs each, da655cf took 1,419.5 to 1,440.0 µs
+  - Regression, never published: with 1000 parked tasks, c4fe22d is slower than da655cf in most runs of
+    [`proofs/sparse-probe`](proofs/sparse-probe/README) (below), and by how much moves a lot from run to
+    run. In the first three runs each, da655cf took 1,419.5 to 1,440.0 µs
     and c4fe22d took 1,965.6 to 2,003.8 µs. In eight more runs each, the two taken in turn, da655cf took
-    1,443.2 to 1,461.0 µs and c4fe22d took 1,555.2 to 1,929.4 µs, 7.2% to 32.6% more run for run. So it
-    is slower at 1000 every time, but we cannot give one figure for how much.
+    1,443.2 to 1,461.0 µs and c4fe22d took 1,555.2 to 1,929.4 µs, 7.2% to 32.6% more run for run. A re-run
+    on 2026-10-16, 40 runs each, had c4fe22d slower in 38 and faster in 2 (by 1.5% and 2.4%), +17.4% at
+    the median. Its times come in two levels, and in about a third of its runs it is within a few percent
+    of da655cf. So it is slower at 1000 as a rule, not every time, and we cannot give one figure for how
+    much.
   - With 100 parked tasks we claim no difference. In the eight runs c4fe22d took 236.3 to 256.2 µs
     against 242.7 to 256.4 µs, and it was faster in 3 of them. With 10 parked tasks c4fe22d was faster
     in every run: 93.0 to 97.1 µs against 108.6 to 117.3 µs. All eleven runs are in the probe's README.

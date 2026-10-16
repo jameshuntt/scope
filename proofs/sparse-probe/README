@@ -43,5 +43,7 @@ once in its own fresh target dir, then:
 | 1000 | da655cf | 1454.8 | 1449.3 | 1454.3 | 1461.0 | 1443.2 | 1450.4 | 1450.3 | 1455.1 |
 | 1000 | c4fe22d | 1929.4 | 1750.7 | 1710.5 | 1717.3 | 1584.4 | 1691.2 | 1555.2 | 1715.4 |
 
-At 1000, `c4fe22d` is slower in every run, by 7.2% to 32.6% run for run. At 100, `c4fe22d` is faster in
+At 1000, `c4fe22d` is slower in each of these eight runs, by 7.2% to 32.6% run for run. A re-run on
+2026-10-16, 40 runs each, had it slower in 38 and faster in 2 (by 1.5% and 2.4%). Its times come in two
+levels, and in about a third of its runs it is within a few percent of `da655cf`. At 100, `c4fe22d` is faster in
 runs 4, 5 and 7 and slower in the rest. At 10, `c4fe22d` is faster in every run.
