@@ -128,12 +128,58 @@ assert_eq!(values, vec![10, 20]);
   poll budget per round. The default was chosen by running the candidates
   against deterministic workload suites.
 - **Cancellation** with tick and wall-clock escalation (`CancelEscalation`),
-  **timers** (`SleepTask`), **join / select / join-all** (`JoinHandle`,
+  **timers** on the wall clock (`SleepTask`) and on the logical clock (`TickSleepTask`,
+  `Cx::sleep_ticks`), **join / select / join-all** (`JoinHandle`,
   `Either`), **panic isolation** (a panicking task fails its join, the scope
   survives), and **typed mailboxes** (`Mailbox`, `MailboxSender`) for delivering
-  messages into a running task from any thread.
+  messages into a running task from any thread, unbounded or bounded (`BoundedMailbox`,
+  `BoundedSender::try_send`).
 - **Tracing** (`Tracer`, `BufferTracer`, `LogTracer`, `CountingTracer`) for
   determinism checks: two runs of the same program produce the same trace.
+
+## The logical clock and bounded mailboxes
+
+A `Tick` is the number of a scheduler round. The clock advances by one at the start of every round
+(each `tick()`, each loop of `run`), and nothing else moves it. `Cx::sleep_ticks(TickDelta(n))` wakes
+the task at the start of the round `n` after this one, as a `Timer` wake on the bus, ordered by the
+policy like every other wake. Nothing reads the wall clock, so a run that uses only logical timers
+repeats tick for tick. `SleepTask` and `Cx::sleep_until` stay as they are, on the wall clock.
+
+`Scope::spawn_with_bounded_mailbox(name, capacity, build)` gives a mailbox that holds at most
+`capacity` messages. `BoundedSender::try_send` enqueues and wakes like `send`, or hands the message
+back as `TrySendError::Full` or `TrySendError::Closed` (the task is gone) and changes nothing.
+
+```rust
+use scope::{scoped, BoundedMailbox, Cx, ScopedTask, TaskPoll, TickDelta, TrySendError};
+
+// Takes one message, then sleeps three rounds on the logical clock, then finishes.
+struct Slow {
+    rx: BoundedMailbox<u32>,
+    got: Option<u32>,
+}
+
+impl<'env> ScopedTask<'env, Vec<u64>> for Slow {
+    fn poll(&mut self, cx: &mut Cx<'_, 'env, Vec<u64>>) -> TaskPoll {
+        cx.resources.push(cx.now_tick().0);
+        if self.got.is_some() {
+            return TaskPoll::Ready;
+        }
+        self.got = self.rx.try_recv();
+        cx.sleep_ticks(TickDelta(3));
+        TaskPoll::Pending
+    }
+}
+
+let mut ticks = Vec::new();
+scoped(&mut ticks, |s| {
+    let (_id, tx) = s.spawn_with_bounded_mailbox("slow", 1, |rx| Slow { rx, got: None });
+    assert_eq!(tx.try_send(7), Ok(()));
+    assert_eq!(tx.try_send(8), Err(TrySendError::Full(8)));
+    assert!(s.run().all_completed());
+    assert_eq!(tx.try_send(9), Err(TrySendError::Closed(9)));
+});
+assert_eq!(ticks, vec![1, 4]);
+```
 
 ## Determinism and verification
 

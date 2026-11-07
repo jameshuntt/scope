@@ -29,6 +29,67 @@ from the crates.io API, in UTC. Programs and scripts that are not part of the cr
     passed every job (test, arm, msrv, miri, loom, latest-deps on stable and on 1.85). The publish job was
     skipped because the push was not a tag.
 
+- **A logical clock.** On branch `logical-runtime-primitives`, not released. Commit
+  [c5b1bbd](https://github.com/jameshuntt/scope/commit/c5b1bbd2d4bf73eaeff10864687fecee37e2e340).
+  Why: every timer read the wall clock, so where a timer wake landed among other work, and how many
+  rounds a run spent waiting, depended on elapsed time. A run with timers did not repeat.
+  - Before: [src/timer.rs L20-33 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/timer.rs#L20-L33), `SleepTask` reads
+    `Instant::now()`; [src/scope.rs L1015-1034 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/scope.rs#L1015-L1034),
+    `fire_expired_timers` compares the sleep heap with `Instant::now()`.
+  - The scope already counted rounds: [src/scope.rs L697-701 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/scope.rs#L697-L701)
+    (`tick_count` goes up by one per round) and [src/scope.rs L968-987 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/scope.rs#L968-L987)
+    (tick-based cancel escalation fires from that count).
+  - After: [src/clock.rs @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/clock.rs): `Tick` and `TickDelta`. A tick is the number of a
+    scheduler round. The one rule: the clock advances by one at the start of every round (each `tick()`,
+    each loop of `run` and `run_until`, idle rounds included), and nothing else moves it. Tick 0 before
+    the first round.
+  - [src/task.rs L186-208 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/task.rs#L186-L208): `Cx::now_tick`, `Cx::sleep_ticks`
+    (`delta` rounds after this one; 0 counts as 1) and `Cx::sleep_until_tick` (a tick not after this round
+    counts as the next round). [src/timer.rs L36-80 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/timer.rs#L36-L80): `TickSleepTask`,
+    beside `SleepTask`. [src/scope.rs L353-357, L458-468 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/scope.rs#L353-L468):
+    `Scope::now_tick`, `Scope::sleep_ticks`, `Scope::sleep_until_tick`.
+  - [src/scope.rs L1087-1125 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/scope.rs#L1087-L1125): logical timers live in a heap
+    ordered by `(tick, TaskId)`, like the cancel tick heap, and fire at the start of their round, right
+    after the cancel ticks and before the bus is drained, as `WakeReason::Timer` wakes on the bus. The
+    policy orders them with the round's other wakes. A replaced timer, or one of a finished task, is dropped.
+  - [src/scope.rs L733-739 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/scope.rs#L733-L739): when nothing ran and a live logical
+    timer waits, `run` runs the next round at once instead of waiting on the clock or ending.
+  - [src/trace.rs L45-50 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/trace.rs#L45-L50): `Tracer::on_sleep_ticks` (armed, after
+    the poll) and `Tracer::on_tick_timer` (fired, before its wake goes on the bus). `BufferTracer` records
+    both. `on_sleep_until` and `on_subscribe_finish` are still not called: calling them would change what
+    the pinned schedule's tracer records.
+  - Not used: chrono_macros 0.1.0. Its types wrap `chrono::DateTime<Utc>` (the calendar clock, which can
+    jump) and `chrono::Duration` (signed). The real-time timers here use `std::time::Instant` (monotonic)
+    and `std::time::Duration`, which already say what they are; the change would add chrono to a crate whose
+    only dependency is waker_tables and gain no type safety. Ticks never use it.
+- **A bounded mailbox.** Same commit. Why: `MailboxSender::send` always pushes and the sender cannot
+  see the backlog, so a host had to count it itself.
+  - Before: [src/mailbox.rs L56-61 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/mailbox.rs#L56-L61).
+  - After: [src/mailbox.rs L100-262 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/mailbox.rs#L100-L262): `BoundedMailbox`,
+    `BoundedSender`, `TrySendError`. The capacity is fixed at spawn and the queue is allocated once at it.
+    `try_send` enqueues and sends the same `Inbox` wake as `send`, or gives the message back as `Full` or
+    `Closed` and enqueues, wakes and allocates nothing. Receiving frees a place at once. Dropping the read
+    end (the task completing, cancelled or panicking) closes the mailbox and drops what is queued; `close`
+    closes it from inside. Capacity 0 refuses every message. `len`, `capacity`, `free` and `is_closed` on
+    the sender. [src/scope.rs L513-557 @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/src/scope.rs#L513-L557):
+    `Scope::spawn_with_bounded_mailbox` and `spawn_with_bounded_mailbox_result`. `Mailbox` and
+    `MailboxSender` are unchanged.
+  - Proof: `tests/schedule_golden.rs` passes unchanged, so no existing schedule moved.
+    [tests/logical_clock.rs @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/tests/logical_clock.rs) (8 tests: a tick is the round number,
+    a timer fires in its round through the bus, 0 and past ticks, a later request replaces the earlier, a
+    cancelled sleeper does not keep `run` going, `TickSleepTask` joins, ten runs equal tick for tick under
+    all 5 policies and 3 budgets, timer wakes ordered by the policy).
+    [tests/bounded_mailbox.rs @ c5b1bbd](https://github.com/jameshuntt/scope/blob/c5b1bbd2d4bf73eaeff10864687fecee37e2e340/tests/bounded_mailbox.rs) (6 tests: capacity 0, exactly
+    capacity and one more, send after receive, closed recipients, the same trace as the unbounded mailbox
+    when nothing is refused, ten equal runs with refusals under every policy and budget). Unit tests in
+    `src/mailbox.rs`: a refused send allocates and wakes nothing over 150 sends, dropping the read end
+    closes it. Loom models in `src/mailbox.rs`: a delivered `Inbox` wake means the message is queued; the
+    bound holds and every accepted message is received once.
+  - Run on the Mac: `cargo test --all-targets --locked` 41 passed; `cargo test --doc --locked` 5 passed (with the README example added in the next commit);
+    clippy `-D warnings`; rustdoc `-D warnings`; `cargo bench --no-run`; `cargo package --locked`;
+    `cargo +1.85 test --all-targets --locked` 41 passed; loom `--test loom_wake` 2 passed, `--lib` 6
+    passed, clippy under loom; Miri `--lib` 9 passed, `--test kernel` 13 passed.
+
 ## 0.3.1 (2026-10-15 06:17 UTC)
 
 Published from [e9f73c3](https://github.com/jameshuntt/scope/commit/e9f73c31020cd59736b8b59c47a930f153cf7063). The package's `.cargo_vcs_info.json` names that commit. Its commits, oldest
