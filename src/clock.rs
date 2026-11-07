@@ -8,8 +8,19 @@
 //!
 //! This is the count the scope already kept for tick-based cancel escalation
 //! ([`crate::CancelEscalation::after_ticks`]), now readable. Nothing reads
-//! `Instant`, `SystemTime` or sleeps to move it, so where a logical timer fires
-//! is a function of the policy and the order of wakes alone.
+//! `Instant`, `SystemTime` or sleeps to move it. A run that uses only logical
+//! timers is a function of three things: the sequence of wakes, the policy,
+//! and this advancement rule. Run it again with the same three and it repeats
+//! tick for tick. Wall-clock timers are outside that replay.
+//!
+//! The clock never wraps. It stops at `u64::MAX`: the round after the one at
+//! `u64::MAX` is tick `u64::MAX` again, and so is every round after it. A
+//! deadline past `u64::MAX` (`now + delta` overflowing) is `u64::MAX`, so the
+//! timer fires in the first round at `u64::MAX`, or in the next round when it
+//! was asked for there. Saturating, like [`Tick`] `+` [`TickDelta`] and the
+//! tick-based cancel deadlines, keeps every timer firing and every outcome
+//! deterministic; a clock that wrapped would read 0 and leave every pending
+//! deadline unreachable.
 //!
 //! A task asks for a logical timer with [`crate::Cx::sleep_ticks`] or
 //! [`crate::Cx::sleep_until_tick`] (or spawns a [`crate::TickSleepTask`]). Its

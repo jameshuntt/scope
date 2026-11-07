@@ -5,8 +5,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use scope::{
-    CancelReason, Cx, Mailbox, QoSClass, Scope, ScopedTask, SchedulerConfig, TaskId, TaskPoll, Tick, TickDelta,
-    TickOutcome, Tracer, WakeOrdering, WakeReason,
+    CancelReason, Cx, Mailbox, QoSClass, SchedulerConfig, Scope, ScopedTask, TaskId, TaskPoll,
+    Tick, TickDelta, TickOutcome, Tracer, WakeOrdering, WakeReason,
 };
 
 /// Records the hooks a logical-timer run touches, in order.
@@ -26,7 +26,9 @@ impl Tracer for Lines {
         self.0.borrow_mut().push(format!("poll {seq} {id} {name}"));
     }
     fn on_finish(&mut self, id: TaskId, name: &str, state: scope::TaskState) {
-        self.0.borrow_mut().push(format!("done {id} {name} {state:?}"));
+        self.0
+            .borrow_mut()
+            .push(format!("done {id} {name} {state:?}"));
     }
     fn on_sleep_ticks(&mut self, id: TaskId, at: Tick) {
         self.0.borrow_mut().push(format!("sleep_ticks {id} {at}"));
@@ -90,7 +92,10 @@ fn a_tick_is_the_number_of_the_round() {
     assert_eq!(s.now_tick(), Tick(0));
     s.spawn_named("y", Yielder { name: "y", left: 3 });
     for round in 1..=4 {
-        assert!(matches!(s.tick(), TickOutcome::Progress(1) | TickOutcome::Done));
+        assert!(matches!(
+            s.tick(),
+            TickOutcome::Progress(1) | TickOutcome::Done
+        ));
         assert_eq!(s.now_tick(), Tick(round));
     }
     drop(s);
@@ -105,12 +110,26 @@ fn a_logical_timer_wakes_the_task_in_the_round_with_its_tick() {
     let report = {
         let mut s = Scope::new(&mut env);
         s.set_tracer(Box::new(Lines(lines.clone())));
-        s.spawn_named("napper", Napper { name: "napper", delta: 5, times: 2 });
+        s.spawn_named(
+            "napper",
+            Napper {
+                name: "napper",
+                delta: 5,
+                times: 2,
+            },
+        );
         s.run()
     };
     assert!(report.all_completed(), "{report:?}");
     // Polled in round 1, asleep 5 ticks: round 6, then round 11. Idle rounds in between are rounds.
-    assert_eq!(env.polls, [("napper".to_owned(), 1), ("napper".to_owned(), 6), ("napper".to_owned(), 11)]);
+    assert_eq!(
+        env.polls,
+        [
+            ("napper".to_owned(), 1),
+            ("napper".to_owned(), 6),
+            ("napper".to_owned(), 11)
+        ]
+    );
     assert_eq!(report.rounds, 11);
     let lines = lines.borrow();
     let at6: Vec<&str> = lines
@@ -120,7 +139,15 @@ fn a_logical_timer_wakes_the_task_in_the_round_with_its_tick() {
         .map(String::as_str)
         .collect();
     // The timer fires first, then the wake comes off the bus like every other wake, then the poll.
-    assert_eq!(at6, ["round 6", "tick_timer #0.0 t6", "wake #0.0 Timer", "poll 2 #0.0 napper"]);
+    assert_eq!(
+        at6,
+        [
+            "round 6",
+            "tick_timer #0.0 t6",
+            "wake #0.0 Timer",
+            "poll 2 #0.0 napper"
+        ]
+    );
     assert!(lines.contains(&"sleep_ticks #0.0 t6".to_owned()));
     assert!(lines.contains(&"sleep_ticks #0.0 t11".to_owned()));
 }
@@ -174,10 +201,20 @@ fn a_later_request_replaces_the_earlier_one() {
         s.spawn_named("twice", Twice(false));
         s.run()
     };
-    assert_eq!(env.polls.iter().map(|(_, t)| *t).collect::<Vec<_>>(), [1, 4]);
+    assert_eq!(
+        env.polls.iter().map(|(_, t)| *t).collect::<Vec<_>>(),
+        [1, 4]
+    );
     // The tick-10 timer is stale once the task is gone: run ends at round 4, not 10.
     assert_eq!(report.rounds, 4);
-    assert_eq!(lines.borrow().iter().filter(|l| l.starts_with("tick_timer")).count(), 1);
+    assert_eq!(
+        lines
+            .borrow()
+            .iter()
+            .filter(|l| l.starts_with("tick_timer"))
+            .count(),
+        1
+    );
 }
 
 #[test]
@@ -193,7 +230,14 @@ fn a_cancelled_sleeper_does_not_keep_run_going() {
     }
     let mut env = Env::default();
     let mut s = Scope::new(&mut env);
-    let sleeper = s.spawn_named("sleeper", Napper { name: "sleeper", delta: 1_000_000, times: 1 });
+    let sleeper = s.spawn_named(
+        "sleeper",
+        Napper {
+            name: "sleeper",
+            delta: 1_000_000,
+            times: 1,
+        },
+    );
     let (_parked, _tx) = s.spawn_with_mailbox("parked", |rx| Parked { rx });
     assert_eq!(s.tick(), TickOutcome::Progress(2));
     s.cancel_now(sleeper);
@@ -220,15 +264,35 @@ fn tick_sleep_tasks_join_like_sleep_tasks() {
 
 /// Napping and yielding tasks of mixed QoS whose timers land in rounds busy with other wakes.
 fn mixed(s: &mut Scope<'_, Env>) {
-    const QOS: [QoSClass; 5] =
-        [QoSClass::Background, QoSClass::Batch, QoSClass::Standard, QoSClass::Interactive, QoSClass::Realtime];
+    const QOS: [QoSClass; 5] = [
+        QoSClass::Background,
+        QoSClass::Batch,
+        QoSClass::Standard,
+        QoSClass::Interactive,
+        QoSClass::Realtime,
+    ];
     const NAP: [&str; 6] = ["n0", "n1", "n2", "n3", "n4", "n5"];
     const YIELD: [&str; 4] = ["y0", "y1", "y2", "y3"];
     for (i, name) in NAP.iter().enumerate() {
-        s.spawn_named_qos(*name, QOS[i % 5], Napper { name, delta: 1 + (i as u64 % 3), times: 3 });
+        s.spawn_named_qos(
+            *name,
+            QOS[i % 5],
+            Napper {
+                name,
+                delta: 1 + (i as u64 % 3),
+                times: 3,
+            },
+        );
     }
     for (i, name) in YIELD.iter().enumerate() {
-        s.spawn_named_qos(*name, QOS[(i + 2) % 5], Yielder { name, left: 4 + i as u32 });
+        s.spawn_named_qos(
+            *name,
+            QOS[(i + 2) % 5],
+            Yielder {
+                name,
+                left: 4 + i as u32,
+            },
+        );
     }
 }
 
@@ -254,7 +318,12 @@ fn same_inputs_and_policy_give_the_same_ticks() {
         for budget in [usize::MAX, 3, 1] {
             let first = run_mixed(ordering, budget);
             for _ in 0..9 {
-                assert_eq!(run_mixed(ordering, budget), first, "{} budget {budget}", ordering.name());
+                assert_eq!(
+                    run_mixed(ordering, budget),
+                    first,
+                    "{} budget {budget}",
+                    ordering.name()
+                );
             }
             per_policy.push(first);
         }
@@ -275,8 +344,24 @@ fn timer_wakes_are_ordered_by_the_policy_like_any_wake() {
             let report = {
                 let mut s = Scope::with_config(&mut env, config);
                 s.set_tracer(Box::new(Lines(lines.clone())));
-                s.spawn_named_qos("low", QoSClass::Background, Napper { name: "low", delta: 2, times: 1 });
-                s.spawn_named_qos("high", QoSClass::Realtime, Napper { name: "high", delta: 2, times: 1 });
+                s.spawn_named_qos(
+                    "low",
+                    QoSClass::Background,
+                    Napper {
+                        name: "low",
+                        delta: 2,
+                        times: 1,
+                    },
+                );
+                s.spawn_named_qos(
+                    "high",
+                    QoSClass::Realtime,
+                    Napper {
+                        name: "high",
+                        delta: 2,
+                        times: 1,
+                    },
+                );
                 s.spawn_named_qos("y", QoSClass::Standard, Yielder { name: "y", left: 6 });
                 s.run()
             };
@@ -284,12 +369,16 @@ fn timer_wakes_are_ordered_by_the_policy_like_any_wake() {
             let l = lines.borrow().clone();
             (l, env.polls, report.rounds)
         };
-        polls.into_iter().map(|(n, t)| format!("{n}@{t}")).collect::<Vec<_>>()
+        polls
+            .into_iter()
+            .map(|(n, t)| format!("{n}@{t}"))
+            .collect::<Vec<_>>()
     };
     let fifo = order(WakeOrdering::Fifo);
     let qos = order(WakeOrdering::BiasedQoS);
     assert_ne!(fifo, qos);
     // Under BiasedQoS the Realtime napper is always polled before the Background one.
-    let first = |v: &[String], who: &str| v.iter().skip(2).position(|p| p.starts_with(who)).unwrap();
+    let first =
+        |v: &[String], who: &str| v.iter().skip(2).position(|p| p.starts_with(who)).unwrap();
     assert!(first(&qos, "high") < first(&qos, "low"), "{qos:?}");
 }

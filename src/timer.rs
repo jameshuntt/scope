@@ -49,14 +49,23 @@ enum TickWait {
 }
 
 impl TickSleepTask {
-    /// Completes `delta` rounds after its first poll; with a `delta` of 0, at its first poll.
+    /// Completes `delta` rounds after its first poll; with a `delta` of 0, at its first poll. A
+    /// round past `u64::MAX` is `u64::MAX`, where the clock stops ([`crate::clock`]).
     pub fn new(delta: TickDelta) -> Self {
-        Self { wait: TickWait::For(delta), deadline: None, armed: false }
+        Self {
+            wait: TickWait::For(delta),
+            deadline: None,
+            armed: false,
+        }
     }
 
     /// Completes in round `tick`, or at its first poll if that round has come.
     pub fn until(tick: Tick) -> Self {
-        Self { wait: TickWait::Until(tick), deadline: None, armed: false }
+        Self {
+            wait: TickWait::Until(tick),
+            deadline: None,
+            armed: false,
+        }
     }
 }
 

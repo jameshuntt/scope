@@ -5,8 +5,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use scope::{
-    scoped, BoundedMailbox, BoundedSender, Cx, MailboxSender, Scope, ScopedTask, SchedulerConfig, TaskId, TaskPoll,
-    TickOutcome, Tracer, TrySendError, WakeOrdering, WakeReason,
+    scoped, BoundedMailbox, BoundedSender, Cx, MailboxSender, SchedulerConfig, Scope, ScopedTask,
+    TaskId, TaskPoll, TickOutcome, Tracer, TrySendError, WakeOrdering, WakeReason,
 };
 
 /// Takes at most `per_poll` messages a poll and finishes after `expect` of them.
@@ -37,7 +37,12 @@ impl<'env, R> ScopedTask<'env, R> for Taker {
 }
 
 fn taker(rx: BoundedMailbox<u32>, expect: usize) -> Taker {
-    Taker { rx, per_poll: usize::MAX, seen: Vec::new(), expect }
+    Taker {
+        rx,
+        per_poll: usize::MAX,
+        seen: Vec::new(),
+        expect,
+    }
 }
 
 #[test]
@@ -61,7 +66,12 @@ fn exactly_capacity_is_accepted_and_one_more_is_full() {
     let mut env = ();
     let mut out = None;
     scoped(&mut env, |s| {
-        let (handle, tx) = s.spawn_with_bounded_mailbox_result("four", 4, |rx| taker(rx, 4), |t, _| t.seen.clone());
+        let (handle, tx) = s.spawn_with_bounded_mailbox_result(
+            "four",
+            4,
+            |rx| taker(rx, 4),
+            |t, _| t.seen.clone(),
+        );
         for m in 0..4 {
             assert_eq!(tx.try_send(m), Ok(()));
         }
@@ -80,8 +90,12 @@ fn exactly_capacity_is_accepted_and_one_more_is_full() {
 fn a_send_after_a_receive_is_accepted() {
     let mut env = ();
     scoped(&mut env, |s| {
-        let (_id, tx) =
-            s.spawn_with_bounded_mailbox("one", 1, |rx| Taker { rx, per_poll: 1, seen: Vec::new(), expect: 3 });
+        let (_id, tx) = s.spawn_with_bounded_mailbox("one", 1, |rx| Taker {
+            rx,
+            per_poll: 1,
+            seen: Vec::new(),
+            expect: 3,
+        });
         assert_eq!(tx.try_send(10), Ok(()));
         assert_eq!(tx.try_send(11), Err(TrySendError::Full(11)));
         assert_eq!(s.tick(), TickOutcome::Progress(1)); // takes 10
@@ -101,7 +115,8 @@ fn a_closed_recipient_is_reported() {
         let (_done, done_tx) = s.spawn_with_bounded_mailbox("done", 2, |rx| taker(rx, 1));
         assert_eq!(done_tx.try_send(1), Ok(()));
         // Hard-cancelled.
-        let (cancelled, cancelled_tx) = s.spawn_with_bounded_mailbox("cancelled", 2, |rx| taker(rx, 9));
+        let (cancelled, cancelled_tx) =
+            s.spawn_with_bounded_mailbox("cancelled", 2, |rx| taker(rx, 9));
         // Closed by the receiver itself.
         struct Closer(BoundedMailbox<u32>);
         impl<'env, R> ScopedTask<'env, R> for Closer {
@@ -135,7 +150,9 @@ impl Tracer for Lines {
         self.0.borrow_mut().push(format!("poll {seq} {id} {name}"));
     }
     fn on_finish(&mut self, id: TaskId, name: &str, state: scope::TaskState) {
-        self.0.borrow_mut().push(format!("done {id} {name} {state:?}"));
+        self.0
+            .borrow_mut()
+            .push(format!("done {id} {name} {state:?}"));
     }
 }
 
@@ -247,7 +264,15 @@ fn run(ordering: WakeOrdering, budget: usize, capacity: Option<usize>, per_poll:
     };
     for (i, out) in outs.into_iter().enumerate() {
         let first = i as u32 * 100;
-        s.spawn_named(format!("p{i}"), Producer { out, next: first, n: first + 10, refused: refused.clone() });
+        s.spawn_named(
+            format!("p{i}"),
+            Producer {
+                out,
+                next: first,
+                n: first + 10,
+                refused: refused.clone(),
+            },
+        );
     }
     let mut done = false;
     for _ in 0..400 {
@@ -271,7 +296,12 @@ fn wake_ordering_is_the_unbounded_mailbox_s_when_nothing_is_refused() {
             let bounded = run(ordering, budget, Some(30), usize::MAX);
             assert_eq!(bounded.2, 0);
             assert_eq!(unbounded.3, bounded.3);
-            assert_eq!(unbounded.0, bounded.0, "{} budget {budget}", ordering.name());
+            assert_eq!(
+                unbounded.0,
+                bounded.0,
+                "{} budget {budget}",
+                ordering.name()
+            );
             assert_eq!(unbounded.1, bounded.1);
         }
     }
@@ -291,7 +321,12 @@ fn runs_with_refusals_repeat_exactly() {
                 assert_eq!(sorted, expected, "every message arrives once");
             }
             for _ in 0..9 {
-                assert_eq!(run(ordering, budget, Some(2), 1), first, "{} budget {budget}", ordering.name());
+                assert_eq!(
+                    run(ordering, budget, Some(2), 1),
+                    first,
+                    "{} budget {budget}",
+                    ordering.name()
+                );
             }
         }
     }

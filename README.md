@@ -143,7 +143,8 @@ A `Tick` is the number of a scheduler round. The clock advances by one at the st
 (each `tick()`, each loop of `run`), and nothing else moves it. `Cx::sleep_ticks(TickDelta(n))` wakes
 the task at the start of the round `n` after this one, as a `Timer` wake on the bus, ordered by the
 policy like every other wake. Nothing reads the wall clock, so a run that uses only logical timers
-repeats tick for tick. `SleepTask` and `Cx::sleep_until` stay as they are, on the wall clock.
+repeats tick for tick. `SleepTask` and `Cx::sleep_until` stay as they are, on the wall clock. The
+clock never wraps: it stops at `u64::MAX`, and a deadline past it is `u64::MAX`.
 
 `Scope::spawn_with_bounded_mailbox(name, capacity, build)` gives a mailbox that holds at most
 `capacity` messages. `BoundedSender::try_send` enqueues and wakes like `send`, or hands the message
@@ -185,7 +186,11 @@ assert_eq!(ticks, vec![1, 4]);
 
 The runtime is single-threaded and its scheduling is a pure function of the
 configured policy and the order of wakes, so a program run twice produces the
-same interleaving. The test suite covers cancellation, timers, join and select,
+same interleaving. With logical timers, the tick at which each thing happens is
+a function of the wake sequence, the policy and the tick-advancement rule (one
+tick per round), and repeats with them. Wall-clock timers (`SleepTask`,
+`Cx::sleep_until`) and cancel escalation by time are outside that replay: how
+many rounds pass while they wait depends on elapsed time. The test suite covers cancellation, timers, join and select,
 panic propagation, external wakers, mailboxes and stall reporting; the
 cross-thread wake and cancel handoff is model-checked with Loom
 (`RUSTFLAGS="--cfg loom" cargo test --test loom_wake --release`), and the kernel

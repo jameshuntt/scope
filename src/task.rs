@@ -192,8 +192,9 @@ impl<'poll, 'env, R> Cx<'poll, 'env, R> {
     #[inline]
     /// Arrange a `Timer` wake for this task `delta` rounds after this one, on the logical clock;
     /// return `Pending` afterwards. The wake fires at the start of round `now_tick() + delta`. A
-    /// wake cannot land in the round that asked for it, so a `delta` of 0 counts as 1. Nothing here
-    /// reads the wall clock.
+    /// wake cannot land in the round that asked for it, so a `delta` of 0 counts as 1. A round past
+    /// `u64::MAX` is `u64::MAX`, where the clock stops ([`crate::clock`]). Nothing here reads the
+    /// wall clock.
     pub fn sleep_ticks(&mut self, delta: TickDelta) {
         let at = self.tick.saturating_add(delta.0.max(1));
         (self.subscribe_sleep_ticks)(self.id, at);

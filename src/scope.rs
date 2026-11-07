@@ -356,6 +356,12 @@ impl<'env, R> Scope<'env, R> {
         Tick(self.tick_count)
     }
 
+    /// Puts the logical clock at `tick`, to test the last ticks.
+    #[cfg(test)]
+    pub(crate) fn set_tick(&mut self, tick: Tick) {
+        self.tick_count = tick.0;
+    }
+
     /// A real `Waker` that wakes `id` (reason `Io`). Hand this to external IO.
     #[cfg(not(loom))]
     pub fn waker_for(&self, id: TaskId, reason: WakeReason) -> std::task::Waker {
@@ -781,7 +787,8 @@ impl<'env, R> Scope<'env, R> {
     }
 
     fn round(&mut self) -> usize {
-        self.tick_count = self.tick_count.wrapping_add(1);
+        // The logical clock stops at `u64::MAX` rather than wrap to tick 0 (see `crate::clock`).
+        self.tick_count = self.tick_count.saturating_add(1);
         self.rounds += 1;
         if let Some(t) = self.tracer.as_mut() {
             t.on_round_begin(self.tick_count);
@@ -898,7 +905,13 @@ impl<'env, R> Scope<'env, R> {
                 self.intents = intents;
                 return;
             };
-            let PollIntents { finish_subs, spawns, sleeps, cancels, tick_sleeps } = &mut intents;
+            let PollIntents {
+                finish_subs,
+                spawns,
+                sleeps,
+                cancels,
+                tick_sleeps,
+            } = &mut intents;
 
             let mut subscribe_finish =
                 |waiter: TaskId, target: TaskId| finish_subs.push((waiter, target));
@@ -960,7 +973,9 @@ impl<'env, R> Scope<'env, R> {
             }
         }
         for (tid, at) in intents.tick_sleeps.drain(..) {
-            let (Some(e), Some(dl)) = (self.slab.get_mut(tid), NonZeroU64::new(at)) else { continue };
+            let (Some(e), Some(dl)) = (self.slab.get_mut(tid), NonZeroU64::new(at)) else {
+                continue;
+            };
             e.tick_sleep_until = Some(dl);
             self.tick_sleep_heap.push(Reverse((at, tid)));
             if let Some(t) = self.tracer.as_mut() {
@@ -1440,5 +1455,89 @@ mod tests {
             }
         }
         assert!(total_polls > min_polls, "the workload barely ran: {total_polls} polls");
+    }
+}
+
+/// The logical clock at its end: it stops at `u64::MAX`, and timers due past it fire there.
+#[cfg(all(test, not(loom)))]
+mod clock_end {
+    use super::*;
+    use crate::clock::{Tick, TickDelta};
+
+    /// Logs the tick of each poll; on the first poll asks for a logical timer.
+    struct Sleeper {
+        delta: u64,
+        polls: u32,
+    }
+
+    impl<'env> ScopedTask<'env, Vec<u64>> for Sleeper {
+        fn poll(&mut self, cx: &mut Cx<'_, 'env, Vec<u64>>) -> TaskPoll {
+            cx.resources.push(cx.now_tick().0);
+            self.polls += 1;
+            if self.polls > 1 {
+                return TaskPoll::Ready;
+            }
+            cx.sleep_ticks(TickDelta(self.delta));
+            TaskPoll::Pending
+        }
+    }
+
+    #[test]
+    fn the_clock_stops_at_the_last_tick_and_a_timer_past_it_fires_there() {
+        let mut ticks = Vec::new();
+        let report = {
+            let mut s = Scope::new(&mut ticks);
+            s.set_tick(Tick(u64::MAX - 2));
+            // Polled in round u64::MAX - 1; `now + 10` is past u64::MAX, so the deadline is
+            // u64::MAX: the next round.
+            s.spawn_named(
+                "past the end",
+                Sleeper {
+                    delta: 10,
+                    polls: 0,
+                },
+            );
+            let report = s.run();
+            assert_eq!(s.now_tick(), Tick(u64::MAX));
+            report
+        };
+        assert!(report.all_completed(), "{report:?}");
+        assert_eq!(ticks, [u64::MAX - 1, u64::MAX]);
+        assert_eq!(report.rounds, 2);
+    }
+
+    #[test]
+    fn at_the_last_tick_every_round_is_that_tick_and_timers_still_fire() {
+        let mut ticks = Vec::new();
+        let report = {
+            let mut s = Scope::new(&mut ticks);
+            s.set_tick(Tick(u64::MAX));
+            s.spawn_named("at the end", Sleeper { delta: 3, polls: 0 });
+            let first = s.tick();
+            assert_eq!(first, TickOutcome::Progress(1));
+            assert_eq!(s.now_tick(), Tick(u64::MAX), "the clock does not wrap to 0");
+            let report = s.run();
+            assert_eq!(s.now_tick(), Tick(u64::MAX));
+            report
+        };
+        assert!(report.all_completed(), "{report:?}");
+        // Asked in a round at u64::MAX, the timer is due at u64::MAX and fires the next round.
+        assert_eq!(ticks, [u64::MAX, u64::MAX]);
+        assert_eq!(report.rounds, 2);
+    }
+
+    #[test]
+    fn a_tick_sleep_task_past_the_end_completes_at_the_last_tick() {
+        let mut ticks: Vec<u64> = Vec::new();
+        let mut s = Scope::new(&mut ticks);
+        s.set_tick(Tick(u64::MAX - 3));
+        // First polled in round u64::MAX - 2: `now + u64::MAX` saturates to u64::MAX.
+        let _late = s.sleep_ticks("late", TickDelta(u64::MAX));
+        let _until = s.sleep_until_tick("until", Tick(u64::MAX));
+        let report = s.run();
+        assert!(report.all_completed(), "{report:?}");
+        assert_eq!(s.now_tick(), Tick(u64::MAX));
+        // Rounds u64::MAX - 2 (armed), u64::MAX - 1 (idle), u64::MAX (both fire).
+        assert_eq!(report.rounds, 3);
     }
 }

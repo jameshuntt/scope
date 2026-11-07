@@ -17,6 +17,10 @@
 //!   candidates against deterministic workload suites, not by taste.
 //! * **Structured `run()`.** Drives to completion — the scope boundary is a
 //!   join point — and reports stalled tasks instead of hanging.
+//! * **A logical clock.** A [`Tick`] is a scheduler round ([`clock`]). With
+//!   logical timers, determinism is a function of the wake sequence, the
+//!   policy and the tick-advancement rule; wall-clock timers ([`SleepTask`])
+//!   are outside replay.
 //!
 //! `unsafe` is confined to [`wake`] (the audited `waker_tables` plumbing);
 //! everything else is `#![deny(unsafe_code)]`.

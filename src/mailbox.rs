@@ -238,7 +238,11 @@ impl<M> BoundedSender<M> {
 
 impl<M> Clone for BoundedSender<M> {
     fn clone(&self) -> Self {
-        Self { shared: self.shared.clone(), bus: self.bus.clone(), target: self.target }
+        Self {
+            shared: self.shared.clone(),
+            bus: self.bus.clone(),
+            target: self.target,
+        }
     }
 }
 
@@ -258,7 +262,11 @@ pub(crate) fn bounded_sender<M>(
     bus: WakeBus,
     target: TaskId,
 ) -> BoundedSender<M> {
-    BoundedSender { shared, bus, target }
+    BoundedSender {
+        shared,
+        bus,
+        target,
+    }
 }
 
 #[cfg(all(test, not(loom)))]
@@ -269,7 +277,11 @@ mod tests {
     fn pair(capacity: usize) -> (BoundedSender<u32>, BoundedMailbox<u32>, WakeBus) {
         let bus = WakeBus::new();
         let (shared, rx) = bounded_channel(capacity);
-        (bounded_sender(shared, bus.clone(), TaskId::new(4, 0)), rx, bus)
+        (
+            bounded_sender(shared, bus.clone(), TaskId::new(4, 0)),
+            rx,
+            bus,
+        )
     }
 
     #[test]
@@ -283,7 +295,11 @@ mod tests {
             }
             assert_eq!(tx.try_send(99), Err(TrySendError::Full(99)));
             assert_eq!(tx.free(), 0);
-            assert_eq!(lock(&rx.shared).msgs.capacity(), allocated, "the queue never grew");
+            assert_eq!(
+                lock(&rx.shared).msgs.capacity(),
+                allocated,
+                "the queue never grew"
+            );
             assert_eq!(rx.drain(), [round * 10, round * 10 + 1, round * 10 + 2]);
         }
         // One Inbox wake per accepted message, none for a refusal.
@@ -301,7 +317,11 @@ mod tests {
         assert_eq!(tx.try_send(1), Ok(()));
         drop(rx);
         assert!(tx.is_closed());
-        assert_eq!(tx.len(), 0, "queued messages were dropped with the read end");
+        assert_eq!(
+            tx.len(),
+            0,
+            "queued messages were dropped with the read end"
+        );
         assert_eq!(tx.try_send(2), Err(TrySendError::Closed(2)));
         assert_eq!(tx.free(), 0);
     }
@@ -324,8 +344,16 @@ mod loom_tests {
             let (shared, rx) = bounded_channel::<u32>(1);
             let tx = bounded_sender(shared, bus.clone(), id);
             let producer = loom::thread::spawn(move || tx.try_send(7));
-            if let Some(SchedulerMsg::Wake { reason: WakeReason::Inbox, .. }) = bus.try_recv() {
-                assert_eq!(rx.try_recv(), Some(7), "wake delivered but the message is not queued");
+            if let Some(SchedulerMsg::Wake {
+                reason: WakeReason::Inbox,
+                ..
+            }) = bus.try_recv()
+            {
+                assert_eq!(
+                    rx.try_recv(),
+                    Some(7),
+                    "wake delivered but the message is not queued"
+                );
             }
             assert_eq!(producer.join().unwrap(), Ok(()));
         });
@@ -348,8 +376,15 @@ mod loom_tests {
                 .zip(sent)
                 .filter_map(|(m, r)| r.is_ok().then_some(m))
                 .collect();
-            assert_eq!(got, accepted, "accepted messages are received once, in order");
-            assert_eq!(sent[0], Ok(()), "the first send always finds the place free");
+            assert_eq!(
+                got, accepted,
+                "accepted messages are received once, in order"
+            );
+            assert_eq!(
+                sent[0],
+                Ok(()),
+                "the first send always finds the place free"
+            );
             if let Err(e) = sent[1] {
                 assert_eq!(e, TrySendError::Full(2));
             }
