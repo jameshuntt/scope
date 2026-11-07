@@ -207,6 +207,18 @@ them; a work-stealing variant would be a different runtime, not a feature of
 this one. Use OS threads around scopes (one runtime per thread, as the 1BRC
 example does), not scopes across threads.
 
+## 0.3.2
+
+- A logical clock: `Tick` is the number of a scheduler round, one per round, tick 0 before the first.
+  `Cx::sleep_ticks`, `Cx::sleep_until_tick`, `TickSleepTask` and `Scope::sleep_ticks` wake a task at
+  the start of a round as a `Timer` wake on the bus, ordered by the policy like any wake; ties in the
+  same round go in `TaskId` order. Nothing on that path reads the wall clock. The clock stops at
+  `u64::MAX` rather than wrap.
+- A bounded mailbox: `Scope::spawn_with_bounded_mailbox` and `BoundedSender::try_send`, which hands
+  the message back as `Full` or `Closed` and enqueues, wakes and allocates nothing then.
+- Additive only. `Mailbox`, `SleepTask` and the schedule are unchanged: `tests/schedule_golden.rs`
+  passes as recorded from 0.3.0. The two new `Tracer` hooks have default bodies.
+
 ## 0.3.1
 
 - The scheduler takes 12% to 42% less time on the crate's benchmarks (`cargo bench --bench

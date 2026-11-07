@@ -89,6 +89,78 @@ from the crates.io API, in UTC. Programs and scripts that are not part of the cr
     clippy `-D warnings`; rustdoc `-D warnings`; `cargo bench --no-run`; `cargo package --locked`;
     `cargo +1.85 test --all-targets --locked` 41 passed; loom `--test loom_wake` 2 passed, `--lib` 6
     passed, clippy under loom; Miri `--lib` 9 passed, `--test kernel` 13 passed.
+- **The logical clock stops at `u64::MAX` instead of wrapping.** Commit
+  [b3ba4b8](https://github.com/jameshuntt/scope/commit/b3ba4b89605c75f8b58b42a89fe90ca676d01855).
+  Why: the round counter went up with `wrapping_add`, so after `u64::MAX` rounds the clock would read
+  tick 0, and every pending logical timer and tick-based cancel deadline would be out of reach until it
+  came round again.
+  - Before: [src/scope.rs L698 @ 320c5bd](https://github.com/jameshuntt/scope/blob/320c5bd961598edba4f5eb6a628d40a1c62f5c71/src/scope.rs#L698), `self.tick_count = self.tick_count.wrapping_add(1)`.
+  - After: [src/scope.rs L790-791 @ b3ba4b8](https://github.com/jameshuntt/scope/blob/b3ba4b89605c75f8b58b42a89fe90ca676d01855/src/scope.rs#L790-L791), `saturating_add(1)`.
+    [src/clock.rs L9-23 @ b3ba4b8](https://github.com/jameshuntt/scope/blob/b3ba4b89605c75f8b58b42a89fe90ca676d01855/src/clock.rs#L9-L23): the clock stops at
+    `u64::MAX`; every round after the one at `u64::MAX` is tick `u64::MAX` again. A deadline past it
+    (`now + delta` overflowing, which `Cx::sleep_ticks`, `TickSleepTask` and `Tick + TickDelta` already
+    saturated) is `u64::MAX`, so the timer fires in the first round at `u64::MAX`, or in the next round
+    when it was asked for there. Saturating, not a terminal error: `round` has no error path, and
+    saturating is what the tick cancel deadlines and `Tick + TickDelta` already do. Every timer still
+    fires and every outcome stays deterministic.
+  - Proof: [src/scope.rs L1461-1543 @ b3ba4b8](https://github.com/jameshuntt/scope/blob/b3ba4b89605c75f8b58b42a89fe90ca676d01855/src/scope.rs#L1461-L1543), three tests
+    through a test-only `Scope::set_tick`: `the_clock_stops_at_the_last_tick_and_a_timer_past_it_fires_there`
+    (from `u64::MAX - 2`, a 10-tick timer fires in round `u64::MAX`; 2 rounds),
+    `at_the_last_tick_every_round_is_that_tick_and_timers_still_fire` (at `u64::MAX`, `tick()` leaves the
+    clock at `u64::MAX` and a 3-tick timer fires the next round), and
+    `a_tick_sleep_task_past_the_end_completes_at_the_last_tick` (`sleep_ticks(TickDelta(u64::MAX))` and
+    `sleep_until_tick(Tick(u64::MAX))` both complete in round `u64::MAX`; 3 rounds).
+- **Determinism, said where it is read.** Same commit. [README.md L189-194 @ b3ba4b8](https://github.com/jameshuntt/scope/blob/b3ba4b89605c75f8b58b42a89fe90ca676d01855/README.md#L189-L194)
+  and [src/lib.rs L20-23 @ b3ba4b8](https://github.com/jameshuntt/scope/blob/b3ba4b89605c75f8b58b42a89fe90ca676d01855/src/lib.rs#L20-L23): with logical timers,
+  the tick at which each thing happens is a function of the wake sequence, the policy and the
+  tick-advancement rule; wall-clock timers and cancel escalation by time are outside that replay.
+- **Formatting.** Same commit. The lines c5b1bbd added are rustfmt-clean (35 rustfmt hunks, all inside
+  lines this branch added or changed). No older line is reformatted: `cargo fmt --check` flags the same
+  older lines it flags on 320c5bd, less the two lines c5b1bbd itself rewrote.
+- **Checked before release** (the code, not the description):
+  - The clock reads tick 0 before the first round and goes up by one at one place, the first line of
+    `round` (each `tick()`, each loop of `run` and `run_until`). Nothing on the tick path reads `Instant`,
+    `SystemTime` or `Duration`: the lines c5b1bbd added name them only in docs.
+  - Logical timers live in a heap of `(tick, TaskId)`; two timers due in the same round fire in `TaskId`
+    order (slot, then generation), right after the tick cancels and before the bus is drained, as
+    `WakeReason::Timer` wakes on the bus, so the policy orders them with the round's other wakes
+    (`tests/logical_clock.rs` `timer_wakes_are_ordered_by_the_policy_like_any_wake`).
+  - `SleepTask`, the wall-clock sleep heap and `fire_expired_timers` are unchanged; so is
+    `tests/schedule_golden.rs`, and it passes.
+  - `Cx::sleep_ticks(TickDelta(0))` counts as 1 (documented; tested by
+    `zero_ticks_is_the_next_round_and_a_past_tick_is_the_next_round`); `TickSleepTask::new(TickDelta(0))`
+    completes at its first poll (documented; tested by `tick_sleep_tasks_join_like_sleep_tasks`).
+  - The two new `Tracer` hooks have default bodies, so no implementation has to change. `Cx`'s new
+    fields are crate-private, as its other machinery is. `SchedulerConfig` and every other public struct
+    gained no field; nothing is `#[non_exhaustive]`. Every change is an addition: version 0.3.2.
+  - Bounded mailbox: the bound is `msgs.len() >= capacity`, checked under the lock before
+    `push_back`, and `try_send` is the only path that enqueues; the `VecDeque` is made with
+    `with_capacity(capacity)` and never grows (a unit test checks its allocated capacity over 150
+    sends). `Closed` is checked before `Full`. A refused message is returned by value, never cloned or
+    queued, and wakes nothing. Capacity 0 refuses every message (documented; `capacity_zero_refuses_every_send`).
+    The wake is the unbounded mailbox's `Inbox` wake, after the lock is released, as `send` does
+    (`wake_ordering_is_the_unbounded_mailbox_s_when_nothing_is_refused` compares the two traces).
+    `Mailbox` and `MailboxSender` are unchanged.
+  - `on_sleep_until` and `on_subscribe_finish` are still never called, as before.
+- **The bounded mailbox beside ABUT's ring** (abut 0.2.2, `ring` feature `ring-heapless`, read from its
+  published source). Both refuse instead of growing, and both report a full queue as a value the
+  sender handles (`TrySendError::Full(msg)` here, `RingError::Full` there). They differ where scope's
+  job differs. ABUT's `HeaplessRing<FRAME_MAX, DEPTH>` never allocates at all: capacity is a const
+  generic, frames are stored in place (`heapless::spsc::Queue`), and it is single producer, single
+  consumer, lock-free. Scope's bounded mailbox allocates once, at spawn, for a capacity chosen at run
+  time, then never again; it is many producers (cloneable `BoundedSender`, any thread) behind the
+  scope's `Mutex`, and it hands the refused message back. A future `no_std` scope could reuse ABUT's
+  pattern for the queue's storage (a const-generic inline ring, so the capacity is in the type and the
+  spawn allocates nothing), but not as it is: scope's senders are many and cross threads, so it would
+  need a multi-producer ring or a critical section around one, and the rest of scope (`Arc`, `Mutex`,
+  `Instant`, the waker substrate) needs `alloc` and a lock first. Nothing changes now.
+  - Run on the Mac at b3ba4b8: `./verify.sh` passed (`cargo test` 49 passed and 1 doc test ignored;
+    Miri `--lib` 12 passed, `--test kernel` 13 passed with `sleep_task` skipped; loom `--test loom_wake` 2
+    passed, `--lib` 6 passed). Miri on the new tests, with the same `MIRIFLAGS`: `--test logical_clock` 8
+    passed, `--test bounded_mailbox` 6 passed. `cargo test --all-targets --locked` 44 passed;
+    `cargo test --doc --locked` 5 passed, 1 ignored; `cargo +1.85 test --all-targets --locked` 44 passed;
+    clippy `-D warnings` on all targets and on the loom lib build; rustdoc `-D warnings`;
+    `cargo bench --no-run`.
 
 ## 0.3.1 (2026-10-15 06:17 UTC)
 
