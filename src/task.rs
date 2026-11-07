@@ -8,6 +8,7 @@
 //! cooperative and single-threaded, so only one task touches `R` at a time.
 
 use crate::cancel::{CancelCell, CancelEscalation, CancelReason};
+use crate::clock::{Tick, TickDelta};
 use crate::ids::TaskId;
 use crate::policy::QoSClass;
 use crate::wake::{WakeBus, WakeReason};
@@ -84,6 +85,10 @@ pub struct Cx<'poll, 'env, R> {
     pub(crate) query_state: &'poll mut dyn FnMut(TaskId) -> TaskState,
     pub(crate) subscribe_sleep_until: &'poll mut dyn FnMut(TaskId, Instant),
     pub(crate) request_cancel: &'poll mut dyn FnMut(TaskId, CancelEscalation, CancelReason),
+    /// The tick of the round this poll runs in.
+    pub(crate) tick: u64,
+    /// Records a logical timer: the task, and the tick whose round fires it.
+    pub(crate) subscribe_sleep_ticks: &'poll mut dyn FnMut(TaskId, u64),
 }
 
 impl<'poll, 'env, R> Cx<'poll, 'env, R> {
@@ -174,6 +179,32 @@ impl<'poll, 'env, R> Cx<'poll, 'env, R> {
     /// [`Cx::sleep_until`] relative to now.
     pub fn sleep_for(&mut self, dur: Duration) {
         self.sleep_until(Instant::now() + dur);
+    }
+
+    // ---- the logical clock ----
+
+    #[inline]
+    /// The logical clock: the tick of the round this poll runs in (see [`crate::clock`]).
+    pub fn now_tick(&self) -> Tick {
+        Tick(self.tick)
+    }
+
+    #[inline]
+    /// Arrange a `Timer` wake for this task `delta` rounds after this one, on the logical clock;
+    /// return `Pending` afterwards. The wake fires at the start of round `now_tick() + delta`. A
+    /// wake cannot land in the round that asked for it, so a `delta` of 0 counts as 1. Nothing here
+    /// reads the wall clock.
+    pub fn sleep_ticks(&mut self, delta: TickDelta) {
+        let at = self.tick.saturating_add(delta.0.max(1));
+        (self.subscribe_sleep_ticks)(self.id, at);
+    }
+
+    #[inline]
+    /// Arrange a `Timer` wake for this task at the start of round `tick`, on the logical clock;
+    /// return `Pending` afterwards. A tick that is not after this round counts as the next round.
+    pub fn sleep_until_tick(&mut self, tick: Tick) {
+        let at = tick.0.max(self.tick.saturating_add(1));
+        (self.subscribe_sleep_ticks)(self.id, at);
     }
 
     // ---- cancellation ----

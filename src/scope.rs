@@ -16,16 +16,17 @@
 //!   reuses them from poll to poll.
 
 use crate::cancel::{CancelCell, CancelEscalation, CancelReason};
+use crate::clock::{Tick, TickDelta};
 use crate::combinators::{
     result_channel, Either, JoinAllOkError, JoinAllOkTask, JoinAllTask, JoinHandle, MapJoinTask,
     Select2Task, SelectNTask,
 };
 use crate::ids::{TaskId, TaskSlab};
-use crate::mailbox::{Mailbox, MailboxSender};
+use crate::mailbox::{BoundedMailbox, BoundedSender, Mailbox, MailboxSender};
 use crate::policy::{resolve_cancel_budgets, QoSClass, SchedulerConfig, WakeOrdering};
 use crate::sync::{lock, Arc, Mutex};
 use crate::task::{Cx, JoinError, ScopedTask, TaskPoll, TaskState};
-use crate::timer::SleepTask;
+use crate::timer::{SleepTask, TickSleepTask};
 use crate::trace::Tracer;
 use crate::wake::{SchedulerMsg, WakeBus, WakeReason};
 use std::cmp::Reverse;
@@ -90,6 +91,9 @@ struct TaskEntry<'env, R> {
     cancel_time_deadline: Option<Instant>,
     /// Never zero: it is the tick count plus a budget of at least one.
     cancel_tick_deadline: Option<NonZeroU64>,
+    /// The tick whose round fires this task's logical timer. Never zero: it is after the round
+    /// that asked, and the first round is tick 1.
+    tick_sleep_until: Option<NonZeroU64>,
 }
 
 struct SpawnReq<'env, R> {
@@ -106,12 +110,19 @@ struct PollIntents<'env, R> {
     spawns: Vec<SpawnReq<'env, R>>,
     sleeps: Vec<(TaskId, Instant)>,
     cancels: Vec<(TaskId, CancelEscalation, CancelReason)>,
+    tick_sleeps: Vec<(TaskId, u64)>,
 }
 
 // By hand: `#[derive(Default)]` would demand `R: Default`.
 impl<'env, R> Default for PollIntents<'env, R> {
     fn default() -> Self {
-        Self { finish_subs: Vec::new(), spawns: Vec::new(), sleeps: Vec::new(), cancels: Vec::new() }
+        Self {
+            finish_subs: Vec::new(),
+            spawns: Vec::new(),
+            sleeps: Vec::new(),
+            cancels: Vec::new(),
+            tick_sleeps: Vec::new(),
+        }
     }
 }
 
@@ -210,6 +221,8 @@ pub struct Scope<'env, R> {
     sleep_heap: BinaryHeap<Reverse<(Instant, TaskId)>>,
     cancel_tick_heap: BinaryHeap<Reverse<(u64, TaskId)>>,
     cancel_time_heap: BinaryHeap<Reverse<(Instant, TaskId)>>,
+    /// Logical timers: the tick whose round fires each one, ties in `TaskId` order.
+    tick_sleep_heap: BinaryHeap<Reverse<(u64, TaskId)>>,
 
     config: SchedulerConfig,
     tracer: Option<Box<dyn Tracer>>,
@@ -307,6 +320,7 @@ impl<'env, R> Scope<'env, R> {
             sleep_heap: BinaryHeap::new(),
             cancel_tick_heap: BinaryHeap::new(),
             cancel_time_heap: BinaryHeap::new(),
+            tick_sleep_heap: BinaryHeap::new(),
             config,
             tracer: None,
             intents: PollIntents::default(),
@@ -334,6 +348,12 @@ impl<'env, R> Scope<'env, R> {
     /// The configuration in effect.
     pub fn config(&self) -> SchedulerConfig {
         self.config
+    }
+
+    /// The logical clock: the tick of the round running now, or of the last round run (see
+    /// [`crate::clock`]). Tick 0 before the first round.
+    pub fn now_tick(&self) -> Tick {
+        Tick(self.tick_count)
     }
 
     /// A real `Waker` that wakes `id` (reason `Io`). Hand this to external IO.
@@ -375,6 +395,7 @@ impl<'env, R> Scope<'env, R> {
             sleeping_until: None,
             cancel_time_deadline: None,
             cancel_tick_deadline: None,
+            tick_sleep_until: None,
         });
         // The name moved into the entry; a tracer reads it from there.
         self.runq.enter(id);
@@ -434,6 +455,17 @@ impl<'env, R> Scope<'env, R> {
         self.spawn_with_result(name, SleepTask::new(dur), |_t, _r| ())
     }
 
+    /// Spawn a task that completes `delta` rounds after its first poll, on the logical clock
+    /// ([`TickSleepTask::new`]); join it to wait on the timer.
+    pub fn sleep_ticks(&mut self, name: impl Into<String>, delta: TickDelta) -> JoinHandle<()> {
+        self.spawn_with_result(name, TickSleepTask::new(delta), |_t, _r| ())
+    }
+
+    /// Spawn a task that completes in round `tick`, on the logical clock ([`TickSleepTask::until`]).
+    pub fn sleep_until_tick(&mut self, name: impl Into<String>, tick: Tick) -> JoinHandle<()> {
+        self.spawn_with_result(name, TickSleepTask::until(tick), |_t, _r| ())
+    }
+
     // ---------------- mailboxes ----------------
 
     /// Spawn a task that owns a typed [`Mailbox`]. `build` receives the read end
@@ -475,6 +507,52 @@ impl<'env, R> Scope<'env, R> {
         let task = build(rx);
         let handle = self.spawn_with_result(name, task, finish);
         let tx = crate::mailbox::sender(queue, self.bus.clone(), handle.task);
+        (handle, tx)
+    }
+
+    /// Spawn a task that owns a [`BoundedMailbox`] of `capacity` messages. The queue for all of
+    /// them is allocated here, once; [`BoundedSender::try_send`] refuses a message past it
+    /// (`Full`) or after the task is gone (`Closed`), and enqueues and allocates nothing then.
+    /// A capacity of 0 refuses every message. Wakes are the same `Inbox` wakes as
+    /// [`spawn_with_mailbox`](Self::spawn_with_mailbox) sends.
+    pub fn spawn_with_bounded_mailbox<M, T, F>(
+        &mut self,
+        name: impl Into<String>,
+        capacity: usize,
+        build: F,
+    ) -> (TaskId, BoundedSender<M>)
+    where
+        M: 'env,
+        T: ScopedTask<'env, R> + 'env,
+        F: FnOnce(BoundedMailbox<M>) -> T,
+    {
+        let (queue, rx) = crate::mailbox::bounded_channel::<M>(capacity);
+        let task = build(rx);
+        let id = self.spawn_named(name, task);
+        let tx = crate::mailbox::bounded_sender(queue, self.bus.clone(), id);
+        (id, tx)
+    }
+
+    /// Like [`spawn_with_bounded_mailbox`](Self::spawn_with_bounded_mailbox) but also yields a
+    /// [`JoinHandle`] for the task's output.
+    pub fn spawn_with_bounded_mailbox_result<M, T, Out, F, Fin>(
+        &mut self,
+        name: impl Into<String>,
+        capacity: usize,
+        build: F,
+        finish: Fin,
+    ) -> (JoinHandle<Out>, BoundedSender<M>)
+    where
+        M: 'env,
+        T: ScopedTask<'env, R> + 'env,
+        Out: 'env,
+        F: FnOnce(BoundedMailbox<M>) -> T,
+        Fin: FnOnce(&mut T, &mut R) -> Out + 'env,
+    {
+        let (queue, rx) = crate::mailbox::bounded_channel::<M>(capacity);
+        let task = build(rx);
+        let handle = self.spawn_with_result(name, task, finish);
+        let tx = crate::mailbox::bounded_sender(queue, self.bus.clone(), handle.task);
         (handle, tx)
     }
 
@@ -653,6 +731,11 @@ impl<'env, R> Scope<'env, R> {
                 break;
             }
             if polled == 0 {
+                // A logical timer is due in a later round: run that round now. Ticks are rounds,
+                // so waiting for one is running rounds, never reading the clock.
+                if self.has_tick_timer() {
+                    continue;
+                }
                 match self.next_deadline() {
                     // Sleep until the deadline or a wake from another thread,
                     // whichever comes first; the wake stays queued for the
@@ -683,6 +766,9 @@ impl<'env, R> Scope<'env, R> {
                 if Instant::now() >= deadline {
                     return false;
                 }
+                if self.has_tick_timer() {
+                    continue;
+                }
                 let remain = deadline.saturating_duration_since(Instant::now());
                 let wait = match self.next_deadline() {
                     Some(t) => t.min(remain),
@@ -702,6 +788,7 @@ impl<'env, R> Scope<'env, R> {
         }
 
         self.fire_expired_cancel_ticks();
+        self.fire_expired_tick_timers();
         self.fire_expired_cancel_times();
         self.fire_expired_timers();
         self.drain_bus();
@@ -811,7 +898,7 @@ impl<'env, R> Scope<'env, R> {
                 self.intents = intents;
                 return;
             };
-            let PollIntents { finish_subs, spawns, sleeps, cancels } = &mut intents;
+            let PollIntents { finish_subs, spawns, sleeps, cancels, tick_sleeps } = &mut intents;
 
             let mut subscribe_finish =
                 |waiter: TaskId, target: TaskId| finish_subs.push((waiter, target));
@@ -834,6 +921,7 @@ impl<'env, R> Scope<'env, R> {
                     }
                     cancels.push((target, esc, reason));
                 };
+            let mut subscribe_sleep_ticks = |tid: TaskId, at: u64| tick_sleeps.push((tid, at));
 
             let mut cx = Cx {
                 resources: &mut *self.resources,
@@ -845,6 +933,8 @@ impl<'env, R> Scope<'env, R> {
                 query_state: &mut query_state,
                 subscribe_sleep_until: &mut subscribe_sleep_until,
                 request_cancel: &mut request_cancel,
+                tick: self.tick_count,
+                subscribe_sleep_ticks: &mut subscribe_sleep_ticks,
             };
 
             let res = catch_unwind(AssertUnwindSafe(|| task.poll(&mut cx)));
@@ -867,6 +957,14 @@ impl<'env, R> Scope<'env, R> {
             if let Some(e) = self.slab.get_mut(tid) {
                 e.sleeping_until = Some(dl);
                 self.sleep_heap.push(Reverse((dl, tid)));
+            }
+        }
+        for (tid, at) in intents.tick_sleeps.drain(..) {
+            let (Some(e), Some(dl)) = (self.slab.get_mut(tid), NonZeroU64::new(at)) else { continue };
+            e.tick_sleep_until = Some(dl);
+            self.tick_sleep_heap.push(Reverse((at, tid)));
+            if let Some(t) = self.tracer.as_mut() {
+                t.on_sleep_ticks(tid, Tick(at));
             }
         }
         for req in intents.spawns.drain(..) {
@@ -984,6 +1082,46 @@ impl<'env, R> Scope<'env, R> {
                 self.cancel_now_with_reason(id, CancelReason::TimeoutTicks);
             }
         }
+    }
+
+    /// Wake every task whose logical timer is due this round, in `(tick, TaskId)` order, through
+    /// the bus like any other wake. A timer replaced by a later one, or of a task that is gone,
+    /// is dropped.
+    fn fire_expired_tick_timers(&mut self) {
+        while let Some(&Reverse((dl, id))) = self.tick_sleep_heap.peek() {
+            if dl > self.tick_count {
+                break;
+            }
+            self.tick_sleep_heap.pop();
+            match self.slab.get_mut(id) {
+                Some(e)
+                    if e.state == TaskState::Alive
+                        && e.tick_sleep_until.map(NonZeroU64::get) == Some(dl) =>
+                {
+                    e.tick_sleep_until = None;
+                }
+                _ => continue,
+            }
+            if let Some(t) = self.tracer.as_mut() {
+                t.on_tick_timer(id, Tick(dl));
+            }
+            self.bus.wake(id, WakeReason::Timer);
+        }
+    }
+
+    /// Whether a live logical timer is waiting. Drops stale timers at the top of the heap, so a
+    /// finished task's timer never keeps `run` going.
+    fn has_tick_timer(&mut self) -> bool {
+        while let Some(&Reverse((dl, id))) = self.tick_sleep_heap.peek() {
+            let live = self.slab.get(id).is_some_and(|e| {
+                e.state == TaskState::Alive && e.tick_sleep_until.map(NonZeroU64::get) == Some(dl)
+            });
+            if live {
+                return true;
+            }
+            self.tick_sleep_heap.pop();
+        }
+        false
     }
 
     fn fire_expired_cancel_times(&mut self) {

@@ -26,6 +26,7 @@
 pub mod sync;
 
 pub mod cancel;
+pub mod clock;
 pub mod combinators;
 pub mod ids;
 pub mod mailbox;
@@ -38,14 +39,15 @@ pub mod trace;
 pub mod wake;
 
 pub use cancel::{CancelEscalation, CancelReason, TickEscalation, TimeEscalation};
+pub use clock::{Tick, TickDelta};
 pub use combinators::{JoinAllOkError, JoinHandle};
 pub use ids::TaskId;
-pub use mailbox::{Mailbox, MailboxSender};
+pub use mailbox::{BoundedMailbox, BoundedSender, Mailbox, MailboxSender, TrySendError};
 pub use policy::{QoSClass, SchedulerConfig, WakeOrdering};
 pub use scope::{run_scoped, scoped, RunReport, Scope, TickOutcome};
 pub use select::Either;
 pub use task::{Cx, FnTask, JoinError, JoinPoll, ScopedTask, TaskPoll, TaskState, YieldNowTask};
-pub use timer::SleepTask;
+pub use timer::{SleepTask, TickSleepTask};
 pub use trace::{BufferTracer, CountingTracer, LogTracer, Tracer};
 pub use wake::{SchedulerMsg, WakeBus, WakeReason};
 #[cfg(not(loom))]

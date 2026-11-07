@@ -4,6 +4,7 @@
 //! must emit identical traces.
 
 use crate::cancel::CancelReason;
+use crate::clock::Tick;
 use crate::ids::TaskId;
 use crate::task::TaskState;
 use crate::wake::WakeReason;
@@ -41,6 +42,12 @@ pub trait Tracer {
     }
     /// A task was hard-stopped.
     fn on_cancel_hard_stop(&mut self, _id: TaskId, _reason: CancelReason) {}
+    /// A task arranged a logical timer wake at the start of round `at`. Called after its poll,
+    /// when the scope records the timer.
+    fn on_sleep_ticks(&mut self, _id: TaskId, _at: Tick) {}
+    /// A logical timer fired at the start of round `at`; the task's `Timer` wake goes on the bus
+    /// next, and `on_wake` reports it when the round drains the bus.
+    fn on_tick_timer(&mut self, _id: TaskId, _at: Tick) {}
 }
 
 /// Prints to stderr.
@@ -101,6 +108,12 @@ impl Tracer for BufferTracer {
     }
     fn on_cancel_hard_stop(&mut self, id: TaskId, reason: CancelReason) {
         self.lines.push(format!("cancel {id} {reason:?}"));
+    }
+    fn on_sleep_ticks(&mut self, id: TaskId, at: Tick) {
+        self.lines.push(format!("sleep_ticks {id} {at}"));
+    }
+    fn on_tick_timer(&mut self, id: TaskId, at: Tick) {
+        self.lines.push(format!("tick_timer {id} {at}"));
     }
 }
 
