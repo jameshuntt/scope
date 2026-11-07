@@ -5,7 +5,19 @@ Every code link below is pinned to a commit, so it opens the lines as they were 
 from the crates.io API, in UTC. Programs and scripts that are not part of the crate are in
 [`proofs/`](proofs/README). Each one has a README with the command and what it prints.
 
-## Unreleased
+## 0.3.2 (2026-11-07 13:53 UTC)
+
+Published from [8e3449b](https://github.com/jameshuntt/scope/commit/8e3449ba4c78185a3315d45d15ca1be75e0ed96a). The package's `.cargo_vcs_info.json` names that commit. Its commits, oldest
+first: 782814c, 8a6aa20, 3096224, 52ea93d, 1468b17, 320c5bd, c5b1bbd, d5dc5a1, b3ba4b8, 8e3449b.
+
+Published by the declared route, not by hand: the tag `v0.3.2` at 8e3449b ran the `publish` job, and
+crates.io records the version as trusted-published from GitHub, repository `jameshuntt/scope`, run
+[42378892451](https://github.com/jameshuntt/scope/actions/runs/42378892451), sha 8e3449b. Every job of
+that run passed (test, arm, msrv, miri, loom, latest-deps on stable and on 1.85, publish); the push of
+8e3449b to `main` ran [42378770724](https://github.com/jameshuntt/scope/actions/runs/42378770724), which
+passed every job, publish skipped. The checksum crates.io records,
+`bc4e9649ae7f5a91c5ef255ba336f169ffe05c84cd145e901a6ddd5c27a21a2d`, is the `shasum -a 256` of the
+`cargo package --locked` output built on the Mac from the same commit. Additive: version 0.3.2.
 
 ### Added
 
@@ -29,7 +41,7 @@ from the crates.io API, in UTC. Programs and scripts that are not part of the cr
     passed every job (test, arm, msrv, miri, loom, latest-deps on stable and on 1.85). The publish job was
     skipped because the push was not a tag.
 
-- **A logical clock.** On branch `logical-runtime-primitives`, not released. Commit
+- **A logical clock.** Commit
   [c5b1bbd](https://github.com/jameshuntt/scope/commit/c5b1bbd2d4bf73eaeff10864687fecee37e2e340).
   Why: every timer read the wall clock, so where a timer wake landed among other work, and how many
   rounds a run spent waiting, depended on elapsed time. A run with timers did not repeat.
