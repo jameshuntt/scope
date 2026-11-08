@@ -319,14 +319,16 @@ impl<M> BoundedMailbox<M> {
     /// ([`BoundedSender::wake_when_free`]), the place is held for the oldest waiter and it is woken
     /// (`WakeReason::Capacity`).
     pub fn try_recv(&self) -> Option<M> {
-        let (msg, woken) = {
+        let woken = {
             let mut q = lock(&self.shared);
             let msg = q.msgs.pop_front();
-            let woken = if msg.is_some() { q.hand_out() } else { None };
-            (msg, woken)
+            if msg.is_none() || q.waiters.is_empty() {
+                return msg;
+            }
+            (msg, q.hand_out())
         };
-        send_wakes(woken);
-        msg
+        send_wakes(woken.1);
+        woken.0
     }
 
     /// Drain every currently-queued message. Frees every place: as many waiters as places were
@@ -458,7 +460,7 @@ impl<M> BoundedSender<M> {
             if q.closed {
                 return Err(TrySendError::Closed(msg));
             }
-            if q.free() == 0 {
+            if q.msgs.len() + q.held.len() >= q.capacity {
                 return Err(TrySendError::Full(msg));
             }
             q.msgs.push_back(msg);
