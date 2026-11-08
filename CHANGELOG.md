@@ -5,14 +5,21 @@ Every code link below is pinned to a commit, so it opens the lines as they were 
 from the crates.io API, in UTC. Programs and scripts that are not part of the crate are in
 [`proofs/`](proofs/README). Each one has a README with the command and what it prints.
 
-## 0.4.0 (not published)
+## 0.4.0 (2026-11-08 14:46 UTC)
 
-Not published. The code is commits [d6bf9d2](https://github.com/jameshuntt/scope/commit/d6bf9d218fcdee506ede964af246690cfd1f41d6) and
-[7100203](https://github.com/jameshuntt/scope/commit/710020348ce92865f2811036b0bee4763d9bf1e3) on the branch `capacity-waiters`, from `main` at
-d3c1a6f; the line links are at 7100203. This entry and the version are their own commits.
-No tag was made, so the tag workflow has not run. The links below name commits that are not on GitHub
-until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains a variant and is not
-`#[non_exhaustive]`, so a `match` over it without a `_` arm stops compiling. Everything else is added.
+Published from [34fae6e](https://github.com/jameshuntt/scope/commit/34fae6ec978c53cfc571b9eb56b0cbac5aeb7e1c). The package's `.cargo_vcs_info.json` names that commit. Its commits, oldest
+first: d6bf9d2, ae8b8f6, 7100203, b381a2c, 34fae6e; the code is d6bf9d2 and 7100203, and the line links are at 7100203.
+
+Published by the declared route, not by hand: the tag `v0.4.0` at 34fae6e ran the `publish` job, and
+crates.io records the version as trusted-published from GitHub, repository `jameshuntt/scope`, run
+[42491280364](https://github.com/jameshuntt/scope/actions/runs/42491280364), sha 34fae6e. Every job of
+that run passed (test, arm, msrv, miri, loom, latest-deps on stable and on 1.85, publish); the push of
+34fae6e to `main` ran [42491112796](https://github.com/jameshuntt/scope/actions/runs/42491112796), which
+passed every job, publish skipped. The checksum crates.io records,
+`824efa6d588b332f6e4940a3addcf55a083530ab90fd12ab6cad70470815d161`, is the `shasum -a 256` of the
+`cargo package --locked` output built on the Mac from the same commit. Breaking: version 0.4.0, because
+`WakeReason` gains a variant and is not `#[non_exhaustive]`, so a `match` over it without a `_` arm stops
+compiling. Everything else is added.
 
 ### Added
 
