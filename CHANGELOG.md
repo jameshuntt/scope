@@ -82,7 +82,7 @@ until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains 
   registration order, a held place cannot be stolen, a second registration, cancel before and after the
   wake, the handoff, close, a stale generation, four threads sending and waiting, a drain, zero
   capacity, and sends without waiters as before), the loom models in
-  [src/mailbox.rs L1172-1390 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L1172-L1390) (4: a registration racing a receive and a sender that does not
+  [src/mailbox.rs L1172-1389 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L1172-L1389) (4: a registration racing a receive and a sender that does not
   wait, a waiter giving up while a place is freed, a close racing a registration, two waiters racing a
   receive), and `tests/capacity_waiters.rs` (3, on a running scope under every ordering: every message
   once in each sender's order and every wake finding its place, the same run twice, and tasks that end

@@ -305,7 +305,6 @@ example does), not scopes across threads.
   `CapacityWait` is dropped, and close wakes every waiter. Without waiters the bounded mailbox does
   what it did in 0.3.2.
 - Breaking only because `WakeReason` gains a variant: a `match` on it with no `_` arm needs one more.
-- Not published yet (no tag); see CHANGELOG.md.
 
 ## 0.3.2
 
