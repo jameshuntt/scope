@@ -7,15 +7,17 @@ from the crates.io API, in UTC. Programs and scripts that are not part of the cr
 
 ## 0.4.0 (not published)
 
-Not published. The code is commit [d6bf9d2](https://github.com/jameshuntt/scope/commit/d6bf9d218fcdee506ede964af246690cfd1f41d6) on the
-branch `capacity-waiters`, from `main` at d3c1a6f; this entry and the version are the commit after it.
+Not published. The code is commits [d6bf9d2](https://github.com/jameshuntt/scope/commit/d6bf9d218fcdee506ede964af246690cfd1f41d6) and
+[7100203](https://github.com/jameshuntt/scope/commit/710020348ce92865f2811036b0bee4763d9bf1e3) on the branch `capacity-waiters`, from `main` at
+d3c1a6f; the line links are at 7100203. This entry and the version are their own commits.
 No tag was made, so the tag workflow has not run. The links below name commits that are not on GitHub
 until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains a variant and is not
 `#[non_exhaustive]`, so a `match` over it without a `_` arm stops compiling. Everything else is added.
 
 ### Added
 
-- **Capacity waiters on the bounded mailbox.** Commit [d6bf9d2](https://github.com/jameshuntt/scope/commit/d6bf9d218fcdee506ede964af246690cfd1f41d6).
+- **Capacity waiters on the bounded mailbox.** Commits [d6bf9d2](https://github.com/jameshuntt/scope/commit/d6bf9d218fcdee506ede964af246690cfd1f41d6)
+  and [7100203](https://github.com/jameshuntt/scope/commit/710020348ce92865f2811036b0bee4763d9bf1e3) (the fast paths when nobody waits).
   Why: a sender refused `Full` had no way to wait for a place. `try_recv` freed a place and woke
   nobody, so a host kept its own waiter list and woke all of it when a place came free. With 64 senders
   and 16 places, big-bad-bool-runtime 0.1.0 (`run.rs` `release`) spends 22.8 refused attempts per
@@ -24,29 +26,29 @@ until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains 
     [src/mailbox.rs L184-200 @ d3c1a6f](https://github.com/jameshuntt/scope/blob/d3c1a6ff68d9126f80aba6e7b2b50ef94ce5bd8f/src/mailbox.rs#L184-L200), `try_send` refuses `Full` and the sender can only try again;
     [src/mailbox.rs L157-160 @ d3c1a6f](https://github.com/jameshuntt/scope/blob/d3c1a6ff68d9126f80aba6e7b2b50ef94ce5bd8f/src/mailbox.rs#L157-L160) and [src/mailbox.rs L163-173 @ d3c1a6f](https://github.com/jameshuntt/scope/blob/d3c1a6ff68d9126f80aba6e7b2b50ef94ce5bd8f/src/mailbox.rs#L163-L173), `close` and the read end's
     drop set the flag and wake nobody.
-  - After: [src/mailbox.rs L127-196 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L127-L196), the waiter table: one entry per task slot, in
-    registration order, each registration numbered. [src/mailbox.rs L198-212 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L198-L212): the shared state
+  - After: [src/mailbox.rs L127-196 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L127-L196), the waiter table: one entry per task slot, in
+    registration order, each registration numbered. [src/mailbox.rs L198-212 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L198-L212): the shared state
     also holds the places held for woken waiters and the bus to wake them through.
-  - [src/mailbox.rs L266-288 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L266-L288), `hand_out`: every free place is held for the oldest waiter, one
+  - [src/mailbox.rs L266-288 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L266-L288), `hand_out`: every free place is held for the oldest waiter, one
     each, before any of them is woken (`WakeReason::Capacity`). A waiter registers only while no place
-    is free for it, so one freed place wakes one waiter. `try_recv` ([src/mailbox.rs L318-330 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L318-L330))
-    and `drain` ([src/mailbox.rs L332-343 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L332-L343)) call it after they take messages; an empty receive
+    is free for it, so one freed place wakes one waiter. `try_recv` ([src/mailbox.rs L318-332 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L318-L332))
+    and `drain` ([src/mailbox.rs L334-345 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L334-L345)) call it after they take messages; an empty receive
     frees nothing and wakes nothing.
-  - [src/mailbox.rs L492-546 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L492-L546), `BoundedSender::wake_when_free(task)`: under the mailbox's lock,
+  - [src/mailbox.rs L494-548 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L494-L548), `BoundedSender::wake_when_free(task)`: under the mailbox's lock,
     `Closed`, `FreeNow` when a place is free for the task (nothing registered, so a place freed after
     a refused send is never missed), `AlreadyRegistered` (the task keeps its turn), or `Registered`
     with a `CapacityWait`. A slot's newer generation drops the older generation's entry and held place.
-  - [src/mailbox.rs L470-490 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L470-L490), `BoundedSender::try_send_from(msg, task)`: the place held for
-    `task` is its to fill, and filling it uses the hold up. [src/mailbox.rs L451-468 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L451-L468): `try_send`
+  - [src/mailbox.rs L472-492 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L472-L492), `BoundedSender::try_send_from(msg, task)`: the place held for
+    `task` is its to fill, and filling it uses the hold up. [src/mailbox.rs L453-470 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L453-L470): `try_send`
     counts held places as taken, so a sender that does not wait cannot take one; it still uses every
-    place nobody holds. [src/mailbox.rs L563-573 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L563-L573): `free` leaves held places out, `free_for(task)`
+    place nobody holds. [src/mailbox.rs L565-575 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L565-L575): `free` leaves held places out, `free_for(task)`
     adds the task's own, for a caller that checks before it sends.
-  - [src/mailbox.rs L400-440 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L400-L440), `CapacityWait`: dropping it (or `cancel`) takes its entry out of
+  - [src/mailbox.rs L402-442 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L402-L442), `CapacityWait`: dropping it (or `cancel`) takes its entry out of
     the table and hands its held place to the next waiter. It is numbered, so a spent registration
     dropped late does not touch a newer one of the same task.
-  - [src/mailbox.rs L299-308 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L299-L308) and [src/mailbox.rs L360-380 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L360-L380): `close` and the read end's drop
+  - [src/mailbox.rs L299-308 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L299-L308) and [src/mailbox.rs L362-382 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L362-L382): `close` and the read end's drop
     let every held place go and wake every waiter, oldest first; a registration on a closed mailbox is
-    `Closed`. [src/wake.rs L55-57 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/wake.rs#L55-L57): `WakeReason::Capacity`, last, so the other variants keep their
+    `Closed`. [src/wake.rs L55-57 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/wake.rs#L55-L57): `WakeReason::Capacity`, last, so the other variants keep their
     discriminants (the pinned schedule test hashes them).
   - A held place and a task that ends without sending: the experiment found that a waiter woken for a
     place that it never used, and that never gave it up, kept that place from everyone. Here the place
@@ -58,7 +60,10 @@ until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains 
     not involved.
   - Unchanged when nobody waits: no waiter registered means no held place, so `try_send`, `try_recv`,
     `drain`, `free` and `close` do what they did in 0.3.2, with the same locks; a refused send still
-    allocates nothing (`a_refused_send_allocates_nothing_and_wakes_nothing` runs as written). The
+    allocates nothing (`a_refused_send_allocates_nothing_and_wakes_nothing` runs as written). At
+    d6bf9d2 `try_recv` built its wake list even with nobody waiting: big-bad-bool-runtime's
+    `scheduler/scope_bounded_bounce` bench (10,000 messages through capacity 4, no waiter) took 516 and
+    518 µs against 492 and 489 µs on 0.3.2; 7100203 returns before that, 491 and 495 µs. The
     scheduler, `WakeBus` and `waker_tables` are not changed; the dependency tree is the same.
 - Where the numbers come from. The design was measured first as an experiment (attempts_scope_wake_n,
   run wake-n-20261107T185418Z, 610 nodes): FIFO wake-N with the place held for the woken waiter
@@ -73,11 +78,11 @@ until the branch is pushed. Breaking: version 0.4.0, because `WakeReason` gains 
   from 994 to 65 rounds; at 1000 senders and one place, 500 to 0.999. Uncontended cost per commit
   moved by -1.6% to +1.6%. Every gate held: no message lost or taken twice, the bound never exceeded,
   no wake lost, no stale waiter reaching its slot's next task, repeated runs equal.
-- Proof: the tests in [src/mailbox.rs L752-1168 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L752-L1168) (16, among them one place wakes one, N wake N,
+- Proof: the tests in [src/mailbox.rs L754-1170 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L754-L1170) (16, among them one place wakes one, N wake N,
   registration order, a held place cannot be stolen, a second registration, cancel before and after the
   wake, the handoff, close, a stale generation, four threads sending and waiting, a drain, zero
   capacity, and sends without waiters as before), the loom models in
-  [src/mailbox.rs L1170-1387 @ d6bf9d2](https://github.com/jameshuntt/scope/blob/d6bf9d218fcdee506ede964af246690cfd1f41d6/src/mailbox.rs#L1170-L1387) (4: a registration racing a receive and a sender that does not
+  [src/mailbox.rs L1172-1390 @ 7100203](https://github.com/jameshuntt/scope/blob/710020348ce92865f2811036b0bee4763d9bf1e3/src/mailbox.rs#L1172-L1390) (4: a registration racing a receive and a sender that does not
   wait, a waiter giving up while a place is freed, a close racing a registration, two waiters racing a
   receive), and `tests/capacity_waiters.rs` (3, on a running scope under every ordering: every message
   once in each sender's order and every wake finding its place, the same run twice, and tasks that end
