@@ -52,6 +52,9 @@ pub enum WakeReason {
     Inbox,
     /// The scope is shutting down.
     Shutdown,
+    /// A bounded mailbox this task waits on ([`crate::BoundedSender::wake_when_free`]) holds a
+    /// place for it, or closed.
+    Capacity,
 }
 
 /// A control message on the wake bus.

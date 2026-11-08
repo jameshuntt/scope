@@ -46,7 +46,10 @@ pub use cancel::{CancelEscalation, CancelReason, TickEscalation, TimeEscalation}
 pub use clock::{Tick, TickDelta};
 pub use combinators::{JoinAllOkError, JoinHandle};
 pub use ids::TaskId;
-pub use mailbox::{BoundedMailbox, BoundedSender, Mailbox, MailboxSender, TrySendError};
+pub use mailbox::{
+    BoundedMailbox, BoundedSender, CapacityWait, Mailbox, MailboxSender, TrySendError,
+    WaitRegistration,
+};
 pub use policy::{QoSClass, SchedulerConfig, WakeOrdering};
 pub use scope::{run_scoped, scoped, RunReport, Scope, TickOutcome};
 pub use select::Either;
