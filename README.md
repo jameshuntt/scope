@@ -182,6 +182,96 @@ scoped(&mut ticks, |s| {
 assert_eq!(ticks, vec![1, 4]);
 ```
 
+### Waiting for a place
+
+A sender refused `Full` can wait for a place instead of trying again blind.
+`BoundedSender::wake_when_free(task)` registers the task in the mailbox, after every task already
+waiting there. When a receive frees a place (or a drain frees several), the mailbox holds each freed
+place for the oldest waiter, one place each, and only then wakes it with `WakeReason::Capacity`. One
+freed place wakes one waiter, never all of them. The woken task fills its place with
+`try_send_from(msg, task)`; a sender that does not wait still uses every place nobody holds, but it
+cannot take a held one. `BoundedSender::free_for(task)` counts the places a task may fill, its held
+place included, for a caller that checks before it sends.
+
+`wake_when_free` checks under the mailbox's lock: if a place is free for the task it registers
+nothing and answers `FreeNow` (send again), so a place freed between a refused send and the
+registration is never missed. A task waits once per mailbox (`AlreadyRegistered` keeps its turn),
+and a closed mailbox answers `Closed`. Closing (or the receiver ending) wakes every waiter and lets
+every held place go.
+
+`Registered` carries a `CapacityWait`. Keep it in the waiting task: dropping it gives the
+registration up, and a place held for the task goes to the next waiter. Scope drops a task's state
+when the task ends by any path (it completes, is cancelled or panics), so a task that ends after it
+was woken but before it sent hands its place on instead of losing it. A registration of a slot's
+newer generation drops the older generation's entry and held place, so a stale `TaskId` never takes
+a place from the slot's next task.
+
+```rust
+use scope::{
+    scoped, BoundedMailbox, BoundedSender, CapacityWait, Cx, ScopedTask, TaskPoll, TrySendError,
+    WaitRegistration,
+};
+
+// Sends 0, 1, 2 into a mailbox of one place; when it is full, waits for a place.
+struct Sender {
+    tx: BoundedSender<u32>,
+    next: u32,
+    wait: Option<CapacityWait<u32>>,
+}
+
+impl<'env, R> ScopedTask<'env, R> for Sender {
+    fn poll(&mut self, cx: &mut Cx<'_, 'env, R>) -> TaskPoll {
+        while self.next < 3 {
+            match self.tx.try_send_from(self.next, cx.id()) {
+                Ok(()) => {
+                    self.next += 1;
+                    self.wait = None;
+                }
+                Err(TrySendError::Full(_)) => match self.tx.wake_when_free(cx.id()) {
+                    WaitRegistration::Registered(w) => {
+                        self.wait = Some(w);
+                        return TaskPoll::Pending;
+                    }
+                    WaitRegistration::AlreadyRegistered => return TaskPoll::Pending,
+                    WaitRegistration::FreeNow => {}
+                    WaitRegistration::Closed => return TaskPoll::Ready,
+                },
+                Err(TrySendError::Closed(_)) => return TaskPoll::Ready,
+            }
+        }
+        TaskPoll::Ready
+    }
+}
+
+// Takes one message a poll into the environment.
+struct Taker {
+    rx: BoundedMailbox<u32>,
+}
+
+impl<'env> ScopedTask<'env, Vec<u32>> for Taker {
+    fn poll(&mut self, cx: &mut Cx<'_, 'env, Vec<u32>>) -> TaskPoll {
+        if let Some(m) = self.rx.try_recv() {
+            cx.resources.push(m);
+        }
+        if cx.resources.len() == 3 {
+            TaskPoll::Ready
+        } else if self.rx.is_empty() {
+            TaskPoll::Pending
+        } else {
+            cx.yield_now()
+        }
+    }
+}
+
+let mut got = Vec::new();
+scoped(&mut got, |s| {
+    let (_id, tx) = s.spawn_with_bounded_mailbox("taker", 1, |rx| Taker { rx });
+    s.spawn_named("sender", Sender { tx, next: 0, wait: None });
+    assert!(s.run().all_completed());
+});
+assert_eq!(got, [0, 1, 2]);
+```
+
 ## Determinism and verification
 
 The runtime is single-threaded and its scheduling is a pure function of the
@@ -206,6 +296,16 @@ A thread pool. Tasks borrow the environment because exactly one thread polls
 them; a work-stealing variant would be a different runtime, not a feature of
 this one. Use OS threads around scopes (one runtime per thread, as the 1BRC
 example does), not scopes across threads.
+
+## 0.4.0
+
+- Capacity waiters on the bounded mailbox: `BoundedSender::wake_when_free`, `try_send_from`,
+  `free_for`, `WaitRegistration`, `CapacityWait` and `WakeReason::Capacity`. A freed place is held for
+  the oldest waiting sender and wakes only it; a held place goes to the next waiter when its
+  `CapacityWait` is dropped, and close wakes every waiter. Without waiters the bounded mailbox does
+  what it did in 0.3.2.
+- Breaking only because `WakeReason` gains a variant: a `match` on it with no `_` arm needs one more.
+- Not published yet (no tag); see CHANGELOG.md.
 
 ## 0.3.2
 
